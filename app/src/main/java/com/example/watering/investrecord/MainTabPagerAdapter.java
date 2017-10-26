@@ -13,10 +13,6 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
 
     private static int PAGE_NUMBER = 4;
     private Context mContext;
-    private Fragment1 mFrag1 = null;
-    private Fragment2 mFrag2 = null;
-    private Fragment3 mFrag3 = null;
-    private Fragment4 mFrag4 = null;
 
     public MainTabPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
@@ -27,19 +23,20 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                mFrag1 = Fragment1.newInstance();
-                return mFrag1;
+                Fragment1 frag1 = new Fragment1();
+                return frag1;
             case 1:
-                mFrag2 = Fragment2.newInstance();
-                return mFrag2;
+                Fragment2 frag2 = new Fragment2();
+                return frag2;
             case 2:
-                mFrag3 = Fragment3.newInstance();
-                return mFrag3;
+                Fragment3 frag3 = new Fragment3();
+                return frag3;
             case 3:
-                mFrag4 = Fragment4.newInstance();
-                return mFrag4;
+                Fragment4 frag4 = new Fragment4();
+                return frag4;
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override

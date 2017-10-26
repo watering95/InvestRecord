@@ -7,13 +7,16 @@
     tools:context="com.example.watering.investrecord.MainActivity">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="368dp"
+        android:layout_height="495dp"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/main_tab"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent" />
+            android:layout_width="match_parent"
+            android:background="@color/colorPrimary"/>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/main_viewpager"
