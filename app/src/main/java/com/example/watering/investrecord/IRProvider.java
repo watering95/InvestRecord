@@ -13,26 +13,34 @@ import android.support.annotation.Nullable;
  */
 
 public class IRProvider extends ContentProvider {
-    static final String AUTHORITY = "com.invest_record.provider";
+    static final String AUTHORITY = "watering.investrecord.provider";
+    static final String PATH_GROUP = "group";
+    static final String PATH_ACCOUNT = "account";
+    static final String PATH_INFO_IO = "info_io";
+    static final String PATH_INFO_DAIRY = "info_dairy";
+    static final int CODE_GROUP = 0;
+    static final int CODE_ACCOUNT = 1;
+    static final int CODE_INFO_IO = 2;
+    static final int CODE_INFO_DAIRY = 3;
 
     static final UriMatcher Matcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
-        Matcher.addURI(AUTHORITY,"User",0);
-        Matcher.addURI(AUTHORITY,"Account",1);
-        Matcher.addURI(AUTHORITY,"Info_IO",2);
-        Matcher.addURI(AUTHORITY,"Info_Dairy",3);
+        Matcher.addURI(AUTHORITY,PATH_GROUP,CODE_GROUP);
+        Matcher.addURI(AUTHORITY,PATH_ACCOUNT,CODE_ACCOUNT);
+        Matcher.addURI(AUTHORITY,PATH_INFO_IO,CODE_INFO_IO);
+        Matcher.addURI(AUTHORITY,PATH_INFO_DAIRY,CODE_INFO_DAIRY);
     }
 
-    UserDBHelper user;
-    AccountDBHelper account;
-    Info_DairyDBHelper info_dairy;
-    Info_IODBHelper info_IO;
+    GroupDBHelper DB_group;
+    AccountDBHelper DB_account;
+    Info_DairyDBHelper DB_info_dairy;
+    Info_IODBHelper DB_info_IO;
 
     public boolean onCreate() {
-        user = new UserDBHelper(getContext());
-        account = new AccountDBHelper(getContext());
-        info_dairy = new Info_DairyDBHelper(getContext());
-        info_IO = new Info_IODBHelper(getContext());
+        DB_group = new GroupDBHelper(getContext());
+        DB_account = new AccountDBHelper(getContext());
+        DB_info_dairy = new Info_DairyDBHelper(getContext());
+        DB_info_IO = new Info_IODBHelper(getContext());
 
         return true;
     }
@@ -40,50 +48,58 @@ public class IRProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        Cursor cursor;
 
         switch (Matcher.match(uri)) {
-            case 0:
-
-                break;
-            case 1:
-
-                break;
-            case 2:
-
-                break;
-            case 3:
-
-                break;
+            case CODE_GROUP:
+                return DB_group.getAll();
+            case CODE_ACCOUNT:
+                return DB_account.getAll();
+            case CODE_INFO_IO:
+                return DB_info_IO.getAll();
+            case CODE_INFO_DAIRY:
+                return DB_info_dairy.getAll();
+            default:
+                return null;
         }
-
-        return null;
     }
 
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+        switch (Matcher.match(uri)) {
+            case CODE_GROUP:
+                return "vnd.android.cursor.dir/vnd.investrecord.group";
+            case CODE_ACCOUNT:
+                return "vnd.android.cursor.dir/vnd.investrecord.account";
+            case CODE_INFO_IO:
+                return "vnd.android.cursor.dir/vnd.investrecord.info_io";
+            case CODE_INFO_DAIRY:
+                return "vnd.android.cursor.dir/vnd.investrecord.info_dairy";
+            default:
+                return null;
+        }
     }
 
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
         switch (Matcher.match(uri)) {
-            case 0:
-                user.setItem(values);
+            case CODE_GROUP:
+                DB_group.setItem(values);
                 break;
-            case 1:
-                account.setItem(values);
+            case CODE_ACCOUNT:
+                DB_account.setItem(values);
                 break;
-            case 2:
-                info_dairy.setItem(values);
+            case CODE_INFO_IO:
+                DB_info_IO.setItem(values);
                 break;
-            case 3:
-                info_IO.setItem(values);
+            case CODE_INFO_DAIRY:
+                DB_info_dairy.setItem(values);
                 break;
+            default:
+                return uri;
         }
-        return null;
+        return uri;
     }
 
     @Override
@@ -91,18 +107,20 @@ public class IRProvider extends ContentProvider {
         int count = 0;
 
         switch (Matcher.match(uri)) {
-            case 0:
+            case CODE_GROUP:
+                DB_group.setDelete(selection, selectionArgs);
+                break;
+            case CODE_ACCOUNT:
 
                 break;
-            case 1:
+            case CODE_INFO_IO:
 
                 break;
-            case 2:
+            case CODE_INFO_DAIRY:
 
                 break;
-            case 3:
+            default:
 
-                break;
         }
         return count;
     }
@@ -112,17 +130,19 @@ public class IRProvider extends ContentProvider {
         int count = 0;
 
         switch (Matcher.match(uri)) {
-            case 0:
+            case CODE_GROUP:
 
                 break;
-            case 1:
+            case CODE_ACCOUNT:
 
                 break;
-            case 2:
+            case CODE_INFO_IO:
 
                 break;
-            case 3:
+            case CODE_INFO_DAIRY:
 
+                break;
+            default:
                 break;
         }
         return count;

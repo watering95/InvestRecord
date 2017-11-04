@@ -1,7 +1,5 @@
 package com.example.watering.investrecord;
 
-import java.sql.Date;
-
 /**
  * Created by watering on 17. 10. 23.
  */

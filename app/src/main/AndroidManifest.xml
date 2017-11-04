@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider android:name=".IRProvider"
+            android:authorities="watering.investrecord.provider"
+            android:exported="true">
+        </provider>
     </application>
 
 </manifest>

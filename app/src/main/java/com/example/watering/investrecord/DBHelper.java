@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.sql.Date;
 import java.util.List;
 
 /**
@@ -18,8 +17,8 @@ public abstract class DBHelper extends SQLiteOpenHelper {
 
     private static final int db_version = 1;
     private static final String DB_FILE_NAME = "InvestRecord.db";
-    protected static String TABLE_NAME;
-    protected static String [] COLUMNS;
+    protected String TABLE_NAME;
+    protected String [] COLUMNS;
 
     public DBHelper(Context context) {
         super(context, DB_FILE_NAME, null, db_version);
@@ -28,11 +27,11 @@ public abstract class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String sql;
 
-        sql = "CREATE TABLE " + TABLE_NAME + " (";
-        for (int i = 0; i< COLUMNS.length; i++) {
-            sql += ", " + COLUMNS[i];
+        sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (";
+        for (int i = 0; i< COLUMNS.length-1; i++) {
+            sql += COLUMNS[i] + ", ";
         }
-        sql += " )";
+        sql += COLUMNS[COLUMNS.length-1] + ");";
         db.execSQL(sql);
     }
 
@@ -42,8 +41,8 @@ public abstract class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void setDelete() {
-        AllDelete(TABLE_NAME);
+    public void setDelete(String whereClause, String[] whereArgs) {
+        delete(TABLE_NAME, whereClause, whereArgs);
     }
 
     public abstract List getItem();
@@ -76,5 +75,10 @@ public abstract class DBHelper extends SQLiteOpenHelper {
 
     protected void AllDelete(String tableName) throws SQLiteException {
         getWritableDatabase().delete(tableName, null, null);
+    }
+
+    protected void delete(String tableName, String where, String[] whereArgs) throws SQLiteException {
+        String whereClause = where + "=?";
+        getWritableDatabase().delete(tableName, whereClause, whereArgs);
     }
 }

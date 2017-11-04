@@ -5,9 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,25 +13,19 @@ import java.util.List;
  * Created by watering on 17. 10. 21.
  */
 
-public class UserDBHelper extends DBHelper {
+public class GroupDBHelper extends DBHelper {
 
-    public UserDBHelper(Context context) {
+    public GroupDBHelper(Context context) {
         super(context);
-    }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-
-        TABLE_NAME = "tbl_User";
-        COLUMNS = new String [] {"id_user INTEGER PRIMARY KEY AUTOINCREAMENT",
+        TABLE_NAME = "tbl_Group";
+        COLUMNS = new String [] {"id_group INTEGER PRIMARY KEY",
                 "name TEXT"};
-
-        super.onCreate(db);
     }
 
     @Override
-    public List<User> getItem() {
-        List<User> list = new ArrayList<>();
+    public List<Group> getItem() {
+        List<Group> list = new ArrayList<>();
         try {
             beginTransaction();
             Cursor c = getAll();

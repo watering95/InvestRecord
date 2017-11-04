@@ -5,9 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,17 +17,11 @@ public class Info_DairyDBHelper extends DBHelper {
 
     public Info_DairyDBHelper(Context context) {
         super(context);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
 
         TABLE_NAME = "tbl_Info_Dairy";
         COLUMNS = new String [] {"date TEXT INTEGER PRIMARY KEY",
                 "principal INTEGER","evaluation INTEGER","rate REAL",
                 "FOREIGN KEY(id_account) REFERENCES tbl_Account(id_account)"};
-
-        super.onCreate(db);
     }
 
     @Override

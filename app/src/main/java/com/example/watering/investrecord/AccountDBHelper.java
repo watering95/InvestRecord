@@ -17,17 +17,11 @@ public class AccountDBHelper extends DBHelper {
 
     public AccountDBHelper(Context context) {
         super(context);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
 
         TABLE_NAME = "tbl_Account";
         COLUMNS = new String [] {"id_account INTEGER PRIMARY KEY AUTOINCREAMENT",
                 "inst TEXT","code TEXT","disc TEXT",
                 "FOREIGN KEY(id_user) REFERENCES tbl_User(id_user)"};
-
-        super.onCreate(db);
     }
 
     @Override
