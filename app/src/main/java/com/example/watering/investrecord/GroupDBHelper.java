@@ -17,13 +17,11 @@ public class GroupDBHelper extends DBHelper {
 
     public GroupDBHelper(Context context) {
         super(context);
-
         TABLE_NAME = "tbl_Group";
         COLUMNS = new String [] {"id_group INTEGER PRIMARY KEY",
                 "name TEXT"};
     }
 
-    @Override
     public List<Group> getItem() {
         List<Group> list = new ArrayList<>();
         try {
@@ -49,7 +47,6 @@ public class GroupDBHelper extends DBHelper {
         return list;
     }
 
-    @Override
     public void setItem(int id, String name) {
         ContentValues values = new ContentValues();
         values.put("id", id);

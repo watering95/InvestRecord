@@ -111,7 +111,7 @@ public class IRProvider extends ContentProvider {
                 DB_group.setDelete(selection, selectionArgs);
                 break;
             case CODE_ACCOUNT:
-
+                DB_account.setDelete(selection, selectionArgs);
                 break;
             case CODE_INFO_IO:
 

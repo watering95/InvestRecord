@@ -3,7 +3,6 @@ package com.example.watering.investrecord;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import java.util.ArrayList;
@@ -19,12 +18,11 @@ public class AccountDBHelper extends DBHelper {
         super(context);
 
         TABLE_NAME = "tbl_Account";
-        COLUMNS = new String [] {"id_account INTEGER PRIMARY KEY AUTOINCREAMENT",
-                "inst TEXT","code TEXT","disc TEXT",
-                "FOREIGN KEY(id_user) REFERENCES tbl_User(id_user)"};
+        COLUMNS = new String [] {"id_account INTEGER PRIMARY KEY",
+                "inst TEXT","num TEXT","disc TEXT",
+                "id_group INTEGER"};
     }
 
-    @Override
     public List<Account> getItem() {
         List<Account> list = new ArrayList<>();
         try {
@@ -33,15 +31,14 @@ public class AccountDBHelper extends DBHelper {
             if(c != null) {
                 int total = c.getCount();
                 if(total > 0) {
-                    c.moveToFirst();
-                    while(!c.isAfterLast()) {
-                        int id_user = c.getInt(1);
-                        int id = c.getInt(2);
-                        String institute = c.getString(3);
-                        String discription = c.getString(4);
-                        String number = c.getString(5);
-                        list.add(new Account(id,id_user,institute,discription,number));
-                        c.moveToNext();
+                    while(c.moveToNext()) {
+                        Account account = new Account();
+                        account.setId(c.getInt(0));
+                        account.setInstitute(c.getString(1));
+                        account.setNumber(c.getString(2));
+                        account.setDiscription(c.getString(3));
+                        account.setGroup(c.getInt(4));
+                        list.add(account);
                     }
                 }
                 c.close();
@@ -54,14 +51,13 @@ public class AccountDBHelper extends DBHelper {
         return list;
     }
 
-    @Override
-    public void setItem(int user, int id, String institute, String discription, String number) {
+    public void setItem(int id_account, String institute, String number, String discription, int id_group) {
         ContentValues values = new ContentValues();
-        values.put("user", user);
-        values.put("id", id);
+        values.put("id_account", id_account);
         values.put("inst", institute);
-        values.put("disc", discription);
         values.put("num", number);
+        values.put("disc", discription);
+        values.put("id_group", id_group);
         insert(TABLE_NAME, values);
     }
 }

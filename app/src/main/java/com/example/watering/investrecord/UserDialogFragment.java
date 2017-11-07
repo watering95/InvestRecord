@@ -64,11 +64,14 @@ public class UserDialogFragment extends DialogFragment {
                 });
                 return builder.create();
             case 1:
+                ArrayAdapter<String> adapter;
+
+                adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, lists);
+
                 view = inflater.inflate(R.layout.dialog_delgroup, null);
 
-                ArrayAdapter<String> adapter;
-                adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, lists);
                 ListView list = (ListView) view.findViewById(R.id.listGroup);
+
                 list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
                 list.setAdapter(adapter);
                 list.setOnItemClickListener(mItemClickListener);

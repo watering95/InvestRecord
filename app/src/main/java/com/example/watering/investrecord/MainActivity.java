@@ -19,13 +19,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
-    private Spinner mSpinner;
+    private Spinner mGroupSpinner;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private MainTabPagerAdapter mPagerAdapter;
-    private List<String> spinnerlists = new ArrayList<>();
+    private ArrayAdapter<String> spinnerAdapter;
+    private List<String> grouplists = new ArrayList<>();
     private List<Group> groups = new ArrayList<>();
-    private DBManager dbManager;
+    public DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         initLayout();
         initDataBase();
-        initSpinner();
+        initGroupSpinner();
     }
 
     @Override
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mViewPager.setCurrentItem(tab.getPosition());
+
             }
 
             @Override
@@ -98,6 +100,11 @@ public class MainActivity extends AppCompatActivity {
         if(dbManager.initGroup() < 0) {
             addGroupDialog();
         }
+        if(dbManager.initAccount() < 0) {
+
+        }
+
+        dbManager.setCurrentGroup(0);
     }
 
     private void addGroupDialog() {
@@ -105,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 dbManager.addGroup(name);
-                updateSpinner();
+                updateGroupList();
             }
         });
         dialog.show(getFragmentManager(), "dialog");
@@ -116,23 +123,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 dbManager.removeGroup(new String[]{name});
-                updateSpinner();
+                updateGroupList();
             }
         });
-        dialog.initData(dbManager.getGroup());
+        dialog.initData(dbManager.getGroups());
         dialog.show(getFragmentManager(), "dialog");
     }
 
-    private void initSpinner() {
-        updateSpinner();
+    private void initGroupSpinner() {
+        updateGroupList();
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,spinnerlists);
-        mSpinner = (Spinner) findViewById(R.id.spinner_group);
-        mSpinner.setAdapter(spinnerAdapter);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,grouplists);
+
+        mGroupSpinner = (Spinner) findViewById(R.id.spinner_group);
+        mGroupSpinner.setAdapter(spinnerAdapter);
+        mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                dbManager.setCurrentGroup(position);
             }
 
             @Override
@@ -142,11 +150,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void updateSpinner() {
-        spinnerlists.clear();
-        groups = dbManager.getGroup();
+    private void updateGroupList() {
+        grouplists.clear();
+        groups = dbManager.getGroups();
         for(int i=0; i<groups.size(); i++) {
-            spinnerlists.add(groups.get(i).getName());
+            grouplists.add(groups.get(i).getName());
         }
     }
 }

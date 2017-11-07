@@ -13,10 +13,12 @@ import android.view.ViewGroup;
 
 public class Fragment1 extends Fragment {
 
+    public Fragment1() {
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment1, container, false);
     }
 }

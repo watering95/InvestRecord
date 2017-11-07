@@ -21,10 +21,9 @@ public class Info_DairyDBHelper extends DBHelper {
         TABLE_NAME = "tbl_Info_Dairy";
         COLUMNS = new String [] {"date TEXT INTEGER PRIMARY KEY",
                 "principal INTEGER","evaluation INTEGER","rate REAL",
-                "FOREIGN KEY(id_account) REFERENCES tbl_Account(id_account)"};
+                "id_account INTEGER"};
     }
 
-    @Override
     public List<Info_Dairy> getItem() {
         List<Info_Dairy> list = new ArrayList<>();
         try {
@@ -54,7 +53,6 @@ public class Info_DairyDBHelper extends DBHelper {
         return list;
     }
 
-    @Override
     public void setItem(String date, int id, String institute, String discription, String number) {
         ContentValues values = new ContentValues();
         values.put("date", date);

@@ -3,6 +3,7 @@ package com.example.watering.investrecord;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import java.util.ArrayList;
@@ -20,10 +21,9 @@ public class Info_IODBHelper extends DBHelper {
         TABLE_NAME = "tbl_Info_IO";
         COLUMNS = new String [] {"date TEXT INTEGER PRIMARY KEY",
                 "input INTEGER","output INTEGER",
-                "FOREIGN KEY(id_account) REFERENCES tbl_Account(id_account)"};
+                "id_account INTEGER"};
     }
 
-    @Override
     public List<Info_IO> getItem() {
         List<Info_IO> list = new ArrayList<>();
         try {
@@ -52,7 +52,6 @@ public class Info_IODBHelper extends DBHelper {
         return list;
     }
 
-    @Override
     public void setItem(String date, int id, int input, int output) {
         ContentValues values = new ContentValues();
         values.put("date", date);
