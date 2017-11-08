@@ -89,8 +89,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:id="@+id/button_regist_frag4"
+            android:text="등록"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:id="@+id/button_edit_frag4"
-            android:onClick=""
             android:text="수정"/>
 
         <Button
@@ -99,13 +105,6 @@
             android:layout_weight="1"
             android:id="@+id/button_delete_frag4"
             android:text="삭제"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/button_cancel_frag4"
-            android:text="취소"/>
 
     </LinearLayout>
 

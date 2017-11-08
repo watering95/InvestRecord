@@ -17,6 +17,7 @@ public class DBManager {
     private static int id_group = 0;
     private static int id_account = 0;
     private static int currentGroup;
+    private static int currentAccount;
 
     private List<Group> groups = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
@@ -63,7 +64,8 @@ public class DBManager {
         while(cursor.moveToNext()) {
             Account account = new Account();
 
-            account.setId(cursor.getInt(0));
+            id_account = cursor.getInt(0);
+            account.setId(id_account);
             account.setInstitute(cursor.getString(1));
             account.setNumber(cursor.getString(2));
             account.setDiscription(cursor.getString(3));
@@ -124,5 +126,14 @@ public class DBManager {
 
     public void setCurrentGroup(int group) {
         currentGroup = group;
+    }
+    public int getCurrentGroup() {
+        return currentGroup;
+    }
+    public void setCurrentAccount(int account) {
+        currentAccount = account;
+    }
+    public int getCurrentAccount() {
+        return currentAccount;
     }
 }

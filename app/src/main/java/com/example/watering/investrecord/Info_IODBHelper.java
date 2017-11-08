@@ -23,41 +23,4 @@ public class Info_IODBHelper extends DBHelper {
                 "input INTEGER","output INTEGER",
                 "id_account INTEGER"};
     }
-
-    public List<Info_IO> getItem() {
-        List<Info_IO> list = new ArrayList<>();
-        try {
-            beginTransaction();
-            Cursor c = getAll();
-            if(c != null) {
-                int total = c.getCount();
-                if(total > 0) {
-                    c.moveToFirst();
-                    while(!c.isAfterLast()) {
-                        String date = c.getString(1);
-                        int id = c.getInt(2);
-                        int input = c.getInt(3);
-                        int output = c.getInt(4);
-                        list.add(new Info_IO(date,id,input,output));
-                        c.moveToNext();
-                    }
-                }
-                c.close();
-            }
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        } finally {
-            endTransaction();
-        }
-        return list;
-    }
-
-    public void setItem(String date, int id, int input, int output) {
-        ContentValues values = new ContentValues();
-        values.put("date", date);
-        values.put("id", id);
-        values.put("input", input);
-        values.put("output", output);
-        insert(TABLE_NAME, values);
-    }
 }

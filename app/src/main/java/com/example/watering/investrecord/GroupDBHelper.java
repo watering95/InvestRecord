@@ -21,36 +21,4 @@ public class GroupDBHelper extends DBHelper {
         COLUMNS = new String [] {"id_group INTEGER PRIMARY KEY",
                 "name TEXT"};
     }
-
-    public List<Group> getItem() {
-        List<Group> list = new ArrayList<>();
-        try {
-            beginTransaction();
-            Cursor c = getAll();
-            if(c != null) {
-                int total = c.getCount();
-                if(total > 0) {
-                    c.moveToFirst();
-                    while(!c.isAfterLast()) {
-                        int id = c.getInt(1);
-                        String name = c.getString(2);
-                        c.moveToNext();
-                    }
-                }
-                c.close();
-            }
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        } finally {
-            endTransaction();
-        }
-        return list;
-    }
-
-    public void setItem(int id, String name) {
-        ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("name", name);
-        insert(TABLE_NAME, values);
-    }
 }
