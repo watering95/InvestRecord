@@ -1,5 +1,6 @@
 package com.example.watering.investrecord;
 
+import android.content.ContentResolver;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> spinnerAdapter;
     private List<String> grouplists = new ArrayList<>();
     private List<Group> groups = new ArrayList<>();
-    public DBManager dbManager;
+    public IRResolver ir = new IRResolver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,24 +95,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDataBase() {
+        ir.getContentResolver(getContentResolver());
 
-        dbManager = new DBManager();
-        dbManager.getContentResolver(getContentResolver());
-        if(dbManager.initGroup() < 0) {
+        if(ir.initGroup() < 0) {
             addGroupDialog();
         }
-        if(dbManager.initAccount() < 0) {
+        if(ir.initAccount() < 0) {
 
         }
 
-        dbManager.setCurrentGroup(0);
+        ir.setCurrentGroup(0);
     }
 
     private void addGroupDialog() {
         UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
-                dbManager.addGroup(name);
+                ir.addGroup(name);
                 updateGroupList();
             }
         });
@@ -122,11 +122,11 @@ public class MainActivity extends AppCompatActivity {
         UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
-                dbManager.removeGroup(new String[]{name});
+                ir.removeGroup(new String[]{name});
                 updateGroupList();
             }
         });
-        dialog.initData(dbManager.getGroups());
+        dialog.initData(ir.getGroups());
         dialog.show(getFragmentManager(), "dialog");
     }
 
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                dbManager.setCurrentGroup(position);
+                ir.setCurrentGroup(position);
             }
 
             @Override
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateGroupList() {
         grouplists.clear();
-        groups = dbManager.getGroups();
+        groups = ir.getGroups();
         for(int i=0; i<groups.size(); i++) {
             grouplists.add(groups.get(i).getName());
         }

@@ -8,16 +8,33 @@ import java.io.Serializable;
 
 public class Info_Dairy implements Serializable {
     String date;
-    Account account;
+    int id_account;
     int principal;
-    int evaluation;
     double rate;
 
-    public Info_Dairy (String date, int id_account, int principal, int evaluation, double rate) {
+    public void setDate(String date) {
         this.date = date;
-        this.account.id_account = id_account;
+    }
+    public void setAccount(int id_account) {
+        this.id_account = id_account;
+    }
+    public void setPrincipal(int principal) {
         this.principal = principal;
-        this.evaluation = evaluation;
+    }
+    public void setRate(double rate) {
         this.rate = rate;
+    }
+
+    public String getDate() {
+        return date;
+    }
+    public int getAccount() {
+        return id_account;
+    }
+    public int getPrincipal() {
+        return principal;
+    }
+    public double getRate() {
+        return rate;
     }
 }

@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class Fragment4 extends Fragment {
 
     private View mView;
     private MainActivity mActivity;
-    private DBManager mDB;
+    private IRResolver ir;
     private Spinner mAccountSpinner;
     private EditText mTxtAccount;
     private EditText mTxtInstitute;
@@ -43,7 +42,7 @@ public class Fragment4 extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment4, container, false);
         mActivity = (MainActivity) getActivity();
-        mDB = mActivity.dbManager;
+        ir = mActivity.ir;
 
         initLayout();
         initAccountSpinner();
@@ -71,15 +70,13 @@ public class Fragment4 extends Fragment {
         mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Account account = new Account();
-
-                account = accounts.get(position);
+                Account account = accounts.get(position);
 
                 mTxtAccount.setText(account.getNumber());
                 mTxtDiscription.setText(account.getDiscription());
                 mTxtInstitute.setText(account.getInstitute());
 
-                mDB.setCurrentAccount(position);
+                ir.setCurrentAccount(position);
             }
 
             @Override
@@ -91,7 +88,7 @@ public class Fragment4 extends Fragment {
 
     private void updateAccountList() {
         accountlists.clear();
-        accounts = mDB.getAccounts();
+        accounts = ir.getAccounts();
         for (int i = 0; i < accounts.size(); i++) {
             accountlists.add(accounts.get(i).getNumber());
         }
@@ -104,11 +101,11 @@ public class Fragment4 extends Fragment {
                     String account = mTxtAccount.getText().toString();
                     String institute = mTxtInstitute.getText().toString();
                     String discript = mTxtDiscription.getText().toString();
-                    mDB.addAccount(institute,account,discript);
+                    ir.addAccount(institute,account,discript);
                     updateAccountList();
                     break;
                 case R.id.button_delete_frag4:
-                    mDB.removeAccount(new String[]{mTxtAccount.getText().toString()});
+                    ir.removeAccount(new String[]{mTxtAccount.getText().toString()});
                     updateAccountList();
                     break;
                 case R.id.button_edit_frag4:

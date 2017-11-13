@@ -1,7 +1,6 @@
 package com.example.watering.investrecord;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 /**
  * Created by watering on 17. 10. 23.
@@ -9,14 +8,40 @@ import java.sql.Date;
 
 public class Info_IO implements Serializable {
     String date;
-    Account account;
+    int id_account;
     int input;
     int output;
+    int evaluation;
 
-    public Info_IO (String date, int id_account, int input, int output) {
+    public void setDate(String date) {
         this.date = date;
-        this.account.id_account = id_account;
+    }
+    public void setInput(int input) {
         this.input = input;
+    }
+    public void setOutput(int output) {
         this.output = output;
+    }
+    public void setAccount(int id_account) {
+        this.id_account = id_account;
+    }
+    public void setEvaluation(int evaluation) {
+        this.evaluation = evaluation;
+    }
+
+    public String getDate() {
+        return date;
+    }
+    public int getAccount() {
+        return id_account;
+    }
+    public int getInput() {
+        return input;
+    }
+    public int getOutput() {
+        return output;
+    }
+    public int getEvaluation() {
+        return evaluation;
     }
 }
