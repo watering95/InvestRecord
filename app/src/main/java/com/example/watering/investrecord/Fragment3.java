@@ -135,14 +135,11 @@ public class Fragment3 extends Fragment {
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.button_regist_frag3:
-                    int sum_in, sum_out, principal;
                     int input = Integer.parseInt(mTxtInput.getText().toString());
                     int output= Integer.parseInt(mTxtOutput.getText().toString());
                     int evaluation = Integer.parseInt(mTxtEvaluation.getText().toString());
                     ir.addInfoIO(selectedDate,input,output,evaluation);
-                    sum_in = ir.getSum(new String[]{"input"},selectedDate);
-                    sum_out = ir.getSum(new String[]{"output"},selectedDate);
-                    principal = sum_in - sum_out;
+                    calInfoDairy(evaluation);
                     break;
                 case R.id.button_edit_frag3:
                     break;
@@ -151,4 +148,16 @@ public class Fragment3 extends Fragment {
             }
         }
     };
+
+    private void calInfoDairy(int evaluation) {
+        int sum_in, sum_out, principal;
+        double rate;
+
+        sum_in = ir.getSum(new String[]{"input"},selectedDate);
+        sum_out = ir.getSum(new String[]{"output"},selectedDate);
+        principal = sum_in - sum_out;
+        rate = evaluation / principal * 100;
+
+        ir.addInfoDairy(selectedDate,principal,rate);
+    }
 }

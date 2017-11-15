@@ -150,7 +150,7 @@ public class IRResolver {
         cr.insert(Uri.parse(URI_INFO_IO),cv);
         inouts.add(inout);
     }
-    public void addInfoDairy(String date,int evaluation,int principal,double rate) {
+    public void addInfoDairy(String date,int principal,double rate) {
         Info_Dairy dairy = new Info_Dairy();
         ContentValues cv = new ContentValues();
 

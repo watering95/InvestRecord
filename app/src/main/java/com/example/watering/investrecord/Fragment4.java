@@ -111,7 +111,7 @@ public class Fragment4 extends Fragment {
             }
         }
         if(accountlists.isEmpty()) accountlists.add("Empty");
-
+        mActivity.Callback4to3();
     }
 
     Button.OnClickListener mClickListener = new View.OnClickListener() {
@@ -125,8 +125,6 @@ public class Fragment4 extends Fragment {
                     ir.addAccount(institute,account,discript);
 
                     updateAccountList();
-
-                    mActivity.Callback4to3();
 
                     break;
                 case R.id.button_delete_frag4:
