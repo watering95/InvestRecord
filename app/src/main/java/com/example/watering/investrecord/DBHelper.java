@@ -18,13 +18,13 @@ public class DBHelper extends SQLiteOpenHelper {
     protected String TABLE_NAME;
     protected String [] COLUMNS;
 
-    public DBHelper(Context context) {
-        super(context, DB_FILE_NAME, null, db_version);
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+    }
+
+    public DBHelper(Context context) {
+        super(context, DB_FILE_NAME, null, db_version);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -55,15 +55,6 @@ public class DBHelper extends SQLiteOpenHelper {
         insert(TABLE_NAME, values);
     }
 
-
-    public Cursor getAll() throws SQLiteException {
-        return getReadableDatabase().query(TABLE_NAME, null, null, null, null, null, null);
-    }
-
-    protected void AllDelete(String tableName) throws SQLiteException {
-        getWritableDatabase().delete(tableName, null, null);
-    }
-
     protected void beginTransaction() {
         getWritableDatabase().beginTransaction();
     }
@@ -75,6 +66,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     protected void insert(String tableName, ContentValues values) throws SQLiteException {
         getWritableDatabase().insert(tableName, null, values);
+    }
+
+    protected Cursor query(String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) throws SQLiteException {
+        return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, groupBy, having, orderBy);
     }
 
     protected void delete(String tableName, String where, String[] whereArgs) throws SQLiteException {

@@ -34,6 +34,7 @@ public class Fragment3 extends Fragment {
     private List<String> accountlists = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
     private ArrayAdapter<String> accountAdapter;
+    MainActivity.Callback callbackfromMain;
 
     private String selectedDate;
 
@@ -42,13 +43,27 @@ public class Fragment3 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment3, container, false);
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
         initLayout();
         initAccountSpinner();
+
+        callbackfromMain = new MainActivity.Callback() {
+            @Override
+            public void updateList() {
+                updateAccountList();
+
+                if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
+
+                mTxtInput.setText("");
+                mTxtOutput.setText("");
+                mTxtEvaluation.setText("");
+            }
+        };
+        mActivity.setCallback3(callbackfromMain);
 
         return mView;
     }
@@ -63,11 +78,24 @@ public class Fragment3 extends Fragment {
         mView.findViewById(R.id.button_delete_frag3).setOnClickListener(mClickListener);
 
         date = (DatePicker) mView.findViewById(R.id.date);
-        selectedDate = String.format("%d/%d/%d",date.getYear(),date.getMonth(),date.getDayOfMonth());
+        selectedDate = String.format("%d-%d-%d",date.getYear(),date.getMonth(),date.getDayOfMonth());
         date.init(date.getYear(), date.getMonth(), date.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                selectedDate = String.format("%d/%d/%d",year,monthOfYear+1,dayOfMonth);
+                Info_IO io = new Info_IO();
+
+                selectedDate = String.format("%d-%d-%d",year,monthOfYear+1,dayOfMonth);
+                io = ir.getInfoIO(String.valueOf(ir.getCurrentAccount()),selectedDate);
+                if(io == null || accountlists.get(0) == "Empty") {
+                    mTxtInput.setText("");
+                    mTxtOutput.setText("");
+                    mTxtEvaluation.setText("");
+                }
+                else {
+                    mTxtInput.setText(String.valueOf(io.getInput()));
+                    mTxtOutput.setText(String.valueOf(io.getOutput()));
+                    mTxtEvaluation.setText(String.valueOf(io.getEvaluation()));
+                }
             }
         });
     }
@@ -96,18 +124,25 @@ public class Fragment3 extends Fragment {
         accountlists.clear();
         accounts = ir.getAccounts();
         for (int i = 0; i < accounts.size(); i++) {
-            accountlists.add(accounts.get(i).getNumber());
+            if(accounts.get(i).getGroup() == ir.getCurrentGroup()) {
+                accountlists.add(accounts.get(i).getNumber());
+            }
         }
+        if(accountlists.isEmpty()) accountlists.add("Empty");
     }
 
     Button.OnClickListener mClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.button_regist_frag3:
+                    int sum_in, sum_out, principal;
                     int input = Integer.parseInt(mTxtInput.getText().toString());
                     int output= Integer.parseInt(mTxtOutput.getText().toString());
                     int evaluation = Integer.parseInt(mTxtEvaluation.getText().toString());
                     ir.addInfoIO(selectedDate,input,output,evaluation);
+                    sum_in = ir.getSum(new String[]{"input"},selectedDate);
+                    sum_out = ir.getSum(new String[]{"output"},selectedDate);
+                    principal = sum_in - sum_out;
                     break;
                 case R.id.button_edit_frag3:
                     break;

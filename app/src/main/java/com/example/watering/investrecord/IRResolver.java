@@ -2,7 +2,6 @@ package com.example.watering.investrecord;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -33,6 +32,25 @@ public class IRResolver {
 
     public void getContentResolver(ContentResolver cr) {
         this.cr = cr;
+    }
+
+    public Group getGroup(int id) {
+        return groups.get(id);
+    }
+    public List<Group> getGroups() {
+        return groups;
+    }
+    public Account getAccount(int id) {
+        return accounts.get(id);
+    }
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+    public List<Info_IO> getInouts() {
+        return inouts;
+    }
+    public List<Info_Dairy> getDairies() {
+        return dairies;
     }
 
     public int initGroup() {
@@ -80,25 +98,6 @@ public class IRResolver {
         return cursor.getCount();
     }
 
-    public Group getGroup(int id) {
-        return groups.get(id);
-    }
-    public List<Group> getGroups() {
-        return groups;
-    }
-    public Account getAccount(int id) {
-        return accounts.get(id);
-    }
-    public List<Account> getAccounts() {
-        return accounts;
-    }
-    public List<Info_IO> getInouts() {
-        return inouts;
-    }
-    public List<Info_Dairy> getDairies() {
-        return dairies;
-    }
-
     public void addGroup(String name) {
         Group group = new Group();
         ContentValues cv = new ContentValues();
@@ -112,7 +111,6 @@ public class IRResolver {
         cr.insert(Uri.parse(URI_GROUP),cv);
         groups.add(group);
     }
-
     public void addAccount(String institute, String number, String discription) {
         Account account = new Account();
         ContentValues cv = new ContentValues();
@@ -133,7 +131,6 @@ public class IRResolver {
         cr.insert(Uri.parse(URI_ACCOUNT),cv);
         accounts.add(account);
     }
-
     public void addInfoIO(String date, int input, int output, int evaluation) {
         Info_IO inout = new Info_IO();
         ContentValues cv = new ContentValues();
@@ -153,7 +150,6 @@ public class IRResolver {
         cr.insert(Uri.parse(URI_INFO_IO),cv);
         inouts.add(inout);
     }
-
     public void addInfoDairy(String date,int evaluation,int principal,double rate) {
         Info_Dairy dairy = new Info_Dairy();
         ContentValues cv = new ContentValues();
@@ -176,7 +172,6 @@ public class IRResolver {
         cr.delete(Uri.parse(URI_GROUP),"name",name);
         initGroup();
     }
-
     public void removeAccount(String[] number) {
         cr.delete(Uri.parse(URI_ACCOUNT),"num",number);
         initAccount();
@@ -193,5 +188,38 @@ public class IRResolver {
     }
     public int getCurrentAccount() {
         return currentAccount;
+    }
+
+    public Info_IO getInfoIO(String account, String date) {
+        Cursor c;
+        Info_IO io = new Info_IO();
+
+        String where = "id_account = '" + account + "' AND date = '" + date + "';";
+
+        c = cr.query(Uri.parse(URI_INFO_IO), null, where, null, null);
+
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        io.setInput(c.getInt(c.getColumnIndex("input")));
+        io.setOutput(c.getInt(c.getColumnIndex("output")));
+        io.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
+        io.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        io.setDate(c.getString(c.getColumnIndex("date")));
+
+        return io;
+    }
+
+    public int getSum(String[] column, String selectedDate) {
+
+        Cursor c;
+
+        String[] total = {"total(" + column[0] + ") AS SUM"};
+        String where = "date < date('" + selectedDate + "')";
+
+        c = cr.query(Uri.parse(URI_INFO_IO), total, where, null, null);
+        c.moveToNext();
+        return c.getInt(0);
     }
 }

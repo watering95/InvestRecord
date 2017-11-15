@@ -51,13 +51,13 @@ public class IRProvider extends ContentProvider {
 
         switch (Matcher.match(uri)) {
             case CODE_GROUP:
-                return DB_group.getAll();
+                return DB_group.query(projection, selection, selectionArgs, null, null, sortOrder);
             case CODE_ACCOUNT:
-                return DB_account.getAll();
+                return DB_account.query(projection, selection, selectionArgs, null, null, sortOrder);
             case CODE_INFO_IO:
-                return DB_info_IO.getAll();
+                return DB_info_IO.query(projection, selection, selectionArgs, null, null, sortOrder);
             case CODE_INFO_DAIRY:
-                return DB_info_dairy.getAll();
+                return DB_info_dairy.query(projection, selection, selectionArgs, null, null, sortOrder);
             default:
                 return null;
         }
@@ -97,7 +97,7 @@ public class IRProvider extends ContentProvider {
                 DB_info_dairy.setItem(values);
                 break;
             default:
-                return uri;
+                return null;
         }
         return uri;
     }
@@ -114,13 +114,12 @@ public class IRProvider extends ContentProvider {
                 DB_account.setDelete(selection, selectionArgs);
                 break;
             case CODE_INFO_IO:
-
+                DB_info_IO.setDelete(selection, selectionArgs);
                 break;
             case CODE_INFO_DAIRY:
-
+                DB_info_dairy.setDelete(selection, selectionArgs);
                 break;
             default:
-
         }
         return count;
     }
@@ -143,7 +142,6 @@ public class IRProvider extends ContentProvider {
 
                 break;
             default:
-                break;
         }
         return count;
     }

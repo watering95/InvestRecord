@@ -1,6 +1,5 @@
 package com.example.watering.investrecord;
 
-import android.content.ContentResolver;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -28,6 +27,25 @@ public class MainActivity extends AppCompatActivity {
     private List<String> grouplists = new ArrayList<>();
     private List<Group> groups = new ArrayList<>();
     public IRResolver ir = new IRResolver();
+
+    interface Callback {
+        void updateList();
+    }
+
+    private boolean m_condition = true;
+    private Callback m_callback3,m_callback4;
+
+    public void setCallback3(Callback callback) {
+        this.m_callback3 = callback;
+    }
+    public void setCallback4(Callback callback) {
+        this.m_callback4 = callback;
+    }
+    public void Callback4to3() {
+        if(m_condition && (m_callback3 != null)) {
+            m_callback3.updateList();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +159,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ir.setCurrentGroup(position);
+                if(m_condition && (m_callback3 != null)) {
+                    m_callback3.updateList();
+                }
+                if(m_condition && (m_callback4 != null)) {
+                    m_callback4.updateList();
+                }
             }
 
             @Override

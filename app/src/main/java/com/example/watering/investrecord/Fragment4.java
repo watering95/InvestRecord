@@ -1,5 +1,6 @@
 package com.example.watering.investrecord;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,7 +33,7 @@ public class Fragment4 extends Fragment {
     private List<String> accountlists = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
     private ArrayAdapter<String> accountAdapter;
-
+    private MainActivity.Callback callbackfromMain;
 
     public Fragment4() {
     }
@@ -46,6 +47,15 @@ public class Fragment4 extends Fragment {
 
         initLayout();
         initAccountSpinner();
+
+        callbackfromMain = new MainActivity.Callback() {
+            @Override
+            public void updateList() {
+                updateAccountList();
+                if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
+            }
+        };
+        mActivity.setCallback4(callbackfromMain);
 
         return mView;
     }
@@ -72,10 +82,16 @@ public class Fragment4 extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Account account = accounts.get(position);
 
-                mTxtAccount.setText(account.getNumber());
-                mTxtDiscription.setText(account.getDiscription());
-                mTxtInstitute.setText(account.getInstitute());
-
+                if(accountlists.get(0) == "Empty") {
+                    mTxtAccount.setText("");
+                    mTxtDiscription.setText("");
+                    mTxtInstitute.setText("");
+                }
+                else {
+                    mTxtAccount.setText(account.getNumber());
+                    mTxtDiscription.setText(account.getDiscription());
+                    mTxtInstitute.setText(account.getInstitute());
+                }
                 ir.setCurrentAccount(position);
             }
 
@@ -90,8 +106,12 @@ public class Fragment4 extends Fragment {
         accountlists.clear();
         accounts = ir.getAccounts();
         for (int i = 0; i < accounts.size(); i++) {
-            accountlists.add(accounts.get(i).getNumber());
+            if(accounts.get(i).getGroup() == ir.getCurrentGroup()) {
+                accountlists.add(accounts.get(i).getNumber());
+            }
         }
+        if(accountlists.isEmpty()) accountlists.add("Empty");
+
     }
 
     Button.OnClickListener mClickListener = new View.OnClickListener() {
@@ -101,8 +121,13 @@ public class Fragment4 extends Fragment {
                     String account = mTxtAccount.getText().toString();
                     String institute = mTxtInstitute.getText().toString();
                     String discript = mTxtDiscription.getText().toString();
+
                     ir.addAccount(institute,account,discript);
+
                     updateAccountList();
+
+                    mActivity.Callback4to3();
+
                     break;
                 case R.id.button_delete_frag4:
                     ir.removeAccount(new String[]{mTxtAccount.getText().toString()});
