@@ -16,7 +16,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/edit_groupname_add"
+            android:id="@+id/edit_groupname_edit"
             android:ems="10"/>
 
     </LinearLayout>

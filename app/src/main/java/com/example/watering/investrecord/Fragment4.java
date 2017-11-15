@@ -1,6 +1,5 @@
 package com.example.watering.investrecord;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -92,7 +91,7 @@ public class Fragment4 extends Fragment {
                     mTxtDiscription.setText(account.getDiscription());
                     mTxtInstitute.setText(account.getInstitute());
                 }
-                ir.setCurrentAccount(position);
+                ir.setCurrentAccount(account.getId());
             }
 
             @Override
@@ -116,24 +115,24 @@ public class Fragment4 extends Fragment {
 
     Button.OnClickListener mClickListener = new View.OnClickListener() {
         public void onClick(View v) {
+            String account = mTxtAccount.getText().toString();
+            String institute = mTxtInstitute.getText().toString();
+            String discript = mTxtDiscription.getText().toString();
+
             switch(v.getId()) {
                 case R.id.button_regist_frag4:
-                    String account = mTxtAccount.getText().toString();
-                    String institute = mTxtInstitute.getText().toString();
-                    String discript = mTxtDiscription.getText().toString();
-
                     ir.addAccount(institute,account,discript);
-
-                    updateAccountList();
-
                     break;
                 case R.id.button_delete_frag4:
-                    ir.removeAccount(new String[]{mTxtAccount.getText().toString()});
-                    updateAccountList();
+                    ir.removeAccount(account);
                     break;
                 case R.id.button_edit_frag4:
+                    ir.updateAccount(institute,account,discript);
                     break;
             }
+            updateAccountList();
+
+            if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
         }
     };
 }

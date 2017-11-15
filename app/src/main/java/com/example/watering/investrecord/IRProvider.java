@@ -85,16 +85,16 @@ public class IRProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
         switch (Matcher.match(uri)) {
             case CODE_GROUP:
-                DB_group.setItem(values);
+                DB_group.insert(values);
                 break;
             case CODE_ACCOUNT:
-                DB_account.setItem(values);
+                DB_account.insert(values);
                 break;
             case CODE_INFO_IO:
-                DB_info_IO.setItem(values);
+                DB_info_IO.insert(values);
                 break;
             case CODE_INFO_DAIRY:
-                DB_info_dairy.setItem(values);
+                DB_info_dairy.insert(values);
                 break;
             default:
                 return null;
@@ -108,16 +108,16 @@ public class IRProvider extends ContentProvider {
 
         switch (Matcher.match(uri)) {
             case CODE_GROUP:
-                DB_group.setDelete(selection, selectionArgs);
+                DB_group.delete(selection, selectionArgs);
                 break;
             case CODE_ACCOUNT:
-                DB_account.setDelete(selection, selectionArgs);
+                DB_account.delete(selection, selectionArgs);
                 break;
             case CODE_INFO_IO:
-                DB_info_IO.setDelete(selection, selectionArgs);
+                DB_info_IO.delete(selection, selectionArgs);
                 break;
             case CODE_INFO_DAIRY:
-                DB_info_dairy.setDelete(selection, selectionArgs);
+                DB_info_dairy.delete(selection, selectionArgs);
                 break;
             default:
         }
@@ -130,16 +130,16 @@ public class IRProvider extends ContentProvider {
 
         switch (Matcher.match(uri)) {
             case CODE_GROUP:
-
+                DB_group.update(values, selection, selectionArgs);
                 break;
             case CODE_ACCOUNT:
-
+                DB_account.update(values, selection, selectionArgs);
                 break;
             case CODE_INFO_IO:
-
+                DB_info_IO.update(values, selection, selectionArgs);
                 break;
             case CODE_INFO_DAIRY:
-
+                DB_info_dairy.update(values, selection, selectionArgs);
                 break;
             default:
         }

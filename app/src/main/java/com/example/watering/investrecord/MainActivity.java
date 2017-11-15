@@ -69,8 +69,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_addGroup:
                 addGroupDialog();
                 break;
+            case R.id.menu_editGroup:
+                editGroupDialog();
+                break;
             case R.id.menu_delGroup:
                 delGroupDialog();
+                break;
+            case R.id.menu_setting:
+                settingDialog();
                 break;
         }
         return true;
@@ -125,29 +131,6 @@ public class MainActivity extends AppCompatActivity {
         ir.setCurrentGroup(0);
     }
 
-    private void addGroupDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                ir.addGroup(name);
-                updateGroupList();
-            }
-        });
-        dialog.show(getFragmentManager(), "dialog");
-    }
-
-    private void delGroupDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                ir.removeGroup(new String[]{name});
-                updateGroupList();
-            }
-        });
-        dialog.initData(ir.getGroups());
-        dialog.show(getFragmentManager(), "dialog");
-    }
-
     private void initGroupSpinner() {
         updateGroupList();
 
@@ -158,7 +141,9 @@ public class MainActivity extends AppCompatActivity {
         mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ir.setCurrentGroup(position);
+                Group group = groups.get(position);
+
+                ir.setCurrentGroup(group.getId());
                 if(m_condition && (m_callback3 != null)) {
                     m_callback3.updateList();
                 }
@@ -172,6 +157,50 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private void addGroupDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+                ir.addGroup(name);
+                updateGroupList();
+            }
+        });
+        dialog.show(getFragmentManager(), "dialog");
+    }
+    private void editGroupDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+                ir.updateGroup(name);
+                updateGroupList();
+            }
+        });
+        dialog.initData(ir.getGroups());
+        dialog.show(getFragmentManager(), "dialog");
+    }
+
+    private void delGroupDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+                ir.removeGroup(name);
+                updateGroupList();
+            }
+        });
+        dialog.initData(ir.getGroups());
+        dialog.show(getFragmentManager(), "dialog");
+    }
+
+    private void settingDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(3, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+
+            }
+        });
+
+        dialog.show(getFragmentManager(), "dialog");
     }
 
     private void updateGroupList() {

@@ -110,6 +110,7 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_GROUP),cv);
         groups.add(group);
+        currentGroup = id_group;
     }
     public void addAccount(String institute, String number, String discription) {
         Account account = new Account();
@@ -130,6 +131,7 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_ACCOUNT),cv);
         accounts.add(account);
+        currentAccount = id_account;
     }
     public void addInfoIO(String date, int input, int output, int evaluation) {
         Info_IO inout = new Info_IO();
@@ -168,14 +170,36 @@ public class IRResolver {
         dairies.add(dairy);
     }
 
-    public void removeGroup(String[] name) {
-        cr.delete(Uri.parse(URI_GROUP),"name",name);
+    public void removeGroup(String name) {
+        cr.delete(Uri.parse(URI_GROUP),"name",new String[] {name});
         initGroup();
+        currentGroup = groups.get(0).getId();
     }
-    public void removeAccount(String[] number) {
-        cr.delete(Uri.parse(URI_ACCOUNT),"num",number);
+    public void removeAccount(String number) {
+        cr.delete(Uri.parse(URI_ACCOUNT),"num",new String[] {number});
         initAccount();
+        currentAccount = accounts.get(0).getId();
     }
+
+    public void updateGroup(String name) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("id_group",currentGroup);
+        cv.put("name",name);
+
+        cr.update(Uri.parse(URI_GROUP),cv,"name",new String[] {name});
+    }
+    public void updateAccount(String institute,String account,String discript) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("id_account",currentAccount);
+        cv.put("inst",institute);
+        cv.put("num",account);
+        cv.put("disc",discript);
+
+        cr.update(Uri.parse(URI_ACCOUNT),cv,"num",new String[] {account});
+    }
+
 
     public void setCurrentGroup(int group) {
         currentGroup = group;

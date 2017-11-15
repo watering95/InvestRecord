@@ -44,11 +44,13 @@ public class UserDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view;
+        ArrayAdapter<String> adapter;
+        ListView list;
 
         switch (type) {
-            case 0:
+            case 0: //dialog_addgroup
                 view = inflater.inflate(R.layout.dialog_addgroup, null);
-                edit = (EditText) view.findViewById(R.id.edit_groupname);
+                edit = (EditText) view.findViewById(R.id.edit_groupname_add);
                 builder.setView(view).setTitle("그룹 추가");
                 builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
                     @Override
@@ -63,15 +65,39 @@ public class UserDialogFragment extends DialogFragment {
                     }
                 });
                 return builder.create();
-            case 1:
-                ArrayAdapter<String> adapter;
 
+            case 1: //dialog_editgroup
+                adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, lists);
+
+                view = inflater.inflate(R.layout.dialog_editgroup, null);
+
+                list = (ListView) view.findViewById(R.id.listGroup_edit);
+                list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                list.setAdapter(adapter);
+                list.setOnItemClickListener(mItemClickListener);
+
+                edit = (EditText) view.findViewById(R.id.edit_groupname_edit);
+                builder.setView(view).setTitle("그룹 수정");
+                builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onWorkComplete(edit.getText().toString());
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                return builder.create();
+
+            case 2: //dialog_delgroup
                 adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, lists);
 
                 view = inflater.inflate(R.layout.dialog_delgroup, null);
 
-                ListView list = (ListView) view.findViewById(R.id.listGroup);
-
+                list = (ListView) view.findViewById(R.id.listGroup_del);
                 list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
                 list.setAdapter(adapter);
                 list.setOnItemClickListener(mItemClickListener);
@@ -91,8 +117,26 @@ public class UserDialogFragment extends DialogFragment {
                 });
                 return builder.create();
 
-            default:
+            case 3: //dialog_setting
+                view = inflater.inflate(R.layout.dialog_setting, null);
+
+                builder.setView(view).setTitle("설정");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onWorkComplete("");
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
                 return builder.create();
+
+            default:
+                return null;
         }
     }
 

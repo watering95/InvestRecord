@@ -109,7 +109,8 @@ public class Fragment3 extends Fragment {
         mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ir.setCurrentAccount(position);
+                Account account = accounts.get(position);
+                ir.setCurrentAccount(account.getId());
             }
 
             @Override
@@ -117,7 +118,6 @@ public class Fragment3 extends Fragment {
 
             }
         });
-
     }
 
     private void updateAccountList() {

@@ -47,14 +47,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-    public void setDelete(String whereClause, String[] whereArgs) {
-        delete(TABLE_NAME, whereClause, whereArgs);
-    }
-
-    public void setItem(ContentValues values) {
-        insert(TABLE_NAME, values);
-    }
-
     protected void beginTransaction() {
         getWritableDatabase().beginTransaction();
     }
@@ -64,16 +56,21 @@ public class DBHelper extends SQLiteOpenHelper {
         getWritableDatabase().endTransaction();
     }
 
-    protected void insert(String tableName, ContentValues values) throws SQLiteException {
-        getWritableDatabase().insert(tableName, null, values);
+    protected void insert(ContentValues values) throws SQLiteException {
+        getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
     protected Cursor query(String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) throws SQLiteException {
         return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, groupBy, having, orderBy);
     }
 
-    protected void delete(String tableName, String where, String[] whereArgs) throws SQLiteException {
-        String whereClause = where + "=?";
-        getWritableDatabase().delete(tableName, whereClause, whereArgs);
+    protected void delete(String where, String[] whereArgs) throws SQLiteException {
+        String selection = where + "=?";
+        getWritableDatabase().delete(TABLE_NAME, selection, whereArgs);
+    }
+
+    protected void update(ContentValues values, String where, String[] selectionArgs) {
+        String selection = where + "=?";
+        getWritableDatabase().update(TABLE_NAME, values, selection, selectionArgs);
     }
 }
