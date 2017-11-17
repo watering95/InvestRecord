@@ -33,8 +33,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean m_condition = true;
-    private Callback m_callback3,m_callback4;
+    private Callback m_callback2,m_callback3,m_callback4;
 
+    public void setCallback2(Callback callback) {
+        this.m_callback2 = callback;
+    }
     public void setCallback3(Callback callback) {
         this.m_callback3 = callback;
     }
@@ -88,10 +91,11 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         mTabLayout = (TabLayout) findViewById(R.id.main_tab);
-        mTabLayout.addTab(mTabLayout.newTab().setText("1"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("2"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("3"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("4"));
+        mTabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("통합자산"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("계좌별"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("입출금입력"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("계좌등록"));
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
@@ -147,7 +151,9 @@ public class MainActivity extends AppCompatActivity {
                     group = groups.get(position);
                     ir.setCurrentGroup(group.getId());
                 }
-
+                if(m_condition && (m_callback2 != null)) {
+                    m_callback2.updateList();
+                }
                 if(m_condition && (m_callback3 != null)) {
                     m_callback3.updateList();
                 }

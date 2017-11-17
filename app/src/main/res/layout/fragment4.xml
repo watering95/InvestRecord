@@ -9,6 +9,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="계좌번호"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="4"/>
         <Spinner
             android:id="@+id/spinner_account_frag4"
             android:layout_width="match_parent"
@@ -16,7 +22,6 @@
             android:layout_weight="1"/>
 
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +32,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="계좌번호"/>
-
         <EditText
             android:id="@+id/editText_account_frag4"
             android:layout_width="match_parent"
@@ -37,7 +41,6 @@
             android:text=""/>
 
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,7 +51,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="기관"/>
-
         <EditText
             android:id="@+id/editText_institute"
             android:layout_width="match_parent"
@@ -58,7 +60,6 @@
             android:text=""/>
 
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -69,7 +70,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="설명"/>
-
         <EditText
             android:id="@+id/editText_discription"
             android:layout_width="match_parent"
@@ -79,7 +79,6 @@
             android:text=""/>
 
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -91,14 +90,12 @@
             android:layout_weight="1"
             android:id="@+id/button_regist_frag4"
             android:text="등록"/>
-
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/button_edit_frag4"
             android:text="수정"/>
-
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
