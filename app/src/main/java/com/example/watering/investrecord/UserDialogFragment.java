@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -37,6 +38,7 @@ public class UserDialogFragment extends DialogFragment {
 
     public interface UserListener {
         void onWorkComplete(String name);
+        void onDeleteAll();
     }
 
     @Override
@@ -46,6 +48,7 @@ public class UserDialogFragment extends DialogFragment {
         View view;
         ArrayAdapter<String> adapter;
         ListView list;
+        Button btn;
 
         switch (type) {
             case 0: //dialog_addgroup
@@ -119,6 +122,13 @@ public class UserDialogFragment extends DialogFragment {
 
             case 3: //dialog_setting
                 view = inflater.inflate(R.layout.dialog_setting, null);
+                btn = (Button)view.findViewById(R.id.button_delete_all);
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onDeleteAll();
+                    }
+                });
 
                 builder.setView(view).setTitle("설정");
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

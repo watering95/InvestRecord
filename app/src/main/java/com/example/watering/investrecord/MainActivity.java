@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private MainTabPagerAdapter mPagerAdapter;
-    private ArrayAdapter<String> spinnerAdapter;
+    private ArrayAdapter<String> groupAdapter;
     private List<String> grouplists = new ArrayList<>();
     private List<Group> groups = new ArrayList<>();
     public IRResolver ir = new IRResolver();
@@ -134,16 +134,20 @@ public class MainActivity extends AppCompatActivity {
     private void initGroupSpinner() {
         updateGroupList();
 
-        spinnerAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,grouplists);
+        groupAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,grouplists);
 
         mGroupSpinner = (Spinner) findViewById(R.id.spinner_group);
-        mGroupSpinner.setAdapter(spinnerAdapter);
+        mGroupSpinner.setAdapter(groupAdapter);
         mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Group group = groups.get(position);
+                Group group;
 
-                ir.setCurrentGroup(group.getId());
+                if(groups.size() != 0 ) {
+                    group = groups.get(position);
+                    ir.setCurrentGroup(group.getId());
+                }
+
                 if(m_condition && (m_callback3 != null)) {
                     m_callback3.updateList();
                 }
@@ -162,8 +166,14 @@ public class MainActivity extends AppCompatActivity {
         UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
-                ir.addGroup(name);
+                if(!name.isEmpty()) ir.insertGroup(name);
                 updateGroupList();
+                if(grouplists.size() != 0) mGroupSpinner.setAdapter(groupAdapter);
+            }
+
+            @Override
+            public void onDeleteAll() {
+
             }
         });
         dialog.show(getFragmentManager(), "dialog");
@@ -172,9 +182,16 @@ public class MainActivity extends AppCompatActivity {
         UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
-                ir.updateGroup(name);
+                if(!name.isEmpty()) ir.updateGroup(name);
                 updateGroupList();
+                if(grouplists.size() != 0) mGroupSpinner.setAdapter(groupAdapter);
             }
+
+            @Override
+            public void onDeleteAll() {
+
+            }
+
         });
         dialog.initData(ir.getGroups());
         dialog.show(getFragmentManager(), "dialog");
@@ -184,8 +201,14 @@ public class MainActivity extends AppCompatActivity {
         UserDialogFragment dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
-                ir.removeGroup(name);
+                ir.deleteGroup("name",new String[] {name});
                 updateGroupList();
+                if(grouplists.size() != 0) mGroupSpinner.setAdapter(groupAdapter);
+            }
+
+            @Override
+            public void onDeleteAll() {
+
             }
         });
         dialog.initData(ir.getGroups());
@@ -198,6 +221,13 @@ public class MainActivity extends AppCompatActivity {
             public void onWorkComplete(String name) {
 
             }
+
+            @Override
+            public void onDeleteAll() {
+                ir.deleteAll();
+                updateGroupList();
+                if(grouplists.size() != 0) mGroupSpinner.setAdapter(groupAdapter);
+            }
         });
 
         dialog.show(getFragmentManager(), "dialog");
@@ -209,5 +239,6 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0; i<groups.size(); i++) {
             grouplists.add(groups.get(i).getName());
         }
+        if(grouplists.isEmpty()) grouplists.add("Empty");
     }
 }

@@ -7,6 +7,7 @@ import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * Created by watering on 17. 11. 1.
@@ -19,6 +20,11 @@ public class IRResolver {
     private static int id_account = 0;
     private static int currentGroup;
     private static int currentAccount;
+
+    static final int CODE_GROUP = 0;
+    static final int CODE_ACCOUNT = 1;
+    static final int CODE_INFO_IO = 2;
+    static final int CODE_INFO_DAIRY = 3;
 
     private List<Group> groups = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
@@ -34,71 +40,25 @@ public class IRResolver {
         this.cr = cr;
     }
 
-    public Group getGroup(int id) {
-        return groups.get(id);
-    }
     public List<Group> getGroups() {
         return groups;
     }
-    public Account getAccount(int id) {
-        return accounts.get(id);
-    }
     public List<Account> getAccounts() {
         return accounts;
-    }
-    public List<Info_IO> getInouts() {
-        return inouts;
-    }
-    public List<Info_Dairy> getDairies() {
-        return dairies;
     }
 
     public int initGroup() {
         groups.clear();
 
-        Cursor cursor;
-        cursor = cr.query(Uri.parse(URI_GROUP),null,null,null,null);
-
-        if(cursor.getCount() < 1) {
-            return -1;
-        }
-
-        while(cursor.moveToNext()) {
-            Group group = new Group();
-            id_group = cursor.getInt(0);
-            group.setId(id_group);
-            group.setName(cursor.getString(1));
-            groups.add(group);
-        }
-
-        return cursor.getCount();
+        return init(CODE_GROUP, URI_GROUP);
     }
     public int initAccount() {
         accounts.clear();
 
-        Cursor cursor;
-        cursor = cr.query(Uri.parse(URI_ACCOUNT),null,null,null,null);
-
-        if(cursor.getCount() < 1) {
-            return -1;
-        }
-
-        while(cursor.moveToNext()) {
-            Account account = new Account();
-
-            id_account = cursor.getInt(0);
-            account.setId(id_account);
-            account.setInstitute(cursor.getString(1));
-            account.setNumber(cursor.getString(2));
-            account.setDiscription(cursor.getString(3));
-            account.setGroup(cursor.getInt(4));
-            accounts.add(account);
-        }
-
-        return cursor.getCount();
+        return init(CODE_ACCOUNT, URI_ACCOUNT);
     }
 
-    public void addGroup(String name) {
+    public void insertGroup(String name) {
         Group group = new Group();
         ContentValues cv = new ContentValues();
 
@@ -112,7 +72,10 @@ public class IRResolver {
         groups.add(group);
         currentGroup = id_group;
     }
-    public void addAccount(String institute, String number, String discription) {
+    public void insertAccount(String institute, String number, String discription) {
+
+        if(groups.size() == 0) return;
+
         Account account = new Account();
         ContentValues cv = new ContentValues();
 
@@ -133,7 +96,10 @@ public class IRResolver {
         accounts.add(account);
         currentAccount = id_account;
     }
-    public void addInfoIO(String date, int input, int output, int evaluation) {
+    public void insertInfoIO(String date, int input, int output, int evaluation) {
+
+        if(groups.size() == 0 || accounts.size() == 0) return;
+
         Info_IO inout = new Info_IO();
         ContentValues cv = new ContentValues();
 
@@ -152,7 +118,10 @@ public class IRResolver {
         cr.insert(Uri.parse(URI_INFO_IO),cv);
         inouts.add(inout);
     }
-    public void addInfoDairy(String date,int principal,double rate) {
+    public void insertInfoDairy(String date, int principal, double rate) {
+
+        if(groups.size() == 0 || accounts.size() == 0) return;
+
         Info_Dairy dairy = new Info_Dairy();
         ContentValues cv = new ContentValues();
 
@@ -170,15 +139,26 @@ public class IRResolver {
         dairies.add(dairy);
     }
 
-    public void removeGroup(String name) {
-        cr.delete(Uri.parse(URI_GROUP),"name",new String[] {name});
+    public void deleteGroup(String where, String[] args) {
+        cr.delete(Uri.parse(URI_GROUP),where,args);
         initGroup();
-        currentGroup = groups.get(0).getId();
     }
-    public void removeAccount(String number) {
-        cr.delete(Uri.parse(URI_ACCOUNT),"num",new String[] {number});
+    public void deleteAccount(String where, String[] args) {
+        cr.delete(Uri.parse(URI_ACCOUNT),where,args);
         initAccount();
-        currentAccount = accounts.get(0).getId();
+    }
+    public void deleteInfoIo(String where, String[] args) {
+        cr.delete(Uri.parse(URI_INFO_IO),where,args);
+    }
+    public void deleteInfoDairy(String where, String[] args) {
+        cr.delete(Uri.parse(URI_INFO_DAIRY),where,args);
+    }
+
+    public void deleteAll() {
+        deleteGroup(null,null);
+        deleteAccount(null, null);
+        deleteInfoIo(null, null);
+        deleteInfoDairy(null,null);
     }
 
     public void updateGroup(String name) {
@@ -200,15 +180,15 @@ public class IRResolver {
         cr.update(Uri.parse(URI_ACCOUNT),cv,"num",new String[] {account});
     }
 
-
     public void setCurrentGroup(int group) {
         currentGroup = group;
     }
-    public int getCurrentGroup() {
-        return currentGroup;
-    }
     public void setCurrentAccount(int account) {
         currentAccount = account;
+    }
+
+    public int getCurrentGroup() {
+        return currentGroup;
     }
     public int getCurrentAccount() {
         return currentAccount;
@@ -245,5 +225,54 @@ public class IRResolver {
         c = cr.query(Uri.parse(URI_INFO_IO), total, where, null, null);
         c.moveToNext();
         return c.getInt(0);
+    }
+
+    private int init(int code, String uri) {
+        Cursor cursor;
+        cursor = cr.query(Uri.parse(uri),null,null,null,null);
+
+        if(cursor.getCount() < 1) {
+            switch (code) {
+                case CODE_GROUP:
+                    currentGroup = 0;
+                    break;
+                case CODE_ACCOUNT:
+                    currentAccount = 0;
+                    break;
+            }
+            return -1;
+        }
+
+        while(cursor.moveToNext()) {
+            switch (code) {
+                case CODE_GROUP:
+                    Group group = new Group();
+
+                    id_group = cursor.getInt(0);
+                    group.setId(id_group);
+                    group.setName(cursor.getString(1));
+                    groups.add(group);
+                    if(cursor.isLast()) currentGroup = groups.get(0).getId();
+                    break;
+                case CODE_ACCOUNT:
+                    Account account = new Account();
+
+                    id_account = cursor.getInt(0);
+                    account.setId(id_account);
+                    account.setInstitute(cursor.getString(1));
+                    account.setNumber(cursor.getString(2));
+                    account.setDiscription(cursor.getString(3));
+                    account.setGroup(cursor.getInt(4));
+                    accounts.add(account);
+                    if(cursor.isLast()) currentAccount = accounts.get(0).getId();
+                    break;
+                case CODE_INFO_IO:
+                    break;
+                case CODE_INFO_DAIRY:
+                    break;
+            }
+        }
+
+        return cursor.getCount();
     }
 }

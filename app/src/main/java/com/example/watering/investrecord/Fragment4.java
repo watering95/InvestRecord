@@ -79,7 +79,6 @@ public class Fragment4 extends Fragment {
         mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Account account = accounts.get(position);
 
                 if(accountlists.get(0) == "Empty") {
                     mTxtAccount.setText("");
@@ -87,11 +86,15 @@ public class Fragment4 extends Fragment {
                     mTxtInstitute.setText("");
                 }
                 else {
+                    Account account;
+
+                    account = accounts.get(position);
+
                     mTxtAccount.setText(account.getNumber());
                     mTxtDiscription.setText(account.getDiscription());
                     mTxtInstitute.setText(account.getInstitute());
+                    ir.setCurrentAccount(account.getId());
                 }
-                ir.setCurrentAccount(account.getId());
             }
 
             @Override
@@ -121,13 +124,13 @@ public class Fragment4 extends Fragment {
 
             switch(v.getId()) {
                 case R.id.button_regist_frag4:
-                    ir.addAccount(institute,account,discript);
+                    if(!account.isEmpty()) ir.insertAccount(institute,account,discript);
                     break;
                 case R.id.button_delete_frag4:
-                    ir.removeAccount(account);
+                    if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
                     break;
                 case R.id.button_edit_frag4:
-                    ir.updateAccount(institute,account,discript);
+                    if(!account.isEmpty()) ir.updateAccount(institute,account,discript);
                     break;
             }
             updateAccountList();

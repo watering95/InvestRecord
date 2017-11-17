@@ -109,8 +109,11 @@ public class Fragment3 extends Fragment {
         mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Account account = accounts.get(position);
-                ir.setCurrentAccount(account.getId());
+                Account account;
+                if(!accounts.isEmpty()) {
+                    account = accounts.get(position);
+                    ir.setCurrentAccount(account.getId());
+                }
             }
 
             @Override
@@ -133,12 +136,13 @@ public class Fragment3 extends Fragment {
 
     Button.OnClickListener mClickListener = new View.OnClickListener() {
         public void onClick(View v) {
+            int input = Integer.parseInt(mTxtInput.getText().toString());
+            int output= Integer.parseInt(mTxtOutput.getText().toString());
+            int evaluation = Integer.parseInt(mTxtEvaluation.getText().toString());
+
             switch(v.getId()) {
                 case R.id.button_regist_frag3:
-                    int input = Integer.parseInt(mTxtInput.getText().toString());
-                    int output= Integer.parseInt(mTxtOutput.getText().toString());
-                    int evaluation = Integer.parseInt(mTxtEvaluation.getText().toString());
-                    ir.addInfoIO(selectedDate,input,output,evaluation);
+                    ir.insertInfoIO(selectedDate,input,output,evaluation);
                     calInfoDairy(evaluation);
                     break;
                 case R.id.button_edit_frag3:
@@ -151,13 +155,13 @@ public class Fragment3 extends Fragment {
 
     private void calInfoDairy(int evaluation) {
         int sum_in, sum_out, principal;
-        double rate;
+        double rate = 0;
 
         sum_in = ir.getSum(new String[]{"input"},selectedDate);
         sum_out = ir.getSum(new String[]{"output"},selectedDate);
         principal = sum_in - sum_out;
-        rate = evaluation / principal * 100;
+        if(principal !=0 && evaluation !=0) rate = evaluation / principal * 100;
 
-        ir.addInfoDairy(selectedDate,principal,rate);
+        ir.insertInfoDairy(selectedDate,principal,rate);
     }
 }

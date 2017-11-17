@@ -65,7 +65,14 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     protected void delete(String where, String[] whereArgs) throws SQLiteException {
-        String selection = where + "=?";
+        String selection;
+
+        if(where == null) {
+            selection = null;
+        }
+        else {
+            selection = where + "=?";
+        }
         getWritableDatabase().delete(TABLE_NAME, selection, whereArgs);
     }
 
