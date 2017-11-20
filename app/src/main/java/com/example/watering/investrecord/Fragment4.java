@@ -105,14 +105,22 @@ public class Fragment4 extends Fragment {
     }
 
     private void updateAccountList() {
+
         accountlists.clear();
         accounts = ir.getAccounts();
-        for (int i = 0; i < accounts.size(); i++) {
-            if(accounts.get(i).getGroup() == ir.getCurrentGroup()) {
-                accountlists.add(accounts.get(i).getNumber());
-            }
+
+        if(accounts.isEmpty()) {
+            accountlists.add("Empty");
+            ir.setCurrentAccount(0);
+            return;
         }
-        if(accountlists.isEmpty()) accountlists.add("Empty");
+
+        for (int i = 0; i < accounts.size(); i++) {
+            accountlists.add(accounts.get(i).getNumber());
+        }
+
+        ir.setCurrentAccount(accounts.get(0).getId());
+
         mActivity.Callback4to3();
     }
 
@@ -126,11 +134,11 @@ public class Fragment4 extends Fragment {
                 case R.id.button_regist_frag4:
                     if(!account.isEmpty()) ir.insertAccount(institute,account,discript);
                     break;
-                case R.id.button_delete_frag4:
-                    if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
-                    break;
                 case R.id.button_edit_frag4:
                     if(!account.isEmpty()) ir.updateAccount(institute,account,discript);
+                    break;
+                case R.id.button_delete_frag4:
+                    if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
                     break;
             }
             updateAccountList();

@@ -49,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
             m_callback3.updateList();
         }
     }
+    public void Callback3to2() {
+        if(m_condition && (m_callback2 != null)) {
+            m_callback2.updateList();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,20 +126,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
     private void initDataBase() {
         ir.getContentResolver(getContentResolver());
 
-        if(ir.initGroup() < 0) {
-            addGroupDialog();
-        }
-        if(ir.initAccount() < 0) {
-
-        }
+        groups = ir.getGroups();
+        if(groups.isEmpty()) addGroupDialog();
 
         ir.setCurrentGroup(0);
     }
-
     private void initGroupSpinner() {
         updateGroupList();
 
@@ -168,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void addGroupDialog() {
         UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
             @Override
@@ -202,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
         dialog.initData(ir.getGroups());
         dialog.show(getFragmentManager(), "dialog");
     }
-
     private void delGroupDialog() {
         UserDialogFragment dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
             @Override
@@ -220,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
         dialog.initData(ir.getGroups());
         dialog.show(getFragmentManager(), "dialog");
     }
-
     private void settingDialog() {
         UserDialogFragment dialog = UserDialogFragment.newInstance(3, new UserDialogFragment.UserListener() {
             @Override
@@ -242,9 +240,17 @@ public class MainActivity extends AppCompatActivity {
     private void updateGroupList() {
         grouplists.clear();
         groups = ir.getGroups();
-        for(int i=0; i<groups.size(); i++) {
+
+        if(groups.isEmpty()) {
+            grouplists.add("Empty");
+            ir.setCurrentGroup(0);
+            return;
+        }
+
+        for(int i = 0; i < groups.size(); i++) {
             grouplists.add(groups.get(i).getName());
         }
-        if(grouplists.isEmpty()) grouplists.add("Empty");
+
+        ir.setCurrentGroup(groups.get(0).getId());
     }
 }

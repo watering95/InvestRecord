@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -20,12 +21,15 @@ import java.util.List;
 public class Fragment2 extends Fragment {
 
     private View mView;
+    private ListView listView;
+    private ListAdapter dairyAdapter;
     private MainActivity mActivity;
     private IRResolver ir;
     private Spinner mAccountSpinner;
 
     private List<String> accountlists = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
+    private ArrayList<Info_Dairy> dairylists = new ArrayList<>();
     private ArrayAdapter<String> accountAdapter;
     MainActivity.Callback callbackfromMain;
 
@@ -39,16 +43,18 @@ public class Fragment2 extends Fragment {
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
-        initLayout();
         initAccountSpinner();
+        updateInfoDairyList();
+        initLayout();
 
         callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
                 updateAccountList();
-
                 if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
 
+                updateInfoDairyList();
+                dairyAdapter.notifyDataSetChanged();
             }
         };
         mActivity.setCallback2(callbackfromMain);
@@ -57,7 +63,15 @@ public class Fragment2 extends Fragment {
     }
 
     private void initLayout() {
+        listView = (ListView)mView.findViewById(R.id.listview_totalasset_frag2);
+        dairyAdapter = new ListAdapter(mView.getContext(),dairylists);
+        if(dairylists.size() != 0) listView.setAdapter(dairyAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+            }
+        });
     }
 
     private void initAccountSpinner() {
@@ -73,6 +87,8 @@ public class Fragment2 extends Fragment {
                 if(!accounts.isEmpty()) {
                     account = accounts.get(position);
                     ir.setCurrentAccount(account.getId());
+                    updateInfoDairyList();
+                    dairyAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -84,14 +100,25 @@ public class Fragment2 extends Fragment {
     }
 
     private void updateAccountList() {
+
         accountlists.clear();
         accounts = ir.getAccounts();
-        for (int i = 0; i < accounts.size(); i++) {
-            if(accounts.get(i).getGroup() == ir.getCurrentGroup()) {
-                accountlists.add(accounts.get(i).getNumber());
-            }
+
+        if(accounts.isEmpty()) {
+            accountlists.add("Empty");
+            ir.setCurrentAccount(0);
+            return;
         }
-        if(accountlists.isEmpty()) accountlists.add("Empty");
+
+        for (int i = 0; i < accounts.size(); i++) {
+            accountlists.add(accounts.get(i).getNumber());
+        }
+
+        ir.setCurrentAccount(accounts.get(0).getId());
     }
 
+    private void updateInfoDairyList() {
+        dairylists.clear();
+        dairylists = (ArrayList) ir.getInfoDaires();
+    }
 }

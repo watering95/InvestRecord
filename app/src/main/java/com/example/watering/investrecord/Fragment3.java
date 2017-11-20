@@ -124,28 +124,48 @@ public class Fragment3 extends Fragment {
     }
 
     private void updateAccountList() {
+
         accountlists.clear();
         accounts = ir.getAccounts();
-        for (int i = 0; i < accounts.size(); i++) {
-            if(accounts.get(i).getGroup() == ir.getCurrentGroup()) {
-                accountlists.add(accounts.get(i).getNumber());
-            }
+
+        if(accounts.isEmpty()) {
+            accountlists.add("Empty");
+            ir.setCurrentAccount(0);
+            return;
         }
-        if(accountlists.isEmpty()) accountlists.add("Empty");
+
+        for (int i = 0; i < accounts.size(); i++) {
+            accountlists.add(accounts.get(i).getNumber());
+        }
+
+        ir.setCurrentAccount(accounts.get(0).getId());
+
     }
 
     Button.OnClickListener mClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            int input = Integer.parseInt(mTxtInput.getText().toString());
-            int output= Integer.parseInt(mTxtOutput.getText().toString());
-            int evaluation = Integer.parseInt(mTxtEvaluation.getText().toString());
+            int input = 0, output = 0, evaluation = 0;
+            String in = mTxtInput.getText().toString();
+            String out = mTxtOutput.getText().toString();
+            String eval = mTxtEvaluation.getText().toString();
+
+            if(!in.isEmpty()) input = Integer.parseInt(in);
+            else input = 0;
+            if(!out.isEmpty()) output = Integer.parseInt(out);
+            else output = 0;
+            if(!eval.isEmpty()) evaluation = Integer.parseInt(eval);
+            else evaluation = 0;
 
             switch(v.getId()) {
                 case R.id.button_regist_frag3:
                     ir.insertInfoIO(selectedDate,input,output,evaluation);
                     calInfoDairy(evaluation);
+                    mActivity.Callback3to2();
                     break;
                 case R.id.button_edit_frag3:
+                    ir.updateInfoIO(selectedDate,input,output,evaluation);
+                    calInfoDairy(evaluation);
+                    mActivity.Callback3to2();
                     break;
                 case R.id.button_delete_frag3:
                     break;
@@ -160,7 +180,7 @@ public class Fragment3 extends Fragment {
         sum_in = ir.getSum(new String[]{"input"},selectedDate);
         sum_out = ir.getSum(new String[]{"output"},selectedDate);
         principal = sum_in - sum_out;
-        if(principal !=0 && evaluation !=0) rate = evaluation / principal * 100;
+        if(principal !=0 && evaluation !=0) rate = evaluation / principal * 100 - 100;
 
         ir.insertInfoDairy(selectedDate,principal,rate);
     }
