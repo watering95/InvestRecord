@@ -70,7 +70,7 @@ public class Fragment2 extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                mActivity.inoutDialog(lists.get(position).getDairy().getDate());
             }
         });
     }

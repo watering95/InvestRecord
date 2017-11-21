@@ -35,6 +35,41 @@ public class MainActivity extends AppCompatActivity {
     private boolean m_condition = true;
     private Callback m_callback2,m_callback3,m_callback4;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        initLayout();
+        initDataBase();
+        initGroupSpinner();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_addGroup:
+                addGroupDialog();
+                break;
+            case R.id.menu_editGroup:
+                editGroupDialog();
+                break;
+            case R.id.menu_delGroup:
+                delGroupDialog();
+                break;
+            case R.id.menu_setting:
+                settingDialog();
+                break;
+        }
+        return true;
+    }
+
     public void setCallback2(Callback callback) {
         this.m_callback2 = callback;
     }
@@ -69,41 +104,6 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.setSelectedDate(selectedDate);
         dialog.show(getFragmentManager(), "dialog");
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        initLayout();
-        initDataBase();
-        initGroupSpinner();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar,menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_addGroup:
-                addGroupDialog();
-                break;
-            case R.id.menu_editGroup:
-                editGroupDialog();
-                break;
-            case R.id.menu_delGroup:
-                delGroupDialog();
-                break;
-            case R.id.menu_setting:
-                settingDialog();
-                break;
-        }
-        return true;
     }
 
     private void initLayout() {
