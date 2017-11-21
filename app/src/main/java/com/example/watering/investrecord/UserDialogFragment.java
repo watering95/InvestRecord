@@ -26,8 +26,10 @@ public class UserDialogFragment extends DialogFragment {
     private UserListener listener;
     private List<Group> groups = new ArrayList<>();
     private List<String> lists = new ArrayList<>();
-    private EditText edit;
-    private String select;
+    private EditText edit, txtInput, txtOutput, txtEvaluation;
+    private String select, selectedDate;
+    private MainActivity mActivity;
+    private IRResolver ir;
 
     public static UserDialogFragment newInstance(int type, UserListener listener) {
         UserDialogFragment fragment = new UserDialogFragment();
@@ -43,12 +45,17 @@ public class UserDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+
         View view;
         ArrayAdapter<String> adapter;
         ListView list;
         Button btn;
+
+        mActivity = (MainActivity) getActivity();
+        ir = mActivity.ir;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = mActivity.getLayoutInflater();
 
         switch (type) {
             case 0: //dialog_addgroup
@@ -145,6 +152,44 @@ public class UserDialogFragment extends DialogFragment {
                 });
                 return builder.create();
 
+            case 4: //dialog_inout
+                view = inflater.inflate(R.layout.dialog_inout, null);
+
+                txtInput = (EditText) view.findViewById(R.id.editText_input);
+                txtOutput = (EditText) view.findViewById(R.id.editText_output);
+                txtEvaluation = (EditText) view.findViewById(R.id.editText_evaluation);
+
+                Info_IO io = ir.getInfoIO(String.valueOf(ir.getCurrentAccount()),selectedDate);
+                if(io == null) {
+                    txtInput.setText("");
+                    txtOutput.setText("");
+                    txtEvaluation.setText("");
+                }
+                else {
+                    txtInput.setText(String.valueOf(io.getInput()));
+                    txtOutput.setText(String.valueOf(io.getOutput()));
+                    txtEvaluation.setText(String.valueOf(io.getEvaluation()));
+                }
+
+                view.findViewById(R.id.button_regist_frag3).setOnClickListener(mClickListener);
+                view.findViewById(R.id.button_edit_frag3).setOnClickListener(mClickListener);
+                view.findViewById(R.id.button_delete_frag3).setOnClickListener(mClickListener);
+
+                builder.setView(view).setTitle("입출금 입력");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        listener.onWorkComplete("");
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                return builder.create();
+
             default:
                 return null;
         }
@@ -163,4 +208,59 @@ public class UserDialogFragment extends DialogFragment {
             select = groups.get(position).getName();
         }
     };
+
+    public void setSelectedDate(String selectedDate) {
+        this.selectedDate = selectedDate;
+    }
+
+    Button.OnClickListener mClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            int input = 0, output = 0, evaluation = 0;
+
+            String in = txtInput.getText().toString();
+            String out = txtOutput.getText().toString();
+            String eval = txtEvaluation.getText().toString();
+
+            if(!in.isEmpty()) input = Integer.parseInt(in);
+            else input = 0;
+            if(!out.isEmpty()) output = Integer.parseInt(out);
+            else output = 0;
+            if(!eval.isEmpty()) evaluation = Integer.parseInt(eval);
+            else evaluation = 0;
+
+            switch(v.getId()) {
+                case R.id.button_regist_frag3:
+                    ir.insertInfoIO(selectedDate,input,output,evaluation);
+                    calInfoDairy(0,evaluation);
+                    mActivity.Callback3to2();
+                    break;
+                case R.id.button_edit_frag3:
+                    ir.updateInfoIO(selectedDate,input,output,evaluation);
+                    calInfoDairy(1,evaluation);
+                    mActivity.Callback3to2();
+                    break;
+                case R.id.button_delete_frag3:
+                    break;
+            }
+        }
+    };
+
+    private void calInfoDairy(int select, int evaluation) {
+        int sum_in, sum_out, principal;
+        double rate = 0;
+
+        sum_in = ir.getSum(new String[]{"input"},selectedDate);
+        sum_out = ir.getSum(new String[]{"output"},selectedDate);
+        principal = sum_in - sum_out;
+        if(principal !=0 && evaluation !=0) rate = (double)evaluation / (double)principal * 100 - 100;
+
+        switch(select) {
+            case 0:
+                ir.insertInfoDairy(selectedDate,principal,rate);
+                break;
+            case 1:
+                ir.updateInfoDairy(selectedDate,principal,rate);
+                break;
+        }
+    }
 }

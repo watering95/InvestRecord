@@ -54,6 +54,22 @@ public class MainActivity extends AppCompatActivity {
             m_callback2.updateList();
         }
     }
+    public void inoutDialog(String selectedDate) {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(4, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+
+            }
+
+            @Override
+            public void onDeleteAll() {
+
+            }
+        });
+
+        dialog.setSelectedDate(selectedDate);
+        dialog.show(getFragmentManager(), "dialog");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
