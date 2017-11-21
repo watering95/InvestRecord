@@ -22,7 +22,7 @@ public class Fragment2 extends Fragment {
 
     private View mView;
     private ListView listView;
-    private ListAdapter listAdapter;
+    private List2Adapter list2Adapter;
     private MainActivity mActivity;
     private IRResolver ir;
     private Spinner mAccountSpinner;
@@ -30,7 +30,7 @@ public class Fragment2 extends Fragment {
     private List<String> accountlists = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
     private ArrayList<Info_Dairy> daires = new ArrayList<>();
-    private ArrayList<Info_List> lists = new ArrayList<>();
+    private ArrayList<Info_List2> lists = new ArrayList<>();
     private ArrayAdapter<String> accountAdapter;
     MainActivity.Callback callbackfromMain;
 
@@ -55,7 +55,7 @@ public class Fragment2 extends Fragment {
                 if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
 
                 updateInfoLists();
-                listAdapter.notifyDataSetChanged();
+                list2Adapter.notifyDataSetChanged();
             }
         };
         mActivity.setCallback2(callbackfromMain);
@@ -65,8 +65,8 @@ public class Fragment2 extends Fragment {
 
     private void initLayout() {
         listView = (ListView)mView.findViewById(R.id.listview_totalasset_frag2);
-        listAdapter = new ListAdapter(mView.getContext(),lists);
-        if(lists.size() != 0) listView.setAdapter(listAdapter);
+        list2Adapter = new List2Adapter(mView.getContext(),lists);
+        if(lists.size() != 0) listView.setAdapter(list2Adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -89,7 +89,7 @@ public class Fragment2 extends Fragment {
                     account = accounts.get(position);
                     ir.setCurrentAccount(account.getId());
                     updateInfoLists();
-                    listAdapter.notifyDataSetChanged();
+                    list2Adapter.notifyDataSetChanged();
                 }
             }
 
@@ -125,7 +125,7 @@ public class Fragment2 extends Fragment {
         for(int i = 0; i < daires.size(); i++) {
             Info_IO io;
             Info_Dairy dairy;
-            Info_List list = new Info_List();
+            Info_List2 list = new Info_List2();
 
             dairy = daires.get(i);
 
@@ -134,5 +134,6 @@ public class Fragment2 extends Fragment {
             list.setDairy(dairy);
             lists.add(list);
         }
+        mActivity.Callback1();
     }
 }

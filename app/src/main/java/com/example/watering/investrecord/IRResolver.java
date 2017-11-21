@@ -93,6 +93,14 @@ public class IRResolver {
         c.moveToNext();
         return c.getInt(0);
     }
+    public Info_Dairy getLastInfoDairy(String account) {
+        String[] selectionArgs = new String[] {account};
+
+        dairies.clear();
+        getData(CODE_INFO_DAIRY, URI_INFO_DAIRY, "id_account=?",selectionArgs,"date DESC");
+        if(dairies.isEmpty()) return null;
+        else return dairies.get(0);
+    }
     public int getCurrentAccount() {
         return currentAccount;
     }

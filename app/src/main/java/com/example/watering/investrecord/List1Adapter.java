@@ -13,13 +13,13 @@ import java.util.ArrayList;
  * Created by watering on 17. 11. 17.
  */
 
-public class ListAdapter extends BaseAdapter {
+public class List1Adapter extends BaseAdapter {
 
     Context mContext;
-    ArrayList<Info_List> mData;
+    ArrayList<Info_List1> mData;
     LayoutInflater inflater;
 
-    public ListAdapter(Context context, ArrayList<Info_List> data) {
+    public List1Adapter(Context context, ArrayList<Info_List1> data) {
         mContext = context;
         mData = data;
         inflater = LayoutInflater.from(mContext);
@@ -47,17 +47,17 @@ public class ListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.layout_list,parent,false);
         }
 
-        Info_Dairy dairy = new Info_Dairy();
-        TextView date = (TextView)convertView.findViewById(R.id.list_date);
-        TextView evaluation = (TextView)convertView.findViewById(R.id.list_evaluation);
-        TextView principal = (TextView)convertView.findViewById(R.id.list_principal);
-        TextView rate = (TextView)convertView.findViewById(R.id.list_rate);
+        TextView account = (TextView)convertView.findViewById(R.id.list_1);
+        TextView evaluation = (TextView)convertView.findViewById(R.id.list_2);
+        TextView principal = (TextView)convertView.findViewById(R.id.list_3);
+        TextView rate = (TextView)convertView.findViewById(R.id.list_4);
 
-        dairy = mData.get(position).getDairy();
-        date.setText(String.valueOf(dairy.getDate()));
-        principal.setText(String.valueOf(dairy.getPrincipal()));
-        rate.setText(String.valueOf(dairy.getRate()));
-        evaluation.setText(String.valueOf(mData.get(position).getEvaluation()));
+        Info_List2 list2 = mData.get(position).getList2();
+
+        account.setText(String.valueOf(mData.get(position).getAccount().getNumber()));
+        principal.setText(String.valueOf(list2.getDairy().getPrincipal()));
+        rate.setText(String.valueOf(list2.getDairy().getRate()));
+        evaluation.setText(String.valueOf(list2.getEvaluation()));
 
         return convertView;
     }

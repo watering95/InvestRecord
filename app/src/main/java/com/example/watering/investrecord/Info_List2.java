@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-public class Info_List {
+public class Info_List2 {
     private Info_Dairy dairy;
     private int evaluation;
 

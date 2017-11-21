@@ -121,7 +121,8 @@ public class Fragment4 extends Fragment {
 
         ir.setCurrentAccount(accounts.get(0).getId());
 
-        mActivity.Callback4to3();
+        mActivity.Callback3();
+        mActivity.Callback1();
     }
 
     Button.OnClickListener mClickListener = new View.OnClickListener() {

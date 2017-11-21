@@ -9,25 +9,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:id="@+id/list_date"
+        android:id="@+id/list_1"
         android:textAlignment="center"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:id="@+id/list_principal"
+        android:id="@+id/list_2"
         android:textAlignment="center"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:id="@+id/list_evaluation"
+        android:id="@+id/list_3"
         android:textAlignment="center"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:id="@+id/list_rate"
+        android:id="@+id/list_4"
         android:textAlignment="center"/>
 
 </LinearLayout>

@@ -117,16 +117,16 @@ public class UserDialogFragment extends DialogFragment {
                 case R.id.button_regist_frag3:
                     ir.insertInfoIO(selectedDate,input,output,evaluation);
                     calInfoDairy(0,evaluation);
-                    mActivity.Callback3to2();
                     break;
                 case R.id.button_edit_frag3:
                     ir.updateInfoIO(selectedDate,input,output,evaluation);
                     calInfoDairy(1,evaluation);
-                    mActivity.Callback3to2();
                     break;
                 case R.id.button_delete_frag3:
                     break;
             }
+            mActivity.Callback2();
+            mActivity.Callback1();
         }
     };
 

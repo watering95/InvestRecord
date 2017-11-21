@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean m_condition = true;
-    private Callback m_callback2,m_callback3,m_callback4;
+    private Callback m_callback1,m_callback2,m_callback3,m_callback4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public void setCallback1(Callback callback) {
+        this.m_callback1 = callback;
+    }
     public void setCallback2(Callback callback) {
         this.m_callback2 = callback;
     }
@@ -79,16 +82,23 @@ public class MainActivity extends AppCompatActivity {
     public void setCallback4(Callback callback) {
         this.m_callback4 = callback;
     }
-    public void Callback4to3() {
-        if(m_condition && (m_callback3 != null)) {
-            m_callback3.updateList();
+
+    public void Callback1() {
+        if(m_condition && (m_callback1 != null)) {
+            m_callback1.updateList();
         }
     }
-    public void Callback3to2() {
+    public void Callback2() {
         if(m_condition && (m_callback2 != null)) {
             m_callback2.updateList();
         }
     }
+    public void Callback3() {
+        if(m_condition && (m_callback3 != null)) {
+            m_callback3.updateList();
+        }
+    }
+
     public void inoutDialog(String selectedDate) {
         UserDialogFragment dialog = UserDialogFragment.newInstance(4, new UserDialogFragment.UserListener() {
             @Override
@@ -165,6 +175,9 @@ public class MainActivity extends AppCompatActivity {
                 if(groups.size() != 0 ) {
                     group = groups.get(position);
                     ir.setCurrentGroup(group.getId());
+                }
+                if(m_condition && (m_callback1 != null)) {
+                    m_callback1.updateList();
                 }
                 if(m_condition && (m_callback2 != null)) {
                     m_callback2.updateList();
