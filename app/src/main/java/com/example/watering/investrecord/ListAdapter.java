@@ -16,10 +16,10 @@ import java.util.ArrayList;
 public class ListAdapter extends BaseAdapter {
 
     Context mContext;
-    ArrayList<Info_Dairy> mData;
+    ArrayList<Info_List> mData;
     LayoutInflater inflater;
 
-    public ListAdapter(Context context, ArrayList<Info_Dairy> data) {
+    public ListAdapter(Context context, ArrayList<Info_List> data) {
         mContext = context;
         mData = data;
         inflater = LayoutInflater.from(mContext);
@@ -47,14 +47,17 @@ public class ListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.layout_list,parent,false);
         }
 
+        Info_Dairy dairy = new Info_Dairy();
         TextView date = (TextView)convertView.findViewById(R.id.list_date);
         TextView evaluation = (TextView)convertView.findViewById(R.id.list_evaluation);
         TextView principal = (TextView)convertView.findViewById(R.id.list_principal);
         TextView rate = (TextView)convertView.findViewById(R.id.list_rate);
 
-        date.setText(String.valueOf(mData.get(position).getDate()));
-        principal.setText(String.valueOf(mData.get(position).getPrincipal()));
-        rate.setText(String.valueOf(mData.get(position).getRate()));
+        dairy = mData.get(position).getDairy();
+        date.setText(String.valueOf(dairy.getDate()));
+        principal.setText(String.valueOf(dairy.getPrincipal()));
+        rate.setText(String.valueOf(dairy.getRate()));
+        evaluation.setText(String.valueOf(mData.get(position).getEvaluation()));
 
         return convertView;
     }

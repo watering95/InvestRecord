@@ -78,24 +78,12 @@ public class Fragment3 extends Fragment {
         mView.findViewById(R.id.button_delete_frag3).setOnClickListener(mClickListener);
 
         date = (DatePicker) mView.findViewById(R.id.date);
-        selectedDate = String.format("%d-%d-%d",date.getYear(),date.getMonth(),date.getDayOfMonth());
+        selectedDate = String.format("%04d-%02d-%02d",date.getYear(),date.getMonth(),date.getDayOfMonth());
         date.init(date.getYear(), date.getMonth(), date.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Info_IO io = new Info_IO();
-
-                selectedDate = String.format("%d-%d-%d",year,monthOfYear+1,dayOfMonth);
-                io = ir.getInfoIO(String.valueOf(ir.getCurrentAccount()),selectedDate);
-                if(io == null || accountlists.get(0) == "Empty") {
-                    mTxtInput.setText("");
-                    mTxtOutput.setText("");
-                    mTxtEvaluation.setText("");
-                }
-                else {
-                    mTxtInput.setText(String.valueOf(io.getInput()));
-                    mTxtOutput.setText(String.valueOf(io.getOutput()));
-                    mTxtEvaluation.setText(String.valueOf(io.getEvaluation()));
-                }
+                selectedDate = String.format("%04d-%02d-%02d",year,monthOfYear+1,dayOfMonth);
+                showSelectedDateInfo();
             }
         });
     }
@@ -159,12 +147,14 @@ public class Fragment3 extends Fragment {
             switch(v.getId()) {
                 case R.id.button_regist_frag3:
                     ir.insertInfoIO(selectedDate,input,output,evaluation);
-                    calInfoDairy(evaluation);
+                    calInfoDairy(0,evaluation);
+                    showSelectedDateInfo();
                     mActivity.Callback3to2();
                     break;
                 case R.id.button_edit_frag3:
                     ir.updateInfoIO(selectedDate,input,output,evaluation);
-                    calInfoDairy(evaluation);
+                    calInfoDairy(1,evaluation);
+                    showSelectedDateInfo();
                     mActivity.Callback3to2();
                     break;
                 case R.id.button_delete_frag3:
@@ -173,15 +163,37 @@ public class Fragment3 extends Fragment {
         }
     };
 
-    private void calInfoDairy(int evaluation) {
+    private void calInfoDairy(int select, int evaluation) {
         int sum_in, sum_out, principal;
         double rate = 0;
 
         sum_in = ir.getSum(new String[]{"input"},selectedDate);
         sum_out = ir.getSum(new String[]{"output"},selectedDate);
         principal = sum_in - sum_out;
-        if(principal !=0 && evaluation !=0) rate = evaluation / principal * 100 - 100;
+        if(principal !=0 && evaluation !=0) rate = (double)evaluation / (double)principal * 100 - 100;
 
-        ir.insertInfoDairy(selectedDate,principal,rate);
+        switch(select) {
+            case 0:
+                ir.insertInfoDairy(selectedDate,principal,rate);
+                break;
+            case 1:
+                ir.updateInfoDairy(selectedDate,principal,rate);
+                break;
+        }
+    }
+    private void showSelectedDateInfo() {
+        Info_IO io;
+
+        io = ir.getInfoIO(String.valueOf(ir.getCurrentAccount()),selectedDate);
+        if(io == null || accountlists.get(0) == "Empty") {
+            mTxtInput.setText("");
+            mTxtOutput.setText("");
+            mTxtEvaluation.setText("");
+        }
+        else {
+            mTxtInput.setText(String.valueOf(io.getInput()));
+            mTxtOutput.setText(String.valueOf(io.getOutput()));
+            mTxtEvaluation.setText(String.valueOf(io.getEvaluation()));
+        }
     }
 }

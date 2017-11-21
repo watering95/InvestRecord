@@ -29,7 +29,6 @@ public class IRResolver {
     private List<Group> groups = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
     private List<Info_Dairy> dairies = new ArrayList<>();
-    private List<Info_IO> inouts = new ArrayList<>();
 
     private static String URI_GROUP = "content://watering.investrecord.provider/group";
     private static String URI_ACCOUNT = "content://watering.investrecord.provider/account";
@@ -39,7 +38,6 @@ public class IRResolver {
     public void getContentResolver(ContentResolver cr) {
         this.cr = cr;
     }
-
     public List<Group> getGroups() {
         groups.clear();
         getData(CODE_GROUP, URI_GROUP, null,null,null);
@@ -52,18 +50,51 @@ public class IRResolver {
         getData(CODE_ACCOUNT,URI_ACCOUNT,"id_group=?",selectionArgs,null);
         return accounts;
     }
-    public List<Info_IO> getInfoInOuts() {
-        inouts.clear();
-
-        getData(CODE_INFO_IO, URI_INFO_IO, null, null,null);
-        return inouts;
-    }
     public List<Info_Dairy> getInfoDaires() {
         String[] selectionArgs = new String[] {String.valueOf(currentAccount)};
 
         dairies.clear();
         getData(CODE_INFO_DAIRY, URI_INFO_DAIRY,"id_account=?",selectionArgs, "date DESC");
         return dairies;
+    }
+    public Info_IO getInfoIO(String account, String date) {
+        Cursor c;
+        Info_IO io = new Info_IO();
+
+        String where = "id_account=? and date=?";
+        String[] selectionArgs = new String[]{"",""};
+        selectionArgs[0] = account;
+        selectionArgs[1] = date;
+
+        c = cr.query(Uri.parse(URI_INFO_IO), null, where, selectionArgs, null);
+
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        io.setInput(c.getInt(c.getColumnIndex("input")));
+        io.setOutput(c.getInt(c.getColumnIndex("output")));
+        io.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
+        io.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        io.setDate(c.getString(c.getColumnIndex("date")));
+
+        return io;
+    }
+    public int getSum(String[] column, String selectedDate) {
+        Cursor c;
+
+        String[] total = {"total(" + column[0] + ") AS SUM"};
+        String where = "date<=? and id_account=?";
+        String[] selectionArgs = new String[]{"",""};
+        selectionArgs[0] = selectedDate;
+        selectionArgs[1] = String.valueOf(currentAccount);
+
+        c = cr.query(Uri.parse(URI_INFO_IO), total, where, selectionArgs, null);
+        c.moveToNext();
+        return c.getInt(0);
+    }
+    public int getCurrentAccount() {
+        return currentAccount;
     }
 
     public void insertGroup(String name) {
@@ -131,7 +162,6 @@ public class IRResolver {
     public void deleteInfoDairy(String where, String[] args) {
         cr.delete(Uri.parse(URI_INFO_DAIRY),where,args);
     }
-
     public void deleteAll() {
         deleteGroup(null,null);
         deleteAccount(null, null);
@@ -170,49 +200,22 @@ public class IRResolver {
 
         cr.update(Uri.parse(URI_INFO_IO),cv,"date",new String[] {date});
     }
+    public void updateInfoDairy(String date, int principal, double rate) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("id_account", currentAccount);
+        cv.put("date", date);
+        cv.put("principal",principal);
+        cv.put("rate",String.format("%.2f",rate));
+
+        cr.update(Uri.parse(URI_INFO_DAIRY),cv,"date",new String[] {date});
+    }
 
     public void setCurrentGroup(int group) {
         currentGroup = group;
     }
     public void setCurrentAccount(int account) {
         currentAccount = account;
-    }
-
-    public int getCurrentAccount() {
-        return currentAccount;
-    }
-
-    public Info_IO getInfoIO(String account, String date) {
-        Cursor c;
-        Info_IO io = new Info_IO();
-
-        String where = "id_account = '" + account + "' AND date = '" + date + "';";
-
-        c = cr.query(Uri.parse(URI_INFO_IO), null, where, null, null);
-
-        if(c.getCount() == 0) return null;
-
-        c.moveToNext();
-
-        io.setInput(c.getInt(c.getColumnIndex("input")));
-        io.setOutput(c.getInt(c.getColumnIndex("output")));
-        io.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
-        io.setAccount(c.getInt(c.getColumnIndex("id_account")));
-        io.setDate(c.getString(c.getColumnIndex("date")));
-
-        return io;
-    }
-
-    public int getSum(String[] column, String selectedDate) {
-
-        Cursor c;
-
-        String[] total = {"total(" + column[0] + ") AS SUM"};
-        String where = "date < date('" + selectedDate + "')";
-
-        c = cr.query(Uri.parse(URI_INFO_IO), total, where, null, null);
-        c.moveToNext();
-        return c.getInt(0);
     }
 
     private void getData(int code, String uri, String selection, String[] selectionArgs, String sortOrder) {

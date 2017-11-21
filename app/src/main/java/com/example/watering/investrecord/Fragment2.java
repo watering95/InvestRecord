@@ -22,14 +22,15 @@ public class Fragment2 extends Fragment {
 
     private View mView;
     private ListView listView;
-    private ListAdapter dairyAdapter;
+    private ListAdapter listAdapter;
     private MainActivity mActivity;
     private IRResolver ir;
     private Spinner mAccountSpinner;
 
     private List<String> accountlists = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
-    private ArrayList<Info_Dairy> dairylists = new ArrayList<>();
+    private ArrayList<Info_Dairy> daires = new ArrayList<>();
+    private ArrayList<Info_List> lists = new ArrayList<>();
     private ArrayAdapter<String> accountAdapter;
     MainActivity.Callback callbackfromMain;
 
@@ -44,7 +45,7 @@ public class Fragment2 extends Fragment {
         ir = mActivity.ir;
 
         initAccountSpinner();
-        updateInfoDairyList();
+        updateInfoLists();
         initLayout();
 
         callbackfromMain = new MainActivity.Callback() {
@@ -53,8 +54,8 @@ public class Fragment2 extends Fragment {
                 updateAccountList();
                 if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
 
-                updateInfoDairyList();
-                dairyAdapter.notifyDataSetChanged();
+                updateInfoLists();
+                listAdapter.notifyDataSetChanged();
             }
         };
         mActivity.setCallback2(callbackfromMain);
@@ -64,8 +65,8 @@ public class Fragment2 extends Fragment {
 
     private void initLayout() {
         listView = (ListView)mView.findViewById(R.id.listview_totalasset_frag2);
-        dairyAdapter = new ListAdapter(mView.getContext(),dairylists);
-        if(dairylists.size() != 0) listView.setAdapter(dairyAdapter);
+        listAdapter = new ListAdapter(mView.getContext(),lists);
+        if(lists.size() != 0) listView.setAdapter(listAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -87,8 +88,8 @@ public class Fragment2 extends Fragment {
                 if(!accounts.isEmpty()) {
                     account = accounts.get(position);
                     ir.setCurrentAccount(account.getId());
-                    updateInfoDairyList();
-                    dairyAdapter.notifyDataSetChanged();
+                    updateInfoLists();
+                    listAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -117,8 +118,21 @@ public class Fragment2 extends Fragment {
         ir.setCurrentAccount(accounts.get(0).getId());
     }
 
-    private void updateInfoDairyList() {
-        dairylists.clear();
-        dairylists = (ArrayList) ir.getInfoDaires();
+    private void updateInfoLists() {
+
+        lists.clear();
+        daires = (ArrayList) ir.getInfoDaires();
+        for(int i = 0; i < daires.size(); i++) {
+            Info_IO io;
+            Info_Dairy dairy;
+            Info_List list = new Info_List();
+
+            dairy = daires.get(i);
+
+            io = ir.getInfoIO(String.valueOf(dairy.getAccount()), dairy.getDate());
+            list.setEvaluation(io.getEvaluation());
+            list.setDairy(dairy);
+            lists.add(list);
+        }
     }
 }
