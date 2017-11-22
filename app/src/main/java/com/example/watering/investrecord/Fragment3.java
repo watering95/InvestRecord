@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -51,8 +50,7 @@ public class Fragment3 extends Fragment {
             @Override
             public void updateList() {
                 updateAccountList();
-
-                if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
+                accountAdapter.notifyDataSetChanged();
             }
         };
         mActivity.setCallback3(callbackfromMain);

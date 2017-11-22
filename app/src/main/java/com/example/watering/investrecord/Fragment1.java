@@ -7,9 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,12 +23,14 @@ import java.util.List;
 public class Fragment1 extends Fragment {
 
     private View mView;
+    private TextView mTxtTotal;
     private ListView listView;
     private List1Adapter listAdapter;
     private MainActivity mActivity;
     private IRResolver ir;
     private ArrayList<Info_List1> lists = new ArrayList<>();
-    MainActivity.Callback callbackfromMain;
+    private MainActivity.Callback callbackfromMain;
+    private int sum;
 
     public Fragment1() {
     }
@@ -43,7 +49,8 @@ public class Fragment1 extends Fragment {
             @Override
             public void updateList() {
                 updateInfoLists();
-                initLayout();
+                mTxtTotal.setText(String.valueOf(sum));
+                listAdapter.notifyDataSetChanged();
             }
         };
         mActivity.setCallback1(callbackfromMain);
@@ -52,9 +59,11 @@ public class Fragment1 extends Fragment {
     }
 
     private void initLayout() {
+        mTxtTotal = (TextView)mView.findViewById(R.id.text_total);
+        mTxtTotal.setText(String.valueOf(sum));
         listView = (ListView)mView.findViewById(R.id.listview_totalasset_frag1);
         listAdapter = new List1Adapter(mView.getContext(),lists);
-        if(lists.size() !=0) listView.setAdapter(listAdapter);
+        if(lists.size() != 0) listView.setAdapter(listAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -64,29 +73,45 @@ public class Fragment1 extends Fragment {
     }
 
     private void updateInfoLists() {
+        Info_Dairy dairy;
+        Info_IO io;
 
+        sum = 0;
         lists.clear();
-
-        Info_List1 list1 = new Info_List1();
-        Info_List2 list2 = new Info_List2();
         List<Account> accounts = ir.getAccounts();
 
-        Info_Dairy dairy;
-
         for(int i = 0; i < accounts.size(); i++) {
+            Info_List1 list1 = new Info_List1();
+            Info_List2 list2 = new Info_List2();
 
-            String account = String.valueOf(accounts.get(i).getId());
+            int id = accounts.get(i).getId();
+            String account = String.valueOf(id);
 
             dairy = ir.getLastInfoDairy(account);
             if(dairy == null) {
-                return;
+                dairy = new Info_Dairy();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.getDefault());
+                long now = System.currentTimeMillis();
+                Date date = new Date(now);
+
+                dairy.setDate(dateFormat.format(date).toString());
+                dairy.setAccount(id);
+                dairy.setPrincipal(0);
+                dairy.setRate(0);
+            }
+            io = ir.getInfoIO(account,dairy.getDate());
+            if(io == null) {
+                io = new Info_IO();
+                io.setEvaluation(0);
             }
 
             list2.setDairy(dairy);
-            list2.setEvaluation(ir.getInfoIO(account,dairy.getDate()).getEvaluation());
+            list2.setEvaluation(io.getEvaluation());
 
             list1.setAccount(accounts.get(i));
             list1.setInfoList2(list2);
+            sum += list1.getList2().getEvaluation();
 
             lists.add(list1);
         }

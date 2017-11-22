@@ -52,7 +52,7 @@ public class Fragment2 extends Fragment {
             @Override
             public void updateList() {
                 updateAccountList();
-                if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
+                accountAdapter.notifyDataSetChanged();
 
                 updateInfoLists();
                 list2Adapter.notifyDataSetChanged();

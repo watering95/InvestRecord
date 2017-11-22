@@ -51,7 +51,7 @@ public class Fragment4 extends Fragment {
             @Override
             public void updateList() {
                 updateAccountList();
-                if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
+                accountAdapter.notifyDataSetChanged();
             }
         };
         mActivity.setCallback4(callbackfromMain);
