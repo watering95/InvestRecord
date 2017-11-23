@@ -6,11 +6,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +32,7 @@ public class Fragment2 extends Fragment {
     private MainActivity mActivity;
     private IRResolver ir;
     private Spinner mAccountSpinner;
+    private WebView mWeb;
 
     private List<String> accountlists = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
@@ -47,6 +54,8 @@ public class Fragment2 extends Fragment {
         initAccountSpinner();
         updateInfoLists();
         initLayout();
+        makeHTMLFile();
+        openWebView();
 
         callbackfromMain = new MainActivity.Callback() {
             @Override
@@ -56,6 +65,9 @@ public class Fragment2 extends Fragment {
 
                 updateInfoLists();
                 list2Adapter.notifyDataSetChanged();
+
+                makeHTMLFile();
+                mWeb.reload();
             }
         };
         mActivity.setCallback2(callbackfromMain);
@@ -90,6 +102,8 @@ public class Fragment2 extends Fragment {
                     ir.setCurrentAccount(account.getId());
                     updateInfoLists();
                     list2Adapter.notifyDataSetChanged();
+                    makeHTMLFile();
+                    mWeb.reload();
                 }
             }
 
@@ -135,5 +149,61 @@ public class Fragment2 extends Fragment {
             lists.add(list);
         }
         mActivity.Callback1();
+    }
+
+    private void makeHTMLFile() {
+        try{
+            BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph.html",false));
+
+            String data = new String();
+            String date;
+            int size = lists.size();
+            if(size != 0) {
+                for (int i = size - 1; i > 0; i--) {
+                    date = "new Date('" + lists.get(i).getDairy().getDate() + "')";
+                    data += "[" + date + ", " + String.valueOf(lists.get(i).getEvaluation()) + "],\n";
+                }
+                date = "new Date('" + lists.get(0).getDairy().getDate() + "')";
+                data += "[" + date + ", " + String.valueOf(lists.get(0).getEvaluation()) + "]\n";
+            }
+            else {
+                data = "[0 , 0]\n";
+            }
+
+            String function = "function drawChart() {\n"
+                    + "var data = new google.visualization.DataTable();\n"
+                    + "data.addColumn('date','Day');\n"
+                    + "data.addColumn('number','평가액');\n"
+                    + "data.addRows([\n" + data + "]);\n\n"
+                    + "var options = {chart:{title:'graph',subtitle:'money'}};\n\n"
+                    + "var chart = new google.charts.Line(document.getElementById('linechart_material'));\n\n"
+                    + "chart.draw(data, google.charts.Line.convertOptions(options));\n"
+                    + "}\n";
+
+            String head = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n"
+                    + "<script type=\"text/javascript\">\n"
+                    + "google.charts.load('current', {'packages':['line']});\n"
+                    + "google.charts.setOnLoadCallback(drawChart);\n\n"
+                    + function
+                    + "</script>\n";
+
+            String body = "<div id=\"linechart_material\"></div>\n";
+
+            String html = "<html>\n" + "<head>\n" + head + "</head>\n" + "<body>\n" + body + "</body>\n" + "</html>";
+
+            bw.write(html);
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openWebView() {
+        mWeb = (WebView)mView.findViewById(R.id.web);
+        mWeb.setWebViewClient(new WebViewClient());
+        WebSettings set = mWeb.getSettings();
+        set.setJavaScriptEnabled(true);
+        set.setBuiltInZoomControls(true);
+        mWeb.loadUrl("file:///" + mActivity.getFilesDir() + "graph.html");
     }
 }

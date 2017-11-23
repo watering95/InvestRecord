@@ -48,8 +48,8 @@ public class List1Adapter extends BaseAdapter {
         }
 
         TextView account = (TextView)convertView.findViewById(R.id.list_1);
-        TextView evaluation = (TextView)convertView.findViewById(R.id.list_2);
-        TextView principal = (TextView)convertView.findViewById(R.id.list_3);
+        TextView principal = (TextView)convertView.findViewById(R.id.list_2);
+        TextView evaluation = (TextView)convertView.findViewById(R.id.list_3);
         TextView rate = (TextView)convertView.findViewById(R.id.list_4);
 
         Info_List2 list2 = mData.get(position).getList2();

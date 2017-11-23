@@ -49,8 +49,8 @@ public class List2Adapter extends BaseAdapter {
 
         Info_Dairy dairy = new Info_Dairy();
         TextView date = (TextView)convertView.findViewById(R.id.list_1);
-        TextView evaluation = (TextView)convertView.findViewById(R.id.list_2);
-        TextView principal = (TextView)convertView.findViewById(R.id.list_3);
+        TextView principal = (TextView)convertView.findViewById(R.id.list_2);
+        TextView evaluation = (TextView)convertView.findViewById(R.id.list_3);
         TextView rate = (TextView)convertView.findViewById(R.id.list_4);
 
         dairy = mData.get(position).getDairy();

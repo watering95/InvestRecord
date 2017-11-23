@@ -124,9 +124,9 @@ public class MainActivity extends AppCompatActivity {
         mTabLayout = (TabLayout) findViewById(R.id.main_tab);
         mTabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
         mTabLayout.addTab(mTabLayout.newTab().setText("통합자산"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("계좌별"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("계좌별이력"));
         mTabLayout.addTab(mTabLayout.newTab().setText("입출금입력"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("계좌등록"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("계좌관리"));
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
