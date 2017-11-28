@@ -119,12 +119,22 @@ public class Fragment2 extends Fragment {
                 data = "[0 , 0]\n";
             }
 
+            String accountnumber;
+
+            if(lists.isEmpty()) accountnumber = "";
+            else {
+                int id = lists.get(0).getDairy().getAccount();
+                Account account = ir.getAccount(String.valueOf(id));
+                accountnumber = account.getNumber();
+            }
+
             String function = "function drawChart() {\n"
                     + "var data = new google.visualization.DataTable();\n"
                     + "data.addColumn('date','Day');\n"
                     + "data.addColumn('number','평가액');\n"
                     + "data.addRows([\n" + data + "]);\n\n"
-                    + "var options = {chart:{title:'graph',subtitle:'money'}};\n\n"
+                    + "var options = {chart:{title:'계좌 평가액',subtitle:'" + accountnumber +"'},"
+                    + "legend:{position:\"top\"}};\n\n"
                     + "var chart = new google.charts.Line(document.getElementById('linechart_material'));\n\n"
                     + "chart.draw(data, google.charts.Line.convertOptions(options));\n"
                     + "}\n";

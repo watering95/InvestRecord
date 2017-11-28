@@ -87,13 +87,6 @@ public class UserDialogFragment extends DialogFragment {
         }
     }
 
-    AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            select = groups.get(position).getName();
-        }
-    };
-
     public void setSelectedDate(String selectedDate) {
         this.selectedDate = selectedDate;
     }
@@ -116,14 +109,21 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     private void dialogEditGroup() {
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, lists);
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
 
         view = inflater.inflate(R.layout.dialog_editgroup, null);
 
         list = (ListView) view.findViewById(R.id.listGroup_edit);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter);
-        list.setOnItemClickListener(mItemClickListener);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                select = groups.get(position).getName();
+                ir.setCurrentGroup(groups.get(position).getId());
+                edit.setText(select);
+            }
+        });
 
         edit = (EditText) view.findViewById(R.id.edit_groupname_edit);
         builder.setView(view).setTitle("그룹 수정");
@@ -141,14 +141,20 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     private void dialogDelGroup() {
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, lists);
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
 
         view = inflater.inflate(R.layout.dialog_delgroup, null);
 
         list = (ListView) view.findViewById(R.id.listGroup_del);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter);
-        list.setOnItemClickListener(mItemClickListener);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                select = groups.get(position).getName();
+                ir.setCurrentGroup(groups.get(position).getId());
+            }
+        });
 
         builder.setView(view).setTitle("그룹 삭제");
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
@@ -237,7 +243,7 @@ public class UserDialogFragment extends DialogFragment {
         builder.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                ir.deleteInfoIO("date",new String[] {selectedDate});
             }
         });
     }

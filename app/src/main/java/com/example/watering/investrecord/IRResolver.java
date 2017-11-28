@@ -202,11 +202,11 @@ public class IRResolver {
 
     public void updateGroup(String name) {
         ContentValues cv = new ContentValues();
-
+        String id = String.valueOf(currentGroup);
         cv.put("id_group",currentGroup);
         cv.put("name",name);
 
-        cr.update(Uri.parse(URI_GROUP),cv,"name",new String[] {name});
+        cr.update(Uri.parse(URI_GROUP),cv,"id_group",new String[] {id});
     }
     public void updateAccount(String institute,String account,String discript) {
         ContentValues cv = new ContentValues();
