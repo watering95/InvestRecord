@@ -47,16 +47,15 @@ public class Fragment2 extends Fragment {
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
-        updateInfoLists();
         initLayout();
+        updateListView();
         makeHTMLFile();
         openWebView();
 
         callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
-                updateInfoLists();
-                list2Adapter.notifyDataSetChanged();
+                updateListView();
 
                 makeHTMLFile();
                 mWeb.reload();
@@ -70,7 +69,7 @@ public class Fragment2 extends Fragment {
     private void initLayout() {
         listView = (ListView)mView.findViewById(R.id.listview_totalasset_frag2);
         list2Adapter = new List2Adapter(mView.getContext(),lists);
-        if(lists.size() != 0) listView.setAdapter(list2Adapter);
+        listView.setAdapter(list2Adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -80,7 +79,6 @@ public class Fragment2 extends Fragment {
     }
 
     private void updateInfoLists() {
-
         lists.clear();
         daires = (ArrayList) ir.getInfoDaires();
         for(int i = 0; i < daires.size(); i++) {
@@ -95,10 +93,11 @@ public class Fragment2 extends Fragment {
             list.setDairy(dairy);
             lists.add(list);
         }
-        updateOtherFragment();
     }
-    private void updateOtherFragment() {
-        mActivity.CallUpdate1();
+
+    private void updateListView() {
+        updateInfoLists();
+        list2Adapter.notifyDataSetChanged();
     }
 
     private void makeHTMLFile() {
