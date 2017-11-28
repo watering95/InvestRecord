@@ -56,7 +56,7 @@ public class List2Adapter extends BaseAdapter {
         dairy = mData.get(position).getDairy();
         date.setText(String.valueOf(dairy.getDate()));
         principal.setText(String.valueOf(dairy.getPrincipal()));
-        rate.setText(String.valueOf(dairy.getRate()));
+        rate.setText(String.format("%.2f",dairy.getRate()));
         evaluation.setText(String.valueOf(mData.get(position).getEvaluation()));
 
         return convertView;

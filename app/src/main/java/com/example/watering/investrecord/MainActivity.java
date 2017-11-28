@@ -20,12 +20,16 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private Spinner mGroupSpinner;
+    private Spinner mAccountSpinner;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
     private MainTabPagerAdapter mPagerAdapter;
     private ArrayAdapter<String> groupAdapter;
+    private ArrayAdapter<String> accountAdapter;
     private List<String> grouplists = new ArrayList<>();
+    private List<String> accountlists = new ArrayList<>();
     private List<Group> groups = new ArrayList<>();
+    private List<Account> accounts = new ArrayList<>();
     public IRResolver ir = new IRResolver();
 
     interface Callback {
@@ -41,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initLayout();
-        initDataBase();
         initGroupSpinner();
+        initAccountSpinner();
+        initDataBase();
     }
 
     @Override
@@ -83,37 +88,25 @@ public class MainActivity extends AppCompatActivity {
         this.m_callback4 = callback;
     }
 
-    public void Callback1() {
+    public void CallUpdate1() {
         if(m_condition && (m_callback1 != null)) {
             m_callback1.updateList();
         }
     }
-    public void Callback2() {
+    public void CallUpdate2() {
         if(m_condition && (m_callback2 != null)) {
             m_callback2.updateList();
         }
     }
-    public void Callback3() {
+    public void CallUpdate3() {
         if(m_condition && (m_callback3 != null)) {
             m_callback3.updateList();
         }
     }
-
-    public void inoutDialog(String selectedDate) {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(4, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-
-            }
-
-            @Override
-            public void onDeleteAll() {
-
-            }
-        });
-
-        dialog.setSelectedDate(selectedDate);
-        dialog.show(getFragmentManager(), "dialog");
+    public void CallUpdate4() {
+        if(m_condition && (m_callback4 != null)) {
+            m_callback4.updateList();
+        }
     }
 
     private void initLayout() {
@@ -154,15 +147,10 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initDataBase() {
         ir.getContentResolver(getContentResolver());
-
-        groups = ir.getGroups();
-        if(groups.isEmpty()) addGroupDialog();
-
-        ir.setCurrentGroup(0);
+        updateGroupSpinner();
+        updateAccountSpinner();
     }
     private void initGroupSpinner() {
-        updateGroupList();
-
         groupAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,grouplists);
 
         mGroupSpinner = (Spinner) findViewById(R.id.spinner_group);
@@ -170,24 +158,31 @@ public class MainActivity extends AppCompatActivity {
         mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Group group;
-
                 if(groups.size() != 0 ) {
-                    group = groups.get(position);
-                    ir.setCurrentGroup(group.getId());
+                    ir.setCurrentGroup(groups.get(position).getId());
                 }
-                if(m_condition && (m_callback1 != null)) {
-                    m_callback1.updateList();
-                }
-                if(m_condition && (m_callback2 != null)) {
-                    m_callback2.updateList();
-                }
-                if(m_condition && (m_callback3 != null)) {
-                    m_callback3.updateList();
-                }
-                if(m_condition && (m_callback4 != null)) {
-                    m_callback4.updateList();
-                }
+                updateAccountSpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+    private void initAccountSpinner() {
+        accountAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,accountlists);
+        mAccountSpinner = (Spinner) findViewById(R.id.spinner_account);
+        mAccountSpinner.setAdapter(accountAdapter);
+        mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ir.setCurrentAccount(accounts.get(position).getId());
+
+                CallUpdate1();
+                CallUpdate2();
+                CallUpdate3();
+                CallUpdate4();
             }
 
             @Override
@@ -197,13 +192,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void inoutDialog(String selectedDate) {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(4, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+
+            }
+
+            @Override
+            public void onDeleteAll() {
+
+            }
+        });
+
+        dialog.setSelectedDate(selectedDate);
+        dialog.show(getFragmentManager(), "dialog");
+    }
     private void addGroupDialog() {
         UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
                 if(!name.isEmpty()) ir.insertGroup(name);
-                updateGroupList();
-                if(grouplists.size() != 0) mGroupSpinner.setAdapter(groupAdapter);
+                updateGroupSpinner();
             }
 
             @Override
@@ -218,8 +228,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 if(!name.isEmpty()) ir.updateGroup(name);
-                updateGroupList();
-                if(grouplists.size() != 0) mGroupSpinner.setAdapter(groupAdapter);
+                updateGroupSpinner();
             }
 
             @Override
@@ -236,8 +245,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 ir.deleteGroup("name",new String[] {name});
-                updateGroupList();
-                if(grouplists.size() != 0) mGroupSpinner.setAdapter(groupAdapter);
+                updateGroupSpinner();
             }
 
             @Override
@@ -258,8 +266,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDeleteAll() {
                 ir.deleteAll();
-                updateGroupList();
-                if(grouplists.size() != 0) mGroupSpinner.setAdapter(groupAdapter);
+                updateGroupSpinner();
+                updateAccountSpinner();
             }
         });
 
@@ -270,16 +278,38 @@ public class MainActivity extends AppCompatActivity {
         grouplists.clear();
         groups = ir.getGroups();
 
-        if(groups.isEmpty()) {
-            grouplists.add("Empty");
-            ir.setCurrentGroup(0);
-            return;
-        }
+        if(groups.isEmpty()) return;
 
         for(int i = 0; i < groups.size(); i++) {
             grouplists.add(groups.get(i).getName());
         }
+    }
+    public void updateAccountList() {
+        accountlists.clear();
+        accounts = ir.getAccounts();
 
-        ir.setCurrentGroup(groups.get(0).getId());
+        if(accounts.isEmpty()) return;
+
+        for (int i = 0; i < accounts.size(); i++) {
+            accountlists.add(accounts.get(i).getNumber());
+        }
+    }
+
+    public void updateGroupSpinner() {
+        updateGroupList();
+        groupAdapter.notifyDataSetChanged();
+        if(groups.isEmpty()) ir.setCurrentGroup(0);
+        else ir.setCurrentGroup(groups.get(0).getId());
+    }
+    public void updateAccountSpinner() {
+        updateAccountList();
+        accountAdapter.notifyDataSetChanged();
+        if(accounts.isEmpty()) ir.setCurrentAccount(0);
+        else ir.setCurrentAccount(accounts.get(0).getId());
+
+        CallUpdate1();
+        CallUpdate2();
+        CallUpdate3();
+        CallUpdate4();
     }
 }

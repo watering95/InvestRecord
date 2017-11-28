@@ -23,13 +23,9 @@ public class Fragment3 extends Fragment {
     private View mView;
     private MainActivity mActivity;
     private IRResolver ir;
-    private Spinner mAccountSpinner;
     private DatePicker date;
 
-    private List<String> accountlists = new ArrayList<>();
-    private List<Account> accounts = new ArrayList<>();
-    private ArrayAdapter<String> accountAdapter;
-    MainActivity.Callback callbackfromMain;
+    private MainActivity.Callback callbackfromMain;
 
     private String selectedDate;
 
@@ -44,13 +40,11 @@ public class Fragment3 extends Fragment {
         ir = mActivity.ir;
 
         initLayout();
-        initAccountSpinner();
 
         callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
-                updateAccountList();
-                accountAdapter.notifyDataSetChanged();
+
             }
         };
         mActivity.setCallback3(callbackfromMain);
@@ -68,46 +62,5 @@ public class Fragment3 extends Fragment {
                 mActivity.inoutDialog(selectedDate);
             }
         });
-    }
-
-    private void initAccountSpinner() {
-        updateAccountList();
-
-        accountAdapter = new ArrayAdapter<String>(mActivity,R.layout.support_simple_spinner_dropdown_item,accountlists);
-        mAccountSpinner = (Spinner) mView.findViewById(R.id.spinner_account_frag3);
-        if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
-        mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Account account;
-                if(!accounts.isEmpty()) {
-                    account = accounts.get(position);
-                    ir.setCurrentAccount(account.getId());
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-    private void updateAccountList() {
-
-        accountlists.clear();
-        accounts = ir.getAccounts();
-
-        if(accounts.isEmpty()) {
-            accountlists.add("Empty");
-            ir.setCurrentAccount(0);
-            return;
-        }
-
-        for (int i = 0; i < accounts.size(); i++) {
-            accountlists.add(accounts.get(i).getNumber());
-        }
-
-        ir.setCurrentAccount(accounts.get(0).getId());
-
     }
 }

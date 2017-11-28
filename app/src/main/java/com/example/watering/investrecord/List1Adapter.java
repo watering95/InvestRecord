@@ -56,7 +56,7 @@ public class List1Adapter extends BaseAdapter {
 
         account.setText(String.valueOf(mData.get(position).getAccount().getNumber()));
         principal.setText(String.valueOf(list2.getDairy().getPrincipal()));
-        rate.setText(String.valueOf(list2.getDairy().getRate()));
+        rate.setText(String.format("%.2f",list2.getDairy().getRate()));
         evaluation.setText(String.valueOf(list2.getEvaluation()));
 
         return convertView;

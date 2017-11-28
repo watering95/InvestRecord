@@ -24,14 +24,10 @@ public class Fragment4 extends Fragment {
     private View mView;
     private MainActivity mActivity;
     private IRResolver ir;
-    private Spinner mAccountSpinner;
     private EditText mTxtAccount;
     private EditText mTxtInstitute;
     private EditText mTxtDiscription;
 
-    private List<String> accountlists = new ArrayList<>();
-    private List<Account> accounts = new ArrayList<>();
-    private ArrayAdapter<String> accountAdapter;
     private MainActivity.Callback callbackfromMain;
 
     public Fragment4() {
@@ -45,13 +41,25 @@ public class Fragment4 extends Fragment {
         ir = mActivity.ir;
 
         initLayout();
-        initAccountSpinner();
 
         callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
-                updateAccountList();
-                accountAdapter.notifyDataSetChanged();
+                int id = ir.getCurrentAccount();
+
+                Account account = ir.getAccount(String.valueOf(id));
+
+                if(account == null) {
+                    mTxtAccount.setText("");
+                    mTxtDiscription.setText("");
+                    mTxtInstitute.setText("");
+                }
+                else {
+                    mTxtAccount.setText(account.getNumber());
+                    mTxtDiscription.setText(account.getDiscription());
+                    mTxtInstitute.setText(account.getInstitute());
+                    ir.setCurrentAccount(account.getId());
+                }
             }
         };
         mActivity.setCallback4(callbackfromMain);
@@ -68,61 +76,6 @@ public class Fragment4 extends Fragment {
         mView.findViewById(R.id.button_regist_frag4).setOnClickListener(mClickListener);
         mView.findViewById(R.id.button_delete_frag4).setOnClickListener(mClickListener);
         mView.findViewById(R.id.button_edit_frag4).setOnClickListener(mClickListener);
-    }
-
-    private void initAccountSpinner() {
-        updateAccountList();
-
-        accountAdapter = new ArrayAdapter<String>(mActivity,R.layout.support_simple_spinner_dropdown_item,accountlists);
-        mAccountSpinner = (Spinner) mView.findViewById(R.id.spinner_account_frag4);
-        if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
-        mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                if(accountlists.get(0) == "Empty") {
-                    mTxtAccount.setText("");
-                    mTxtDiscription.setText("");
-                    mTxtInstitute.setText("");
-                }
-                else {
-                    Account account;
-
-                    account = accounts.get(position);
-
-                    mTxtAccount.setText(account.getNumber());
-                    mTxtDiscription.setText(account.getDiscription());
-                    mTxtInstitute.setText(account.getInstitute());
-                    ir.setCurrentAccount(account.getId());
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-    private void updateAccountList() {
-
-        accountlists.clear();
-        accounts = ir.getAccounts();
-
-        if(accounts.isEmpty()) {
-            accountlists.add("Empty");
-            ir.setCurrentAccount(0);
-            return;
-        }
-
-        for (int i = 0; i < accounts.size(); i++) {
-            accountlists.add(accounts.get(i).getNumber());
-        }
-
-        ir.setCurrentAccount(accounts.get(0).getId());
-
-        mActivity.Callback3();
-        mActivity.Callback1();
     }
 
     Button.OnClickListener mClickListener = new View.OnClickListener() {
@@ -142,9 +95,15 @@ public class Fragment4 extends Fragment {
                     if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
                     break;
             }
-            updateAccountList();
 
-            if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
+            updateOtherFragment();
         }
     };
+
+    private void updateOtherFragment() {
+        mActivity.updateAccountSpinner();
+        mActivity.CallUpdate3();
+        mActivity.CallUpdate2();
+        mActivity.CallUpdate1();
+    }
 }

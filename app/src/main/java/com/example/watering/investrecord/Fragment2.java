@@ -31,15 +31,11 @@ public class Fragment2 extends Fragment {
     private List2Adapter list2Adapter;
     private MainActivity mActivity;
     private IRResolver ir;
-    private Spinner mAccountSpinner;
     private WebView mWeb;
 
-    private List<String> accountlists = new ArrayList<>();
-    private List<Account> accounts = new ArrayList<>();
     private ArrayList<Info_Dairy> daires = new ArrayList<>();
     private ArrayList<Info_List2> lists = new ArrayList<>();
-    private ArrayAdapter<String> accountAdapter;
-    MainActivity.Callback callbackfromMain;
+    private MainActivity.Callback callbackfromMain;
 
     public Fragment2() {
     }
@@ -51,7 +47,6 @@ public class Fragment2 extends Fragment {
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
-        initAccountSpinner();
         updateInfoLists();
         initLayout();
         makeHTMLFile();
@@ -60,9 +55,6 @@ public class Fragment2 extends Fragment {
         callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
-                updateAccountList();
-                accountAdapter.notifyDataSetChanged();
-
                 updateInfoLists();
                 list2Adapter.notifyDataSetChanged();
 
@@ -87,51 +79,6 @@ public class Fragment2 extends Fragment {
         });
     }
 
-    private void initAccountSpinner() {
-        updateAccountList();
-
-        accountAdapter = new ArrayAdapter<String>(mActivity,R.layout.support_simple_spinner_dropdown_item,accountlists);
-        mAccountSpinner = (Spinner) mView.findViewById(R.id.spinner_account_frag2);
-        if(accountlists.size() != 0) mAccountSpinner.setAdapter(accountAdapter);
-        mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Account account;
-                if(!accounts.isEmpty()) {
-                    account = accounts.get(position);
-                    ir.setCurrentAccount(account.getId());
-                    updateInfoLists();
-                    list2Adapter.notifyDataSetChanged();
-                    makeHTMLFile();
-                    mWeb.reload();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-    private void updateAccountList() {
-
-        accountlists.clear();
-        accounts = ir.getAccounts();
-
-        if(accounts.isEmpty()) {
-            accountlists.add("Empty");
-            ir.setCurrentAccount(0);
-            return;
-        }
-
-        for (int i = 0; i < accounts.size(); i++) {
-            accountlists.add(accounts.get(i).getNumber());
-        }
-
-        ir.setCurrentAccount(accounts.get(0).getId());
-    }
-
     private void updateInfoLists() {
 
         lists.clear();
@@ -148,7 +95,10 @@ public class Fragment2 extends Fragment {
             list.setDairy(dairy);
             lists.add(list);
         }
-        mActivity.Callback1();
+        updateOtherFragment();
+    }
+    private void updateOtherFragment() {
+        mActivity.CallUpdate1();
     }
 
     private void makeHTMLFile() {
@@ -180,16 +130,16 @@ public class Fragment2 extends Fragment {
                     + "chart.draw(data, google.charts.Line.convertOptions(options));\n"
                     + "}\n";
 
-            String head = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n"
+            String script = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n"
                     + "<script type=\"text/javascript\">\n"
                     + "google.charts.load('current', {'packages':['line']});\n"
-                    + "google.charts.setOnLoadCallback(drawChart);\n\n"
+                    + "google.charts.setOnLoadCallback(drawChart);\n"
                     + function
                     + "</script>\n";
 
             String body = "<div id=\"linechart_material\"></div>\n";
 
-            String html = "<html>\n" + "<head>\n" + head + "</head>\n" + "<body>\n" + body + "</body>\n" + "</html>";
+            String html = "<!DOCTYPE html>\n" + "<head>\n" + script + "</head>\n" + "<body>\n" + body + "</body>\n" + "</html>";
 
             bw.write(html);
             bw.close();

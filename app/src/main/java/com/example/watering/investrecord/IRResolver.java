@@ -57,6 +57,27 @@ public class IRResolver {
         getData(CODE_INFO_DAIRY, URI_INFO_DAIRY,"id_account=?",selectionArgs, "date DESC");
         return dairies;
     }
+    public Account getAccount(String id_account) {
+        Cursor c;
+        Account account = new Account();
+
+        String where = "id_account=?";
+        String[] selectionArgs = {id_account};
+
+        c = cr.query(Uri.parse(URI_ACCOUNT), null, where, selectionArgs, null);
+
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        account.setGroup(c.getInt(c.getColumnIndex("id_group")));
+        account.setNumber(c.getString(c.getColumnIndex("num")));
+        account.setInstitute(c.getString(c.getColumnIndex("inst")));
+        account.setDiscription(c.getString(c.getColumnIndex("disc")));
+        account.setId(c.getInt(c.getColumnIndex("id_account")));
+
+        return account;
+    }
     public Info_IO getInfoIO(String account, String date) {
         Cursor c;
         Info_IO io = new Info_IO();
@@ -256,7 +277,6 @@ public class IRResolver {
                     if(cursor.isLast()) {
                         id_group = cursor.getInt(0);
                         id_group += 1;
-                        currentGroup = groups.get(0).getId();
                     }
                     break;
                 case CODE_ACCOUNT:
@@ -272,7 +292,6 @@ public class IRResolver {
                     if(cursor.isLast()) {
                         id_account = cursor.getInt(0);
                         id_account += 1;
-                        currentAccount = accounts.get(0).getId();
                     }
                     break;
                 case CODE_INFO_IO:

@@ -22,7 +22,7 @@ import java.util.List;
 
 public class UserDialogFragment extends DialogFragment {
 
-    private int type;
+    private int type, i_u;
     private UserListener listener;
     private List<Group> groups = new ArrayList<>();
     private List<String> lists = new ArrayList<>();
@@ -97,38 +97,6 @@ public class UserDialogFragment extends DialogFragment {
     public void setSelectedDate(String selectedDate) {
         this.selectedDate = selectedDate;
     }
-
-    Button.OnClickListener mClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            int input = 0, output = 0, evaluation = 0;
-
-            String in = txtInput.getText().toString();
-            String out = txtOutput.getText().toString();
-            String eval = txtEvaluation.getText().toString();
-
-            if(!in.isEmpty()) input = Integer.parseInt(in);
-            else input = 0;
-            if(!out.isEmpty()) output = Integer.parseInt(out);
-            else output = 0;
-            if(!eval.isEmpty()) evaluation = Integer.parseInt(eval);
-            else evaluation = 0;
-
-            switch(v.getId()) {
-                case R.id.button_regist_frag3:
-                    ir.insertInfoIO(selectedDate,input,output,evaluation);
-                    calInfoDairy(0,evaluation);
-                    break;
-                case R.id.button_edit_frag3:
-                    ir.updateInfoIO(selectedDate,input,output,evaluation);
-                    calInfoDairy(1,evaluation);
-                    break;
-                case R.id.button_delete_frag3:
-                    break;
-            }
-            mActivity.Callback2();
-            mActivity.Callback1();
-        }
-    };
 
     private void dialogAddGroup() {
         view = inflater.inflate(R.layout.dialog_addgroup, null);
@@ -213,12 +181,6 @@ public class UserDialogFragment extends DialogFragment {
                 listener.onWorkComplete("");
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
     }
     private void dialogInout() {
         view = inflater.inflate(R.layout.dialog_inout, null);
@@ -228,29 +190,51 @@ public class UserDialogFragment extends DialogFragment {
         txtEvaluation = (EditText) view.findViewById(R.id.editText_evaluation);
 
         Info_IO io = ir.getInfoIO(String.valueOf(ir.getCurrentAccount()),selectedDate);
+
         if(io == null) {
+            i_u = 0;
             txtInput.setText("");
             txtOutput.setText("");
             txtEvaluation.setText("");
         }
         else {
+            i_u = 1;
             txtInput.setText(String.valueOf(io.getInput()));
             txtOutput.setText(String.valueOf(io.getOutput()));
             txtEvaluation.setText(String.valueOf(io.getEvaluation()));
         }
 
-        view.findViewById(R.id.button_regist_frag3).setOnClickListener(mClickListener);
-        view.findViewById(R.id.button_edit_frag3).setOnClickListener(mClickListener);
-        view.findViewById(R.id.button_delete_frag3).setOnClickListener(mClickListener);
-
         builder.setView(view).setTitle("입출금 입력");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("등록", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onWorkComplete("");
+                int input, output, evaluation;
+                String in, out, eval;
+
+                in = txtInput.getText().toString();
+                out = txtOutput.getText().toString();
+                eval = txtEvaluation.getText().toString();
+
+                if(in.isEmpty()) in = "0";
+                if(out.isEmpty()) out = "0";
+                if(eval.isEmpty()) eval = "0";
+
+                input = Integer.parseInt(in);
+                output = Integer.parseInt(out);
+                evaluation = Integer.parseInt(eval);
+
+                switch (i_u) {
+                    case 0:
+                        ir.insertInfoIO(selectedDate,input,output,evaluation);
+                        break;
+                    case 1:
+                        ir.updateInfoIO(selectedDate,input,output,evaluation);
+                        break;
+                }
+                calInfoDairy(i_u,evaluation);
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
