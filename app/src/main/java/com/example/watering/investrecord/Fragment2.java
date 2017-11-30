@@ -40,17 +40,14 @@ public class Fragment2 extends Fragment {
     public Fragment2() {
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment2, container, false);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
-        initLayout();
-        updateListView();
         makeHTMLFile();
-        openWebView();
 
         callbackfromMain = new MainActivity.Callback() {
             @Override
@@ -62,6 +59,16 @@ public class Fragment2 extends Fragment {
             }
         };
         mActivity.setCallback2(callbackfromMain);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.fragment2, container, false);
+
+        initLayout();
+        updateListView();
+        openWebView();
 
         return mView;
     }
@@ -88,7 +95,7 @@ public class Fragment2 extends Fragment {
 
             dairy = daires.get(i);
 
-            io = ir.getInfoIO(String.valueOf(dairy.getAccount()), dairy.getDate());
+            io = ir.getInfoIO(dairy.getAccount(), dairy.getDate());
             list.setEvaluation(io.getEvaluation());
             list.setDairy(dairy);
             lists.add(list);

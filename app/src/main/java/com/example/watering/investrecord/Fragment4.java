@@ -89,7 +89,7 @@ public class Fragment4 extends Fragment {
                     if(!account.isEmpty()) ir.insertAccount(institute,account,discript);
                     break;
                 case R.id.button_edit_frag4:
-                    if(!account.isEmpty()) ir.updateAccount(institute,account,discript);
+                    if(!account.isEmpty()) ir.updateAccount(ir.getCurrentAccount(),institute,account,discript);
                     break;
                 case R.id.button_delete_frag4:
                     if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
@@ -102,8 +102,5 @@ public class Fragment4 extends Fragment {
 
     private void updateOtherFragment() {
         mActivity.updateAccountSpinner();
-        mActivity.CallUpdate3();
-        mActivity.CallUpdate2();
-        mActivity.CallUpdate1();
     }
 }

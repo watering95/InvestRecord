@@ -13,7 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -195,7 +198,7 @@ public class UserDialogFragment extends DialogFragment {
         txtOutput = (EditText) view.findViewById(R.id.editText_output);
         txtEvaluation = (EditText) view.findViewById(R.id.editText_evaluation);
 
-        Info_IO io = ir.getInfoIO(String.valueOf(ir.getCurrentAccount()),selectedDate);
+        Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
 
         if(io == null) {
             i_u = 0;
@@ -229,40 +232,79 @@ public class UserDialogFragment extends DialogFragment {
                 output = Integer.parseInt(out);
                 evaluation = Integer.parseInt(eval);
 
+                Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
+
                 switch (i_u) {
                     case 0:
                         ir.insertInfoIO(selectedDate,input,output,evaluation);
                         break;
                     case 1:
-                        ir.updateInfoIO(selectedDate,input,output,evaluation);
+                        ir.updateInfoIO(io.getId(),io.getDate(),input,output,evaluation);
                         break;
                 }
-                calInfoDairy(i_u,evaluation);
+                modifyInfoDiary(i_u);
             }
         });
         builder.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ir.deleteInfoIO("date",new String[] {selectedDate});
+                modifyInfoDiary(2);
             }
         });
     }
 
-    private void calInfoDairy(int select, int evaluation) {
+    private void modifyInfoDiary(int select) {
+        List<Info_Dairy> daires = ir.getInfoDaires();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date date;
+        String txtDate;
+        int evaluation;
+        int index = daires.size() - 1;
+
+        if(index < 0) {
+            evaluation = ir.getInfoIO(ir.getCurrentAccount(), selectedDate).getEvaluation();
+            calInfoDairy(select, selectedDate, evaluation);
+            return;
+        }
+
+        try {
+             do {
+                txtDate = daires.get(index).getDate();
+                date = df.parse(txtDate);
+                evaluation = ir.getInfoIO(ir.getCurrentAccount(), txtDate).getEvaluation();
+
+                if(date.before(df.parse(selectedDate))) {
+                    calInfoDairy(select,selectedDate,evaluation);
+                    break;
+                }
+                calInfoDairy(select, txtDate, evaluation);
+                index--;
+            } while(date.after(df.parse(selectedDate)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void calInfoDairy(int select, String date, int evaluation) {
         int sum_in, sum_out, principal;
         double rate = 0;
 
-        sum_in = ir.getSum(new String[]{"input"},selectedDate);
-        sum_out = ir.getSum(new String[]{"output"},selectedDate);
+
+        sum_in = ir.getSum(new String[]{"input"},date);
+        sum_out = ir.getSum(new String[]{"output"},date);
         principal = sum_in - sum_out;
-        if(principal !=0 && evaluation !=0) rate = (double)evaluation / (double)principal * 100 - 100;
+        if(principal != 0 && evaluation != 0) rate = (double)evaluation / (double)principal * 100 - 100;
+
+        Info_Dairy dairy = ir.getInfoDairy(String.valueOf(ir.getCurrentAccount()),selectedDate);
+
 
         switch(select) {
             case 0:
-                ir.insertInfoDairy(selectedDate,principal,rate);
+                ir.insertInfoDairy(date,principal,rate);
                 break;
             case 1:
-                ir.updateInfoDairy(selectedDate,principal,rate);
+                ir.updateInfoDairy(dairy.getId(),date,principal,rate);
                 break;
         }
     }

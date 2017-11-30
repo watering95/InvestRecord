@@ -12,7 +12,11 @@ public class Info_IO implements Serializable {
     int input;
     int output;
     int evaluation;
+    int id;
 
+    public void setId(int id) {
+        this.id = id;
+    }
     public void setDate(String date) {
         this.date = date;
     }
@@ -29,6 +33,9 @@ public class Info_IO implements Serializable {
         this.evaluation = evaluation;
     }
 
+    public int getId() {
+        return id;
+    }
     public String getDate() {
         return date;
     }

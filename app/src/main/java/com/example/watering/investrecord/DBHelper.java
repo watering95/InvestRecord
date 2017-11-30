@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -20,7 +21,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        String sql;
 
+        sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT ";
+
+        for (int i = 0; i< COLUMNS.length; i++) {
+            sql += ", " + COLUMNS[i];
+        }
+        sql += ");";
+        db.execSQL(sql);
     }
 
     public DBHelper(Context context) {
@@ -39,11 +49,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String sql;
 
-        sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (";
-        for (int i = 0; i< COLUMNS.length-1; i++) {
-            sql += COLUMNS[i] + ", ";
+        sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT ";
+
+        for (int i = 0; i< COLUMNS.length; i++) {
+            sql += ", " + COLUMNS[i];
         }
-        sql += COLUMNS[COLUMNS.length-1] + ");";
+        sql += ");";
         db.execSQL(sql);
     }
 

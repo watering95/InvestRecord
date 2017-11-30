@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
-                if(!name.isEmpty()) ir.updateGroup(name);
+                if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
                 updateGroupSpinner();
             }
 
@@ -298,13 +298,13 @@ public class MainActivity extends AppCompatActivity {
     public void updateGroupSpinner() {
         updateGroupList();
         groupAdapter.notifyDataSetChanged();
-        if(groups.isEmpty()) ir.setCurrentGroup(0);
+        if(groups.isEmpty()) ir.setCurrentGroup(-1);
         else ir.setCurrentGroup(groups.get(0).getId());
     }
     public void updateAccountSpinner() {
         updateAccountList();
         accountAdapter.notifyDataSetChanged();
-        if(accounts.isEmpty()) ir.setCurrentAccount(0);
+        if(accounts.isEmpty()) ir.setCurrentAccount(-1);
         else ir.setCurrentAccount(accounts.get(0).getId());
 
         CallUpdate1();

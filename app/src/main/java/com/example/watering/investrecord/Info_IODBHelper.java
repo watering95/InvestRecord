@@ -12,8 +12,7 @@ public class Info_IODBHelper extends DBHelper {
         super(context);
 
         TABLE_NAME = "tbl_Info_IO";
-        COLUMNS = new String [] {"date TEXT INTEGER PRIMARY KEY",
-                "input INTEGER","output INTEGER","evaluation INTEGER",
+        COLUMNS = new String [] { "date TEXT", "input INTEGER","output INTEGER","evaluation INTEGER",
                 "id_account INTEGER"};
     }
 }

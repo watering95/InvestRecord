@@ -12,8 +12,7 @@ public class AccountDBHelper extends DBHelper {
         super(context);
 
         TABLE_NAME = "tbl_Account";
-        COLUMNS = new String [] {"id_account INTEGER PRIMARY KEY",
-                "inst TEXT","num TEXT","disc TEXT",
+        COLUMNS = new String [] {"inst TEXT","num TEXT UNIQUE","disc TEXT",
                 "id_group INTEGER"};
     }
 }

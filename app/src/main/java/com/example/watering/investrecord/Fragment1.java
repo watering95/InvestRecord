@@ -100,7 +100,7 @@ public class Fragment1 extends Fragment {
                 dairy.setPrincipal(0);
                 dairy.setRate(0);
             }
-            io = ir.getInfoIO(account,dairy.getDate());
+            io = ir.getInfoIO(id,dairy.getDate());
             if(io == null) {
                 io = new Info_IO();
                 io.setEvaluation(0);
