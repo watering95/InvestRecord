@@ -260,11 +260,11 @@ public class UserDialogFragment extends DialogFragment {
         Date date;
         String txtDate;
         int evaluation;
-        int index = daires.size() - 1;
+        int index = 0;
 
-        if(index < 0) {
+        if(daires.isEmpty()) {
             evaluation = ir.getInfoIO(ir.getCurrentAccount(), selectedDate).getEvaluation();
-            calInfoDairy(select, selectedDate, evaluation);
+            calInfoDairy(select,0,selectedDate,evaluation);
             return;
         }
 
@@ -274,37 +274,34 @@ public class UserDialogFragment extends DialogFragment {
                 date = df.parse(txtDate);
                 evaluation = ir.getInfoIO(ir.getCurrentAccount(), txtDate).getEvaluation();
 
-                if(date.before(df.parse(selectedDate))) {
-                    calInfoDairy(select,selectedDate,evaluation);
-                    break;
+                if(df.parse(selectedDate).compareTo(date) > 0) {
+                    calInfoDairy(0,daires.get(index).getId(),selectedDate,evaluation);
                 }
-                calInfoDairy(select, txtDate, evaluation);
-                index--;
-            } while(date.after(df.parse(selectedDate)));
+                else {
+                    calInfoDairy(1,daires.get(index).getId(),txtDate,evaluation);
+                    index++;
+                }
+            } while(df.parse(selectedDate).compareTo(date) < 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void calInfoDairy(int select, String date, int evaluation) {
+    private void calInfoDairy(int select, int id, String date, int evaluation) {
         int sum_in, sum_out, principal;
         double rate = 0;
-
 
         sum_in = ir.getSum(new String[]{"input"},date);
         sum_out = ir.getSum(new String[]{"output"},date);
         principal = sum_in - sum_out;
         if(principal != 0 && evaluation != 0) rate = (double)evaluation / (double)principal * 100 - 100;
 
-        Info_Dairy dairy = ir.getInfoDairy(String.valueOf(ir.getCurrentAccount()),selectedDate);
-
-
         switch(select) {
             case 0:
                 ir.insertInfoDairy(date,principal,rate);
                 break;
             case 1:
-                ir.updateInfoDairy(dairy.getId(),date,principal,rate);
+                ir.updateInfoDairy(id,date,principal,rate);
                 break;
         }
     }
