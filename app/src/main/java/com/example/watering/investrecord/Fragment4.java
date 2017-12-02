@@ -33,36 +33,28 @@ public class Fragment4 extends Fragment {
     public Fragment4() {
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment4, container, false);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
-
-        initLayout();
 
         callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
-                int id = ir.getCurrentAccount();
-
-                Account account = ir.getAccount(String.valueOf(id));
-
-                if(account == null) {
-                    mTxtAccount.setText("");
-                    mTxtDiscription.setText("");
-                    mTxtInstitute.setText("");
-                }
-                else {
-                    mTxtAccount.setText(account.getNumber());
-                    mTxtDiscription.setText(account.getDiscription());
-                    mTxtInstitute.setText(account.getInstitute());
-                    ir.setCurrentAccount(account.getId());
-                }
+                update();
             }
         };
         mActivity.setCallback4(callbackfromMain);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.fragment4, container, false);
+
+        initLayout();
 
         return mView;
     }
@@ -72,6 +64,8 @@ public class Fragment4 extends Fragment {
         mTxtAccount = (EditText) mView.findViewById(R.id.editText_account_frag4);
         mTxtInstitute = (EditText) mView.findViewById(R.id.editText_institute);
         mTxtDiscription = (EditText) mView.findViewById(R.id.editText_discription);
+
+        update();
 
         mView.findViewById(R.id.button_regist_frag4).setOnClickListener(mClickListener);
         mView.findViewById(R.id.button_delete_frag4).setOnClickListener(mClickListener);
@@ -96,11 +90,25 @@ public class Fragment4 extends Fragment {
                     break;
             }
 
-            updateOtherFragment();
+            mActivity.updateAccountSpinner();
         }
     };
 
-    private void updateOtherFragment() {
-        mActivity.updateAccountSpinner();
+    private void update() {
+        int id = ir.getCurrentAccount();
+
+        Account account = ir.getAccount(String.valueOf(id));
+
+        if(account == null) {
+            mTxtAccount.setText("");
+            mTxtDiscription.setText("");
+            mTxtInstitute.setText("");
+        }
+        else {
+            mTxtAccount.setText(account.getNumber());
+            mTxtDiscription.setText(account.getDiscription());
+            mTxtInstitute.setText(account.getInstitute());
+            ir.setCurrentAccount(account.getId());
+        }
     }
 }

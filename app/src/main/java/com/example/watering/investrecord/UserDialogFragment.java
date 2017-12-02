@@ -296,7 +296,6 @@ public class UserDialogFragment extends DialogFragment {
             e.printStackTrace();
         }
     }
-
     private void calInfoDairy(int select, int id, String date, int evaluation) {
         int sum_in, sum_out, principal;
         double rate = 0;
@@ -314,5 +313,6 @@ public class UserDialogFragment extends DialogFragment {
                 ir.updateInfoDairy(id,date,principal,rate);
                 break;
         }
+        mActivity.CallUpdate2();
     }
 }

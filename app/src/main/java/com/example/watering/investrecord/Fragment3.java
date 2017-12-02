@@ -32,14 +32,12 @@ public class Fragment3 extends Fragment {
     public Fragment3() {
     }
 
-    @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment3, container, false);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
-
-        initLayout();
 
         callbackfromMain = new MainActivity.Callback() {
             @Override
@@ -48,6 +46,14 @@ public class Fragment3 extends Fragment {
             }
         };
         mActivity.setCallback3(callbackfromMain);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.fragment3, container, false);
+
+        initLayout();
 
         return mView;
     }

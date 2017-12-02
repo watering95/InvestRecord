@@ -36,15 +36,12 @@ public class Fragment1 extends Fragment {
     public Fragment1() {
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment1, container, false);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
-
-        updateInfoLists();
-        initLayout();
 
         callbackfromMain = new MainActivity.Callback() {
             @Override
@@ -57,6 +54,15 @@ public class Fragment1 extends Fragment {
             }
         };
         mActivity.setCallback1(callbackfromMain);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.fragment1, container, false);
+
+        updateInfoLists();
+        initLayout();
 
         return mView;
     }
