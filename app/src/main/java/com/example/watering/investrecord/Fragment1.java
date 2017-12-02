@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,8 +49,10 @@ public class Fragment1 extends Fragment {
         callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
+                DecimalFormat df = new DecimalFormat("#,###");
+
                 updateInfoLists();
-                mTxtTotal.setText(String.valueOf(sum));
+                mTxtTotal.setText(df.format(sum));
                 listAdapter.notifyDataSetChanged();
             }
         };
@@ -59,8 +62,10 @@ public class Fragment1 extends Fragment {
     }
 
     private void initLayout() {
+        DecimalFormat df = new DecimalFormat("#,###");
+
         mTxtTotal = (TextView)mView.findViewById(R.id.text_total);
-        mTxtTotal.setText(String.valueOf(sum));
+        mTxtTotal.setText(df.format(sum));
         listView = (ListView)mView.findViewById(R.id.listview_totalasset_frag1);
         listAdapter = new List1Adapter(mView.getContext(),lists);
         if(lists.size() != 0) listView.setAdapter(listAdapter);

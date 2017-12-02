@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -52,12 +53,13 @@ public class List2Adapter extends BaseAdapter {
         TextView principal = (TextView)convertView.findViewById(R.id.list_2);
         TextView evaluation = (TextView)convertView.findViewById(R.id.list_3);
         TextView rate = (TextView)convertView.findViewById(R.id.list_4);
+        DecimalFormat df = new DecimalFormat("#,###");
 
         dairy = mData.get(position).getDairy();
         date.setText(String.valueOf(dairy.getDate()));
-        principal.setText(String.valueOf(dairy.getPrincipal()));
+        principal.setText(df.format(dairy.getPrincipal()));
         rate.setText(String.format("%.2f",dairy.getRate()));
-        evaluation.setText(String.valueOf(mData.get(position).getEvaluation()));
+        evaluation.setText(df.format(mData.get(position).getEvaluation()));
 
         return convertView;
     }

@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -194,6 +196,8 @@ public class UserDialogFragment extends DialogFragment {
     private void dialogInout() {
         view = inflater.inflate(R.layout.dialog_inout, null);
 
+        DecimalFormat df = new DecimalFormat("#,###");
+
         txtInput = (EditText) view.findViewById(R.id.editText_input);
         txtOutput = (EditText) view.findViewById(R.id.editText_output);
         txtEvaluation = (EditText) view.findViewById(R.id.editText_evaluation);
@@ -208,17 +212,19 @@ public class UserDialogFragment extends DialogFragment {
         }
         else {
             i_u = 1;
-            txtInput.setText(String.valueOf(io.getInput()));
-            txtOutput.setText(String.valueOf(io.getOutput()));
-            txtEvaluation.setText(String.valueOf(io.getEvaluation()));
+            txtInput.setText(df.format(io.getInput()));
+            txtOutput.setText(df.format(io.getOutput()));
+            txtEvaluation.setText(df.format(io.getEvaluation()));
         }
 
         builder.setView(view).setTitle("입출금 입력");
         builder.setPositiveButton("등록", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int input, output, evaluation;
+                int input=0, output=0, evaluation=0;
                 String in, out, eval;
+
+                DecimalFormat df = new DecimalFormat("#,###");
 
                 in = txtInput.getText().toString();
                 out = txtOutput.getText().toString();
@@ -228,9 +234,13 @@ public class UserDialogFragment extends DialogFragment {
                 if(out.isEmpty()) out = "0";
                 if(eval.isEmpty()) eval = "0";
 
-                input = Integer.parseInt(in);
-                output = Integer.parseInt(out);
-                evaluation = Integer.parseInt(eval);
+                try {
+                    input = df.parse(in).intValue();
+                    output = df.parse(out).intValue();
+                    evaluation = df.parse(eval).intValue();
+                } catch (ParseException e) {
+
+                }
 
                 Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
 
