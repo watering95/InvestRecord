@@ -285,16 +285,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void updateAccountList() {
+        String str;
+        Account account;
+
         accountlists.clear();
         accounts = ir.getAccounts();
 
         if(accounts.isEmpty()) return;
 
         for (int i = 0; i < accounts.size(); i++) {
-            accountlists.add(accounts.get(i).getNumber());
+            account = accounts.get(i);
+            str = account.getNumber() + " " + account.getInstitute() + " " + account.getDiscription();
+            accountlists.add(str);
         }
     }
-
     public void updateGroupSpinner() {
         updateGroupList();
         groupAdapter.notifyDataSetChanged();

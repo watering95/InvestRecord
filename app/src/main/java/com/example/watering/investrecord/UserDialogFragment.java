@@ -262,6 +262,12 @@ public class UserDialogFragment extends DialogFragment {
                 modifyInfoDiary(2);
             }
         });
+        builder.setNeutralButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
     }
 
     private void modifyInfoDiary(int select) {
