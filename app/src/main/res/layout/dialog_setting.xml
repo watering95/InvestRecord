@@ -10,5 +10,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/button_delete_all"
         android:text="전부삭제"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_delete_db"
+        android:text="DB 파일 삭제"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_backup_db"
+        android:text="DB 파일 백업"/>
 
 </LinearLayout>

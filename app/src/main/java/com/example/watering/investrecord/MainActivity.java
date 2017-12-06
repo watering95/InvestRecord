@@ -1,11 +1,15 @@
 package com.example.watering.investrecord;
 
+import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +17,25 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.drive.CreateFileActivityOptions;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveClient;
+import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +53,15 @@ public class MainActivity extends AppCompatActivity {
     private List<Group> groups = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
     public IRResolver ir = new IRResolver();
+
+    private GoogleSignInClient mGoogleSignInClient;
+    private DriveClient mDriveClient;
+    private DriveResourceClient mDriveResourceClient;
+
+    private static final String TAG = "InvestRecord";
+    private static final int REQUEST_CODE_SIGN_IN = 0;
+    private static final int REQUEST_CODE_CREATOR = 1;
+    private FileInputStream mDBFile;
 
     interface Callback {
         void updateList();
@@ -260,7 +291,12 @@ public class MainActivity extends AppCompatActivity {
         UserDialogFragment dialog = UserDialogFragment.newInstance(3, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
+                if(name.equals("del")) {
 
+                }
+                else if(name.equals("backup")) {
+                    signIn();
+                }
             }
 
             @Override
@@ -315,5 +351,115 @@ public class MainActivity extends AppCompatActivity {
         CallUpdate2();
         CallUpdate3();
         CallUpdate4();
+    }
+
+    private void signIn() {
+        Log.i(TAG, "Start sign in");
+        mGoogleSignInClient = buildGoogleSignInClient();
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+    }
+    private void saveFileToDrive() {
+        Log.i(TAG, "Load DB File");
+        final FileInputStream file = mDBFile;
+
+        mDriveResourceClient
+        .createContents()
+        .continueWithTask(
+            new Continuation<DriveContents, Task<Void>>() {
+                @Override
+                public Task<Void> then(@NonNull Task<DriveContents> task) throws Exception {
+                    return createFileIntentSender(task.getResult(), file);
+                }
+            }
+        )
+        .addOnFailureListener(
+            new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.w(TAG, "Failed to create new contents.", e);
+                }
+            }
+        );
+    }
+
+    private GoogleSignInClient buildGoogleSignInClient() {
+        GoogleSignInOptions signInOptions =
+            new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(Drive.SCOPE_FILE)
+                .build();
+        return GoogleSignIn.getClient(this,signInOptions);
+    }
+    private Task<Void> createFileIntentSender(DriveContents driveContents, FileInputStream file) {
+        Log.i(TAG, "New contents created.");
+        OutputStream outputStream = driveContents.getOutputStream();
+
+        byte[] readBuffer = new byte[1024];
+
+        try {
+            while(file.read(readBuffer,0,readBuffer.length) != -1) {
+                outputStream.write(readBuffer);
+            }
+        } catch (IOException e) {
+            Log.w(TAG, "Unable to write file contents.", e);
+        }
+
+        Calendar today = Calendar.getInstance();
+        String filename = String.format("InvestRecord_%d%02d%02d.db",today.get(today.YEAR),today.get(today.MONTH),today.get(today.DATE));
+
+        MetadataChangeSet metadataChangeSet =
+            new MetadataChangeSet.Builder()
+                .setMimeType("application/x-sqlite3")
+                .setTitle(filename)
+                .build();
+
+        CreateFileActivityOptions createFileActivityOptions =
+            new CreateFileActivityOptions.Builder()
+                .setInitialMetadata(metadataChangeSet)
+                .setInitialDriveContents(driveContents)
+                .build();
+
+        return mDriveClient
+            .newCreateFileActivityIntentSender(createFileActivityOptions)
+            .continueWith(
+               new Continuation<IntentSender, Void>() {
+                   @Override
+                   public Void then(@NonNull Task<IntentSender> task) throws Exception {
+                       startIntentSenderForResult(task.getResult(), REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                       return null;
+                   }
+               }
+            );
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_IN:
+                Log.i(TAG, "Sign in request code");
+                if(resultCode == RESULT_OK) {
+                    Log.i(TAG, "Singed in successfully.");
+                    mDriveClient = Drive.getDriveClient(this, GoogleSignIn.getLastSignedInAccount(this));
+                    mDriveResourceClient = Drive.getDriveResourceClient(this, GoogleSignIn.getLastSignedInAccount(this));
+
+                    try {
+                        String file = getFilesDir().toString();
+                        file = file.substring(0,file.length()-5) + "databases/InvestRecord.db";
+                        mDBFile = new FileInputStream(file);
+                    } catch (FileNotFoundException e) {
+                        Log.i(TAG, "DB File not existed.");
+                        return;
+                    }
+
+                    saveFileToDrive();
+                }
+                break;
+            case REQUEST_CODE_CREATOR:
+                Log.i(TAG, "creator request code");
+                if(resultCode == RESULT_OK) {
+                    Log.i(TAG, "REQUEST_CODE_CREATOR successed.");
+                }
+                break;
+        }
     }
 }

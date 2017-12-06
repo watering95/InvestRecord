@@ -38,7 +38,7 @@ public class UserDialogFragment extends DialogFragment {
     private View view;
     private ArrayAdapter<String> adapter;
     private ListView list;
-    private Button btn;
+    private Button btn_delete,btn_delete_file,btn_backup_file;
     private LayoutInflater inflater;
     private AlertDialog.Builder builder;
 
@@ -177,11 +177,26 @@ public class UserDialogFragment extends DialogFragment {
     }
     private void dialogSetting() {
         view = inflater.inflate(R.layout.dialog_setting, null);
-        btn = (Button)view.findViewById(R.id.button_delete_all);
-        btn.setOnClickListener(new View.OnClickListener() {
+        btn_delete = (Button)view.findViewById(R.id.button_delete_all);
+        btn_delete_file = (Button)view.findViewById(R.id.button_delete_db);
+        btn_backup_file = (Button)view.findViewById(R.id.button_backup_db);
+
+        btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onDeleteAll();
+            }
+        });
+        btn_delete_file.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onWorkComplete("del");
+            }
+        });
+        btn_backup_file.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onWorkComplete("backup");
             }
         });
 
