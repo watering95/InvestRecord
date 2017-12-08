@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,16 +20,14 @@ import java.util.List;
  * Created by watering on 17. 10. 21.
  */
 
+@SuppressWarnings({"ALL", "DefaultFileTemplate"})
 public class Fragment1 extends Fragment {
 
     private View mView;
     private TextView mTxtTotal;
-    private ListView listView;
     private List1Adapter listAdapter;
-    private MainActivity mActivity;
     private IRResolver ir;
-    private ArrayList<Info_List1> lists = new ArrayList<>();
-    private MainActivity.Callback callbackfromMain;
+    private final ArrayList<Info_List1> lists = new ArrayList<>();
     private int sum;
 
     public Fragment1() {
@@ -40,10 +37,10 @@ public class Fragment1 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mActivity = (MainActivity) getActivity();
+        MainActivity mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
-        callbackfromMain = new MainActivity.Callback() {
+        MainActivity.Callback callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
                 DecimalFormat df = new DecimalFormat("#,###");
@@ -70,9 +67,9 @@ public class Fragment1 extends Fragment {
     private void initLayout() {
         DecimalFormat df = new DecimalFormat("#,###");
 
-        mTxtTotal = (TextView)mView.findViewById(R.id.text_total);
+        mTxtTotal = mView.findViewById(R.id.text_total);
         mTxtTotal.setText(df.format(sum));
-        listView = (ListView)mView.findViewById(R.id.listview_totalasset_frag1);
+        ListView listView = mView.findViewById(R.id.listview_totalasset_frag1);
         listAdapter = new List1Adapter(mView.getContext(),lists);
         if(lists.size() != 0) listView.setAdapter(listAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -106,7 +103,7 @@ public class Fragment1 extends Fragment {
                 long now = System.currentTimeMillis();
                 Date date = new Date(now);
 
-                dairy.setDate(dateFormat.format(date).toString());
+                dairy.setDate(dateFormat.format(date));
                 dairy.setAccount(id);
                 dairy.setPrincipal(0);
                 dairy.setRate(0);

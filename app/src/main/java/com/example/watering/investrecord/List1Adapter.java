@@ -9,16 +9,18 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 11. 17.
  */
 
-public class List1Adapter extends BaseAdapter {
+@SuppressWarnings("ALL")
+class List1Adapter extends BaseAdapter {
 
-    Context mContext;
-    ArrayList<Info_List1> mData;
-    LayoutInflater inflater;
+    private final Context mContext;
+    private final ArrayList<Info_List1> mData;
+    private final LayoutInflater inflater;
 
     public List1Adapter(Context context, ArrayList<Info_List1> data) {
         mContext = context;
@@ -48,17 +50,17 @@ public class List1Adapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.layout_list,parent,false);
         }
 
-        TextView account = (TextView)convertView.findViewById(R.id.list_1);
-        TextView principal = (TextView)convertView.findViewById(R.id.list_2);
-        TextView evaluation = (TextView)convertView.findViewById(R.id.list_3);
-        TextView rate = (TextView)convertView.findViewById(R.id.list_4);
+        TextView account = convertView.findViewById(R.id.list_1);
+        TextView principal = convertView.findViewById(R.id.list_2);
+        TextView evaluation = convertView.findViewById(R.id.list_3);
+        TextView rate = convertView.findViewById(R.id.list_4);
 
         Info_List2 list2 = mData.get(position).getList2();
         DecimalFormat df = new DecimalFormat("#,###");
 
         account.setText(String.valueOf(mData.get(position).getAccount().getNumber()));
         principal.setText(df.format(list2.getDairy().getPrincipal()));
-        rate.setText(String.format("%.2f",list2.getDairy().getRate()));
+        rate.setText(String.format(Locale.getDefault(),"%.2f",list2.getDairy().getRate()));
         evaluation.setText(df.format(list2.getEvaluation()));
 
         return convertView;

@@ -4,7 +4,8 @@ package com.example.watering.investrecord;
  * Created by watering on 17. 10. 23.
  */
 
-public class Info_List1 {
+@SuppressWarnings("ALL")
+class Info_List1 {
     private Account account;
     private Info_List2 list2;
 

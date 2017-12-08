@@ -6,12 +6,13 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
+@SuppressWarnings({"ALL", "DefaultFileTemplate"})
 public class Info_Dairy implements Serializable {
-    String date;
-    int id_account;
-    int principal;
-    double rate;
-    int id;
+    private String date;
+    private int id_account;
+    private int principal;
+    private double rate;
+    private int id;
 
     public void setId(int id) {
         this.id = id;

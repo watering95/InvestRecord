@@ -10,32 +10,27 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by watering on 17. 10. 21.
  */
 
+@SuppressWarnings({"ALL", "DefaultFileTemplate"})
 public class Fragment2 extends Fragment {
 
     private View mView;
-    private ListView listView;
     private List2Adapter list2Adapter;
     private MainActivity mActivity;
     private IRResolver ir;
     private WebView mWeb;
 
-    private ArrayList<Info_Dairy> daires = new ArrayList<>();
-    private ArrayList<Info_List2> lists = new ArrayList<>();
-    private MainActivity.Callback callbackfromMain;
+    private final ArrayList<Info_List2> lists = new ArrayList<>();
 
     public Fragment2() {
     }
@@ -49,7 +44,7 @@ public class Fragment2 extends Fragment {
 
         makeHTMLFile();
 
-        callbackfromMain = new MainActivity.Callback() {
+        MainActivity.Callback callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
                 updateListView();
@@ -74,7 +69,7 @@ public class Fragment2 extends Fragment {
     }
 
     private void initLayout() {
-        listView = (ListView)mView.findViewById(R.id.listview_totalasset_frag2);
+        ListView listView = mView.findViewById(R.id.listview_totalasset_frag2);
         list2Adapter = new List2Adapter(mView.getContext(),lists);
         listView.setAdapter(list2Adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -87,7 +82,7 @@ public class Fragment2 extends Fragment {
 
     private void updateInfoLists() {
         lists.clear();
-        daires = (ArrayList) ir.getInfoDaires();
+        ArrayList<Info_Dairy> daires = (ArrayList<Info_Dairy>) ir.getInfoDaires();
         for(int i = 0; i < daires.size(); i++) {
             Info_IO io;
             Info_Dairy dairy;
@@ -111,19 +106,19 @@ public class Fragment2 extends Fragment {
         try{
             BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph.html",false));
 
-            String data = new String();
+            StringBuilder data = new StringBuilder();
             String date;
             int size = lists.size();
             if(size != 0) {
                 for (int i = size - 1; i > 0; i--) {
                     date = "new Date('" + lists.get(i).getDairy().getDate() + "')";
-                    data += "[" + date + ", " + String.valueOf(lists.get(i).getEvaluation()) + "],\n";
+                    data.append("[").append(date).append(", ").append(String.valueOf(lists.get(i).getEvaluation())).append("],\n");
                 }
                 date = "new Date('" + lists.get(0).getDairy().getDate() + "')";
-                data += "[" + date + ", " + String.valueOf(lists.get(0).getEvaluation()) + "]\n";
+                data.append("[").append(date).append(", ").append(String.valueOf(lists.get(0).getEvaluation())).append("]\n");
             }
             else {
-                data = "[0 , 0]\n";
+                data = new StringBuilder("[0 , 0]\n");
             }
 
             String accountnumber;
@@ -165,7 +160,7 @@ public class Fragment2 extends Fragment {
     }
 
     private void openWebView() {
-        mWeb = (WebView)mView.findViewById(R.id.web);
+        mWeb = mView.findViewById(R.id.web);
         mWeb.setWebViewClient(new WebViewClient());
         WebSettings set = mWeb.getSettings();
         set.setJavaScriptEnabled(true);

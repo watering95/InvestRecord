@@ -6,13 +6,14 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
+@SuppressWarnings("ALL")
 public class Info_IO implements Serializable {
-    String date;
-    int id_account;
-    int input;
-    int output;
-    int evaluation;
-    int id;
+    private String date;
+    private int id_account;
+    private int input;
+    private int output;
+    private int evaluation;
+    private int id;
 
     public void setId(int id) {
         this.id = id;

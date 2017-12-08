@@ -12,18 +12,19 @@ import android.support.annotation.Nullable;
  * Created by watering on 17. 10. 21.
  */
 
+@SuppressWarnings("ALL")
 public class IRProvider extends ContentProvider {
-    static final String AUTHORITY = "watering.investrecord.provider";
-    static final String PATH_GROUP = "group";
-    static final String PATH_ACCOUNT = "account";
-    static final String PATH_INFO_IO = "info_io";
-    static final String PATH_INFO_DAIRY = "info_dairy";
-    static final int CODE_GROUP = 0;
-    static final int CODE_ACCOUNT = 1;
-    static final int CODE_INFO_IO = 2;
-    static final int CODE_INFO_DAIRY = 3;
+    private static final String AUTHORITY = "watering.investrecord.provider";
+    private static final String PATH_GROUP = "group";
+    private static final String PATH_ACCOUNT = "account";
+    private static final String PATH_INFO_IO = "info_io";
+    private static final String PATH_INFO_DAIRY = "info_dairy";
+    private static final int CODE_GROUP = 0;
+    private static final int CODE_ACCOUNT = 1;
+    private static final int CODE_INFO_IO = 2;
+    private static final int CODE_INFO_DAIRY = 3;
 
-    static final UriMatcher Matcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final UriMatcher Matcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
         Matcher.addURI(AUTHORITY,PATH_GROUP,CODE_GROUP);
         Matcher.addURI(AUTHORITY,PATH_ACCOUNT,CODE_ACCOUNT);
@@ -31,10 +32,10 @@ public class IRProvider extends ContentProvider {
         Matcher.addURI(AUTHORITY,PATH_INFO_DAIRY,CODE_INFO_DAIRY);
     }
 
-    GroupDBHelper DB_group;
-    AccountDBHelper DB_account;
-    Info_DairyDBHelper DB_info_dairy;
-    Info_IODBHelper DB_info_IO;
+    private GroupDBHelper DB_group;
+    private AccountDBHelper DB_account;
+    private Info_DairyDBHelper DB_info_dairy;
+    private Info_IODBHelper DB_info_IO;
 
     public boolean onCreate() {
         DB_group = new GroupDBHelper(getContext());
@@ -51,13 +52,13 @@ public class IRProvider extends ContentProvider {
 
         switch (Matcher.match(uri)) {
             case CODE_GROUP:
-                return DB_group.query(projection, selection, selectionArgs, null, null, sortOrder);
+                return DB_group.query(projection, selection, selectionArgs, sortOrder);
             case CODE_ACCOUNT:
-                return DB_account.query(projection, selection, selectionArgs, null, null, sortOrder);
+                return DB_account.query(projection, selection, selectionArgs, sortOrder);
             case CODE_INFO_IO:
-                return DB_info_IO.query(projection, selection, selectionArgs, null, null, sortOrder);
+                return DB_info_IO.query(projection, selection, selectionArgs, sortOrder);
             case CODE_INFO_DAIRY:
-                return DB_info_dairy.query(projection, selection, selectionArgs, null, null, sortOrder);
+                return DB_info_dairy.query(projection, selection, selectionArgs, sortOrder);
             default:
                 return null;
         }

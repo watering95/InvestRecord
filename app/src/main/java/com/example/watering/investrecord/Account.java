@@ -6,12 +6,13 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
+@SuppressWarnings("ALL")
 public class Account implements Serializable {
-    int id_account;
-    String institute;
-    String number;
-    String discription;
-    int id_group;
+    private int id_account;
+    private String institute;
+    private String number;
+    private String discription;
+    private int id_group;
 
     public void setId(int id_account) {
         this.id_account = id_account;
@@ -32,9 +33,7 @@ public class Account implements Serializable {
     public int getId() {
         return id_account;
     }
-    public int getGroup() {
-        return id_group;
-    }
+
     public String getNumber() {
         return number;
     }

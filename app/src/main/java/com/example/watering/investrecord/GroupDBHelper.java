@@ -6,7 +6,8 @@ import android.content.Context;
  * Created by watering on 17. 10. 21.
  */
 
-public class GroupDBHelper extends DBHelper {
+@SuppressWarnings("ALL")
+class GroupDBHelper extends DBHelper {
 
     public GroupDBHelper(Context context) {
         super(context);

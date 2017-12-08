@@ -6,7 +6,8 @@ import android.content.Context;
  * Created by watering on 17. 10. 21.
  */
 
-public class Info_DairyDBHelper extends DBHelper {
+@SuppressWarnings("ALL")
+class Info_DairyDBHelper extends DBHelper {
 
     public Info_DairyDBHelper(Context context) {
         super(context);

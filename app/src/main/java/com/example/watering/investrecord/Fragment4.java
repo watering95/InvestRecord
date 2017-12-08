@@ -13,6 +13,7 @@ import android.widget.EditText;
  * Created by watering on 17. 10. 21.
  */
 
+@SuppressWarnings({"ALL", "DefaultFileTemplate"})
 public class Fragment4 extends Fragment {
 
     private View mView;
@@ -22,8 +23,6 @@ public class Fragment4 extends Fragment {
     private EditText mTxtInstitute;
     private EditText mTxtDiscription;
     private int i_u = 0;
-
-    private MainActivity.Callback callbackfromMain;
 
     public Fragment4() {
     }
@@ -35,7 +34,7 @@ public class Fragment4 extends Fragment {
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
-        callbackfromMain = new MainActivity.Callback() {
+        MainActivity.Callback callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
                 update();
@@ -56,9 +55,9 @@ public class Fragment4 extends Fragment {
 
     private void initLayout() {
 
-        mTxtAccount = (EditText) mView.findViewById(R.id.editText_account_frag4);
-        mTxtInstitute = (EditText) mView.findViewById(R.id.editText_institute);
-        mTxtDiscription = (EditText) mView.findViewById(R.id.editText_discription);
+        mTxtAccount = mView.findViewById(R.id.editText_account_frag4);
+        mTxtInstitute = mView.findViewById(R.id.editText_institute);
+        mTxtDiscription = mView.findViewById(R.id.editText_description);
 
         update();
 
@@ -66,7 +65,7 @@ public class Fragment4 extends Fragment {
         mView.findViewById(R.id.button_delete_frag4).setOnClickListener(mClickListener);
     }
 
-    Button.OnClickListener mClickListener = new View.OnClickListener() {
+    private final Button.OnClickListener mClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             String account = mTxtAccount.getText().toString();
             String institute = mTxtInstitute.getText().toString();

@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">InvestRecord</string>
+    <string name="group">그룹</string>
+    <string name="account">계좌번호</string>
+    <string name="group_name">그룹명</string>
+    <string name="input">입금액</string>
+    <string name="output">출금액</string>
+    <string name="evaluate">평가금액</string>
+    <string name="delete_all">전부삭제</string>
+    <string name="DB_delete">DB 파일 삭제</string>
+    <string name="DB_backup">DB 파일 백업</string>
+    <string name="total">총자산</string>
+    <string name="principal">원금</string>
+    <string name="rate">수익율</string>
+    <string name="date">날짜</string>
+    <string name="institute">기관</string>
+    <string name="description">설명</string>
+    <string name="regist">등록</string>
+    <string name="delete">삭제</string>
+    <string name="group_regist">그룹 등록</string>
+    <string name="group_edit">그룹 편집</string>
+    <string name="group_delete">그룹 삭제</string>
+    <string name="setting">설정</string>
 </resources>

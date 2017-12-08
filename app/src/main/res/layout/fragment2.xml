@@ -12,25 +12,25 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="날짜"
+            android:text="@string/date"
             android:layout_weight="1"
             android:textAlignment="center"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="원금"
+            android:text="@string/principal"
             android:layout_weight="1"
             android:textAlignment="center"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="평가액"
+            android:text="@string/evaluate"
             android:layout_weight="1"
             android:textAlignment="center"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="수익율"
+            android:text="@string/rate"
             android:layout_weight="1"
             android:textAlignment="center"/>
 

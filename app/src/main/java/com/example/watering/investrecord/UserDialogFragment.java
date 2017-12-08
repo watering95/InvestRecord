@@ -20,17 +20,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 11. 2.
  */
 
+@SuppressWarnings("ALL")
 public class UserDialogFragment extends DialogFragment {
 
     private int type, i_u;
     private UserListener listener;
     private List<Group> groups = new ArrayList<>();
-    private List<String> lists = new ArrayList<>();
+    private final List<String> lists = new ArrayList<>();
     private EditText edit, txtInput, txtOutput, txtEvaluation;
     private String select, selectedDate;
     private MainActivity mActivity;
@@ -38,7 +40,6 @@ public class UserDialogFragment extends DialogFragment {
     private View view;
     private ArrayAdapter<String> adapter;
     private ListView list;
-    private Button btn_delete,btn_delete_file,btn_backup_file;
     private LayoutInflater inflater;
     private AlertDialog.Builder builder;
 
@@ -98,7 +99,7 @@ public class UserDialogFragment extends DialogFragment {
 
     private void dialogAddGroup() {
         view = inflater.inflate(R.layout.dialog_addgroup, null);
-        edit = (EditText) view.findViewById(R.id.edit_groupname_add);
+        edit = view.findViewById(R.id.edit_groupname_add);
         builder.setView(view).setTitle("그룹 추가");
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
@@ -114,11 +115,11 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     private void dialogEditGroup() {
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
 
         view = inflater.inflate(R.layout.dialog_editgroup, null);
 
-        list = (ListView) view.findViewById(R.id.listGroup_edit);
+        list = view.findViewById(R.id.listGroup_edit);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -130,7 +131,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        edit = (EditText) view.findViewById(R.id.edit_groupname_edit);
+        edit = view.findViewById(R.id.edit_groupname_edit);
         builder.setView(view).setTitle("그룹 수정");
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             @Override
@@ -146,11 +147,11 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     private void dialogDelGroup() {
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
 
         view = inflater.inflate(R.layout.dialog_delgroup, null);
 
-        list = (ListView) view.findViewById(R.id.listGroup_del);
+        list = view.findViewById(R.id.listGroup_del);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -177,9 +178,9 @@ public class UserDialogFragment extends DialogFragment {
     }
     private void dialogSetting() {
         view = inflater.inflate(R.layout.dialog_setting, null);
-        btn_delete = (Button)view.findViewById(R.id.button_delete_all);
-        btn_delete_file = (Button)view.findViewById(R.id.button_delete_db);
-        btn_backup_file = (Button)view.findViewById(R.id.button_backup_db);
+        Button btn_delete = view.findViewById(R.id.button_delete_all);
+        Button btn_delete_file = view.findViewById(R.id.button_delete_db);
+        Button btn_backup_file = view.findViewById(R.id.button_backup_db);
 
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,9 +214,9 @@ public class UserDialogFragment extends DialogFragment {
 
         DecimalFormat df = new DecimalFormat("#,###");
 
-        txtInput = (EditText) view.findViewById(R.id.editText_input);
-        txtOutput = (EditText) view.findViewById(R.id.editText_output);
-        txtEvaluation = (EditText) view.findViewById(R.id.editText_evaluation);
+        txtInput = view.findViewById(R.id.editText_input);
+        txtOutput = view.findViewById(R.id.editText_output);
+        txtEvaluation = view.findViewById(R.id.editText_evaluation);
 
         Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
 
@@ -287,7 +288,7 @@ public class UserDialogFragment extends DialogFragment {
 
     private void modifyInfoDiary(int select) {
         List<Info_Dairy> daires = ir.getInfoDaires();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date;
         String txtDate;
         int evaluation;

@@ -12,28 +12,29 @@ import android.provider.BaseColumns;
  * Created by watering on 17. 10. 21.
  */
 
-public class DBHelper extends SQLiteOpenHelper {
+@SuppressWarnings("ALL")
+class DBHelper extends SQLiteOpenHelper {
 
     private static final int db_version = 1;
     private static final String DB_FILE_NAME = "InvestRecord.db";
-    protected String TABLE_NAME;
-    protected String [] COLUMNS;
+    String TABLE_NAME;
+    String [] COLUMNS;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql;
+        StringBuilder sql;
 
-        sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
-                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT ";
+        sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT ");
 
-        for (int i = 0; i< COLUMNS.length; i++) {
-            sql += ", " + COLUMNS[i];
+        for (String COLUMN : COLUMNS) {
+            sql.append(", ").append(COLUMN);
         }
-        sql += ");";
-        db.execSQL(sql);
+        sql.append(");");
+        db.execSQL(sql.toString());
     }
 
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DB_FILE_NAME, null, db_version);
     }
 
@@ -47,16 +48,16 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
 
-        String sql;
+        StringBuilder sql;
 
-        sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
-                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT ";
+        sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT ");
 
-        for (int i = 0; i< COLUMNS.length; i++) {
-            sql += ", " + COLUMNS[i];
+        for (String COLUMN : COLUMNS) {
+            sql.append(", ").append(COLUMN);
         }
-        sql += ");";
-        db.execSQL(sql);
+        sql.append(");");
+        db.execSQL(sql.toString());
     }
 
     protected void beginTransaction() {
@@ -68,15 +69,15 @@ public class DBHelper extends SQLiteOpenHelper {
         getWritableDatabase().endTransaction();
     }
 
-    protected void insert(ContentValues values) throws SQLiteException {
+    void insert(ContentValues values) throws SQLiteException {
         getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
-    protected Cursor query(String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) throws SQLiteException {
-        return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, groupBy, having, orderBy);
+    Cursor query(String[] columns, String selection, String[] selectionArgs, String orderBy) throws SQLiteException {
+        return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
     }
 
-    protected void delete(String where, String[] whereArgs) throws SQLiteException {
+    void delete(String where, String[] whereArgs) throws SQLiteException {
         String selection;
 
         if(where == null) {
@@ -88,7 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
         getWritableDatabase().delete(TABLE_NAME, selection, whereArgs);
     }
 
-    protected void update(ContentValues values, String where, String[] selectionArgs) {
+    void update(ContentValues values, String where, String[] selectionArgs) {
         String selection = where + "=?";
         getWritableDatabase().update(TABLE_NAME, values, selection, selectionArgs);
     }

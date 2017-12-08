@@ -7,7 +7,8 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-public class Group implements Serializable {
+@SuppressWarnings("ALL")
+class Group implements Serializable {
     private int id;
     private String name;
 

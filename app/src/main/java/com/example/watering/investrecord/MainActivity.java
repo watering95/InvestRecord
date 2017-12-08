@@ -38,24 +38,19 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
-    private Spinner mGroupSpinner;
-    private Spinner mAccountSpinner;
-    private TabLayout mTabLayout;
     private ViewPager mViewPager;
-    private MainTabPagerAdapter mPagerAdapter;
     private ArrayAdapter<String> groupAdapter;
     private ArrayAdapter<String> accountAdapter;
-    private List<String> grouplists = new ArrayList<>();
-    private List<String> accountlists = new ArrayList<>();
+    private final List<String> grouplists = new ArrayList<>();
+    private final List<String> accountlists = new ArrayList<>();
     private List<Group> groups = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
-    public IRResolver ir = new IRResolver();
+    public final IRResolver ir = new IRResolver();
 
-    private GoogleSignInClient mGoogleSignInClient;
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
 
@@ -68,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         void updateList();
     }
 
-    private boolean m_condition = true;
     private Callback m_callback1,m_callback2,m_callback3,m_callback4;
 
     @Override
@@ -120,33 +114,33 @@ public class MainActivity extends AppCompatActivity {
         this.m_callback4 = callback;
     }
 
-    public void CallUpdate1() {
-        if(m_condition && (m_callback1 != null)) {
+    private void CallUpdate1() {
+        if(m_callback1 != null) {
             m_callback1.updateList();
         }
     }
     public void CallUpdate2() {
-        if(m_condition && (m_callback2 != null)) {
+        if(m_callback2 != null) {
             m_callback2.updateList();
         }
     }
-    public void CallUpdate3() {
-        if(m_condition && (m_callback3 != null)) {
+    private void CallUpdate3() {
+        if(m_callback3 != null) {
             m_callback3.updateList();
         }
     }
-    public void CallUpdate4() {
-        if(m_condition && (m_callback4 != null)) {
+    private void CallUpdate4() {
+        if(m_callback4 != null) {
             m_callback4.updateList();
         }
     }
 
     private void initLayout() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         setSupportActionBar(mToolbar);
 
-        mTabLayout = (TabLayout) findViewById(R.id.main_tab);
+        TabLayout mTabLayout = findViewById(R.id.main_tab);
         mTabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
         mTabLayout.addTab(mTabLayout.newTab().setText("통합자산"));
         mTabLayout.addTab(mTabLayout.newTab().setText("계좌별이력"));
@@ -154,8 +148,8 @@ public class MainActivity extends AppCompatActivity {
         mTabLayout.addTab(mTabLayout.newTab().setText("계좌관리"));
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
-        mPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), this);
+        mViewPager = findViewById(R.id.main_viewpager);
+        MainTabPagerAdapter mPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
 
@@ -183,9 +177,9 @@ public class MainActivity extends AppCompatActivity {
         updateAccountSpinner();
     }
     private void initGroupSpinner() {
-        groupAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,grouplists);
+        groupAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, grouplists);
 
-        mGroupSpinner = (Spinner) findViewById(R.id.spinner_group);
+        Spinner mGroupSpinner = findViewById(R.id.spinner_group);
         mGroupSpinner.setAdapter(groupAdapter);
         mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -203,8 +197,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void initAccountSpinner() {
-        accountAdapter = new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,accountlists);
-        mAccountSpinner = (Spinner) findViewById(R.id.spinner_account);
+        accountAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, accountlists);
+        Spinner mAccountSpinner = findViewById(R.id.spinner_account);
         mAccountSpinner.setAdapter(accountAdapter);
         mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -321,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
             grouplists.add(groups.get(i).getName());
         }
     }
-    public void updateAccountList() {
+    private void updateAccountList() {
         String str;
         Account account;
 
@@ -336,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
             accountlists.add(str);
         }
     }
-    public void updateGroupSpinner() {
+    private void updateGroupSpinner() {
         updateGroupList();
         groupAdapter.notifyDataSetChanged();
         if(groups.isEmpty()) ir.setCurrentGroup(-1);
@@ -356,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void signIn() {
         Log.i(TAG, "Start sign in");
-        mGoogleSignInClient = buildGoogleSignInClient();
+        GoogleSignInClient mGoogleSignInClient = buildGoogleSignInClient();
         startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
     }
     private void saveFileToDrive() {
@@ -416,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Calendar today = Calendar.getInstance();
-        String filename = String.format("InvestRecord_%d%02d%02d.db",today.get(today.YEAR),today.get(today.MONTH),today.get(today.DATE));
+        String filename = String.format(Locale.getDefault(),"InvestRecord_%d%02d%02d.db",today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DATE));
 
         MetadataChangeSet metadataChangeSet =
             new MetadataChangeSet.Builder()
@@ -469,7 +463,7 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_CODE_CREATOR:
                 Log.i(TAG, "creator request code");
                 if(resultCode == RESULT_OK) {
-                    Log.i(TAG, "REQUEST_CODE_CREATOR successed.");
+                    Log.i(TAG, "REQUEST_CODE_CREATOR succeded.");
                 }
                 break;
         }

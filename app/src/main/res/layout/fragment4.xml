@@ -13,13 +13,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:text="계좌번호"/>
+            android:text="@string/account"/>
         <EditText
             android:id="@+id/editText_account_frag4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:layout_weight="1"
+            android:inputType="text"
             android:text=""/>
 
     </LinearLayout>
@@ -32,13 +33,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:text="기관"/>
+            android:text="@string/institute"/>
         <EditText
             android:id="@+id/editText_institute"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:layout_weight="1"
+            android:inputType="text"
             android:text=""/>
 
     </LinearLayout>
@@ -51,13 +53,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:text="설명"/>
+            android:text="@string/description"/>
         <EditText
-            android:id="@+id/editText_discription"
+            android:id="@+id/editText_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:layout_weight="1"
+            android:inputType="text"
             android:text=""/>
 
     </LinearLayout>
@@ -71,13 +74,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/button_regist_frag4"
-            android:text="등록"/>
+            android:text="@string/regist"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/button_delete_frag4"
-            android:text="삭제"/>
+            android:text="@string/delete"/>
 
     </LinearLayout>
 

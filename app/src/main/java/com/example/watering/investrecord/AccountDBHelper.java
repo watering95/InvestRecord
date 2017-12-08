@@ -6,7 +6,8 @@ import android.content.Context;
  * Created by watering on 17. 10. 21.
  */
 
-public class AccountDBHelper extends DBHelper {
+@SuppressWarnings({"ALL", "DefaultFileTemplate"})
+class AccountDBHelper extends DBHelper {
 
     public AccountDBHelper(Context context) {
         super(context);

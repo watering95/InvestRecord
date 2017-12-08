@@ -7,31 +7,32 @@ import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 11. 1.
  */
 
+@SuppressWarnings("ALL")
 public class IRResolver {
 
     private ContentResolver cr;
     private static int currentGroup=-1;
     private static int currentAccount=-1;
 
-    static final int CODE_GROUP = 0;
-    static final int CODE_ACCOUNT = 1;
-    static final int CODE_INFO_IO = 2;
-    static final int CODE_INFO_DAIRY = 3;
+    private static final int CODE_GROUP = 0;
+    private static final int CODE_ACCOUNT = 1;
+    private static final int CODE_INFO_IO = 2;
+    private static final int CODE_INFO_DAIRY = 3;
 
-    private List<Group> groups = new ArrayList<>();
-    private List<Account> accounts = new ArrayList<>();
-    private List<Info_Dairy> dairies = new ArrayList<>();
+    private final List<Group> groups = new ArrayList<>();
+    private final List<Account> accounts = new ArrayList<>();
+    private final List<Info_Dairy> dairies = new ArrayList<>();
 
-    private static String URI_GROUP = "content://watering.investrecord.provider/group";
-    private static String URI_ACCOUNT = "content://watering.investrecord.provider/account";
-    private static String URI_INFO_IO = "content://watering.investrecord.provider/info_io";
-    private static String URI_INFO_DAIRY = "content://watering.investrecord.provider/info_dairy";
+    private static final String URI_GROUP = "content://watering.investrecord.provider/group";
+    private static final String URI_ACCOUNT = "content://watering.investrecord.provider/account";
+    private static final String URI_INFO_IO = "content://watering.investrecord.provider/info_io";
+    private static final String URI_INFO_DAIRY = "content://watering.investrecord.provider/info_dairy";
 
     public void getContentResolver(ContentResolver cr) {
         this.cr = cr;
@@ -66,6 +67,7 @@ public class IRResolver {
 
         c = cr.query(Uri.parse(URI_ACCOUNT), null, where, selectionArgs, null);
 
+        assert c != null;
         if(c.getCount() == 0) return null;
 
         c.moveToNext();
@@ -75,6 +77,8 @@ public class IRResolver {
         account.setInstitute(c.getString(c.getColumnIndex("inst")));
         account.setDiscription(c.getString(c.getColumnIndex("disc")));
         account.setId(c.getInt(c.getColumnIndex("_id")));
+
+        c.close();
 
         return account;
     }
@@ -89,6 +93,7 @@ public class IRResolver {
 
         c = cr.query(Uri.parse(URI_INFO_IO), null, where, selectionArgs, null);
 
+        assert c != null;
         if(c.getCount() == 0) return null;
 
         c.moveToNext();
@@ -99,6 +104,8 @@ public class IRResolver {
         io.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
         io.setAccount(c.getInt(c.getColumnIndex("id_account")));
         io.setDate(c.getString(c.getColumnIndex("date")));
+
+        c.close();
 
         return io;
     }
@@ -113,6 +120,7 @@ public class IRResolver {
 
         c = cr.query(Uri.parse(URI_INFO_DAIRY), null, where, selectionArgs, null);
 
+        assert c != null;
         if(c.getCount() == 0) return null;
 
         c.moveToNext();
@@ -122,6 +130,8 @@ public class IRResolver {
         dairy.setPrincipal(c.getInt(c.getColumnIndex("principal")));
         dairy.setAccount(c.getInt(c.getColumnIndex("id_account")));
         dairy.setDate(c.getString(c.getColumnIndex("date")));
+
+        c.close();
 
         return dairy;
     }
@@ -136,8 +146,13 @@ public class IRResolver {
         selectionArgs[1] = String.valueOf(currentAccount);
 
         c = cr.query(Uri.parse(URI_INFO_IO), total, where, selectionArgs, null);
+        assert c != null;
         c.moveToNext();
-        return c.getInt(0);
+
+        int sum = c.getInt(0);
+        c.close();
+
+        return sum;
     }
     public Info_Dairy getLastInfoDairy(String account) {
         String[] selectionArgs = new String[] {account};
@@ -211,14 +226,14 @@ public class IRResolver {
     public void deleteInfoIO(String where, String[] args) {
         cr.delete(Uri.parse(URI_INFO_IO),where,args);
     }
-    public void deleteInfoDairy(String where, String[] args) {
-        cr.delete(Uri.parse(URI_INFO_DAIRY),where,args);
+    private void deleteInfoDairy() {
+        cr.delete(Uri.parse(URI_INFO_DAIRY), null, null);
     }
     public void deleteAll() {
         deleteGroup(null,null);
         deleteAccount(null, null);
         deleteInfoIO(null, null);
-        deleteInfoDairy(null,null);
+        deleteInfoDairy();
     }
 
     public void updateGroup(int id, String name) {
@@ -262,7 +277,7 @@ public class IRResolver {
         cv.put("id_account", currentAccount);
         cv.put("date", date);
         cv.put("principal",principal);
-        cv.put("rate",String.format("%.2f",rate));
+        cv.put("rate",String.format(Locale.getDefault(),"%.2f",rate));
 
         cr.update(Uri.parse(URI_INFO_DAIRY),cv,where,selectionArgs);
     }
@@ -279,7 +294,7 @@ public class IRResolver {
 
         cursor = cr.query(Uri.parse(uri),null, selection, selectionArgs, sortOrder);
 
-        if(cursor.getCount() < 1) {
+        if((cursor != null ? cursor.getCount() : 0) < 1) {
             switch (code) {
                 case CODE_GROUP:
                     currentGroup = -1;
@@ -291,6 +306,7 @@ public class IRResolver {
             return;
         }
 
+        assert cursor != null;
         while(cursor.moveToNext()) {
             switch (code) {
                 case CODE_GROUP:
@@ -327,5 +343,7 @@ public class IRResolver {
                     break;
             }
         }
+
+        cursor.close();
     }
 }

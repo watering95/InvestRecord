@@ -12,7 +12,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="입금액"
+                android:text="@string/input"
                 android:layout_weight="3"/>
             <EditText
                 android:id="@+id/editText_input"
@@ -29,7 +29,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="출금액"
+                android:text="@string/output"
                 android:layout_weight="3"/>
             <EditText
                 android:id="@+id/editText_output"
@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="평가금액"
+            android:text="@string/evaluate"
             android:layout_weight="3"/>
         <EditText
             android:id="@+id/editText_evaluation"

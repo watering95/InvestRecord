@@ -6,26 +6,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.Spinner;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 10. 21.
  */
 
+@SuppressWarnings("ALL")
 public class Fragment3 extends Fragment {
 
     private View mView;
     private MainActivity mActivity;
-    private IRResolver ir;
-    private DatePicker date;
-
-    private MainActivity.Callback callbackfromMain;
 
     private String selectedDate;
 
@@ -37,9 +30,8 @@ public class Fragment3 extends Fragment {
         super.onCreate(savedInstanceState);
 
         mActivity = (MainActivity) getActivity();
-        ir = mActivity.ir;
 
-        callbackfromMain = new MainActivity.Callback() {
+        MainActivity.Callback callbackfromMain = new MainActivity.Callback() {
             @Override
             public void updateList() {
 
@@ -59,12 +51,12 @@ public class Fragment3 extends Fragment {
     }
 
     private void initLayout() {
-        date = (DatePicker) mView.findViewById(R.id.date);
-        selectedDate = String.format("%04d-%02d-%02d",date.getYear(),date.getMonth(),date.getDayOfMonth());
+        DatePicker date = mView.findViewById(R.id.date);
+        selectedDate = String.format(Locale.getDefault(),"%04d-%02d-%02d", date.getYear(), date.getMonth(), date.getDayOfMonth());
         date.init(date.getYear(), date.getMonth(), date.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                selectedDate = String.format("%04d-%02d-%02d",year,monthOfYear+1,dayOfMonth);
+                selectedDate = String.format(Locale.getDefault(),"%04d-%02d-%02d",year,monthOfYear+1,dayOfMonth);
                 mActivity.inoutDialog(selectedDate);
             }
         });
