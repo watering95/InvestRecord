@@ -6,14 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -27,6 +21,7 @@ public class Fragment4 extends Fragment {
     private EditText mTxtAccount;
     private EditText mTxtInstitute;
     private EditText mTxtDiscription;
+    private int i_u = 0;
 
     private MainActivity.Callback callbackfromMain;
 
@@ -69,7 +64,6 @@ public class Fragment4 extends Fragment {
 
         mView.findViewById(R.id.button_regist_frag4).setOnClickListener(mClickListener);
         mView.findViewById(R.id.button_delete_frag4).setOnClickListener(mClickListener);
-        mView.findViewById(R.id.button_edit_frag4).setOnClickListener(mClickListener);
     }
 
     Button.OnClickListener mClickListener = new View.OnClickListener() {
@@ -80,10 +74,10 @@ public class Fragment4 extends Fragment {
 
             switch(v.getId()) {
                 case R.id.button_regist_frag4:
-                    if(!account.isEmpty()) ir.insertAccount(institute,account,discript);
-                    break;
-                case R.id.button_edit_frag4:
-                    if(!account.isEmpty()) ir.updateAccount(ir.getCurrentAccount(),institute,account,discript);
+                    if(!account.isEmpty()) {
+                        if(i_u == 0) ir.insertAccount(institute,account,discript);
+                        if(i_u == 1) ir.updateAccount(ir.getCurrentAccount(),institute,account,discript);
+                    }
                     break;
                 case R.id.button_delete_frag4:
                     if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
@@ -96,15 +90,20 @@ public class Fragment4 extends Fragment {
 
     private void update() {
         int id = ir.getCurrentAccount();
+        Account account = new Account();
 
-        Account account = ir.getAccount(String.valueOf(id));
+        if(id > 0) {
+            account = ir.getAccount(String.valueOf(id));
+        }
 
         if(account == null) {
+            i_u = 0;
             mTxtAccount.setText("");
             mTxtDiscription.setText("");
             mTxtInstitute.setText("");
         }
         else {
+            i_u = 1;
             mTxtAccount.setText(account.getNumber());
             mTxtDiscription.setText(account.getDiscription());
             mTxtInstitute.setText(account.getInstitute());

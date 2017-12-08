@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -292,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 if(name.equals("del")) {
-
+                    deleteDBFile();
                 }
                 else if(name.equals("backup")) {
                     signIn();
@@ -380,6 +381,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         );
+    }
+    private void deleteDBFile() {
+        String file = getFilesDir().toString();
+        file = file.substring(0,file.length()-5) + "databases/InvestRecord.db";
+
+        File dbFile = new File(file);
+        try {
+            dbFile.delete();
+        } catch (Exception e) {
+
+        }
     }
 
     private GoogleSignInClient buildGoogleSignInClient() {

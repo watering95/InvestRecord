@@ -282,10 +282,10 @@ public class IRResolver {
         if(cursor.getCount() < 1) {
             switch (code) {
                 case CODE_GROUP:
-                    currentGroup = 0;
+                    currentGroup = -1;
                     break;
                 case CODE_ACCOUNT:
-                    currentAccount = 0;
+                    currentAccount = -1;
                     break;
             }
             return;
