@@ -20,6 +20,10 @@ class DBHelper extends SQLiteOpenHelper {
     String TABLE_NAME;
     String [] COLUMNS;
 
+    DBHelper(Context context) {
+        super(context, DB_FILE_NAME, null, db_version);
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         StringBuilder sql;
@@ -33,17 +37,6 @@ class DBHelper extends SQLiteOpenHelper {
         sql.append(");");
         db.execSQL(sql.toString());
     }
-
-    DBHelper(Context context) {
-        super(context, DB_FILE_NAME, null, db_version);
-    }
-
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
-        db.execSQL(sql);
-        onCreate(db);
-    }
-
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
@@ -59,11 +52,15 @@ class DBHelper extends SQLiteOpenHelper {
         sql.append(");");
         db.execSQL(sql.toString());
     }
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
+        db.execSQL(sql);
+        onCreate(db);
+    }
 
     protected void beginTransaction() {
         getWritableDatabase().beginTransaction();
     }
-
     protected void endTransaction() {
         getWritableDatabase().setTransactionSuccessful();
         getWritableDatabase().endTransaction();
@@ -72,11 +69,6 @@ class DBHelper extends SQLiteOpenHelper {
     void insert(ContentValues values) throws SQLiteException {
         getWritableDatabase().insert(TABLE_NAME, null, values);
     }
-
-    Cursor query(String[] columns, String selection, String[] selectionArgs, String orderBy) throws SQLiteException {
-        return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
-    }
-
     void delete(String where, String[] whereArgs) throws SQLiteException {
         String selection;
 
@@ -88,9 +80,11 @@ class DBHelper extends SQLiteOpenHelper {
         }
         getWritableDatabase().delete(TABLE_NAME, selection, whereArgs);
     }
-
     void update(ContentValues values, String where, String[] selectionArgs) {
         String selection = where + "=?";
         getWritableDatabase().update(TABLE_NAME, values, selection, selectionArgs);
+    }
+    Cursor query(String[] columns, String selection, String[] selectionArgs, String orderBy) throws SQLiteException {
+        return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
     }
 }

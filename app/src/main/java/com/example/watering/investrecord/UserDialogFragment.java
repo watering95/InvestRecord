@@ -28,7 +28,6 @@ import java.util.Locale;
 
 @SuppressWarnings("ALL")
 public class UserDialogFragment extends DialogFragment {
-
     private int type, i_u;
     private UserListener listener;
     private List<Group> groups = new ArrayList<>();
@@ -42,13 +41,6 @@ public class UserDialogFragment extends DialogFragment {
     private ListView list;
     private LayoutInflater inflater;
     private AlertDialog.Builder builder;
-
-    public static UserDialogFragment newInstance(int type, UserListener listener) {
-        UserDialogFragment fragment = new UserDialogFragment();
-        fragment.listener = listener;
-        fragment.type = type;
-        return fragment;
-    }
 
     public interface UserListener {
         void onWorkComplete(String name);
@@ -85,6 +77,12 @@ public class UserDialogFragment extends DialogFragment {
         }
         return builder.create();
     }
+    public static UserDialogFragment newInstance(int type, UserListener listener) {
+        UserDialogFragment fragment = new UserDialogFragment();
+        fragment.listener = listener;
+        fragment.type = type;
+        return fragment;
+    }
 
     public void initData(List<Group> lists) {
         this.groups = lists;
@@ -92,7 +90,6 @@ public class UserDialogFragment extends DialogFragment {
             this.lists.add(groups.get(i).getName());
         }
     }
-
     public void setSelectedDate(String selectedDate) {
         this.selectedDate = selectedDate;
     }

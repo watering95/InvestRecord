@@ -32,17 +32,14 @@ class List1Adapter extends BaseAdapter {
     public int getCount() {
         return mData.size();
     }
-
     @Override
     public Object getItem(int position) {
         return mData.get(position);
     }
-
     @Override
     public long getItemId(int position) {
         return 0;
     }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

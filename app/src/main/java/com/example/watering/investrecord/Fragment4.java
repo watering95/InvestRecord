@@ -13,7 +13,7 @@ import android.widget.EditText;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings({"ALL", "DefaultFileTemplate"})
+@SuppressWarnings({"ALL"})
 public class Fragment4 extends Fragment {
 
     private View mView;

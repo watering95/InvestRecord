@@ -217,6 +217,12 @@ public class IRResolver {
         cr.insert(Uri.parse(URI_INFO_DAIRY),cv);
     }
 
+    public void deleteAll() {
+        deleteGroup(null,null);
+        deleteAccount(null, null);
+        deleteInfoIO(null, null);
+        deleteInfoDairy();
+    }
     public void deleteGroup(String where, String[] args) {
         cr.delete(Uri.parse(URI_GROUP),where,args);
     }
@@ -228,12 +234,6 @@ public class IRResolver {
     }
     private void deleteInfoDairy() {
         cr.delete(Uri.parse(URI_INFO_DAIRY), null, null);
-    }
-    public void deleteAll() {
-        deleteGroup(null,null);
-        deleteAccount(null, null);
-        deleteInfoIO(null, null);
-        deleteInfoDairy();
     }
 
     public void updateGroup(int id, String name) {

@@ -63,7 +63,6 @@ public class IRProvider extends ContentProvider {
                 return null;
         }
     }
-
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
@@ -80,7 +79,6 @@ public class IRProvider extends ContentProvider {
                 return null;
         }
     }
-
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
@@ -102,7 +100,6 @@ public class IRProvider extends ContentProvider {
         }
         return uri;
     }
-
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         int count = 0;
@@ -124,7 +121,6 @@ public class IRProvider extends ContentProvider {
         }
         return count;
     }
-
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
         int count = 0;

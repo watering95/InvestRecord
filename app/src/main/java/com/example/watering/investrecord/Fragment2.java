@@ -11,6 +11,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings({"ALL", "DefaultFileTemplate"})
+@SuppressWarnings({"ALL"})
 public class Fragment2 extends Fragment {
 
     private View mView;
@@ -29,7 +30,6 @@ public class Fragment2 extends Fragment {
     private MainActivity mActivity;
     private IRResolver ir;
     private WebView mWeb;
-
     private final ArrayList<Info_List2> lists = new ArrayList<>();
 
     public Fragment2() {
@@ -96,7 +96,6 @@ public class Fragment2 extends Fragment {
             lists.add(list);
         }
     }
-
     private void updateListView() {
         updateInfoLists();
         list2Adapter.notifyDataSetChanged();
@@ -155,10 +154,10 @@ public class Fragment2 extends Fragment {
             bw.write(html);
             bw.close();
         } catch (IOException e) {
+            Toast.makeText(mActivity.getApplicationContext(), R.string.toast_htmlfile, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
-
     private void openWebView() {
         mWeb = mView.findViewById(R.id.web);
         mWeb.setWebViewClient(new WebViewClient());

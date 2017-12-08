@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -383,8 +384,9 @@ public class MainActivity extends AppCompatActivity {
         File dbFile = new File(file);
         try {
             dbFile.delete();
+            Toast.makeText(this,R.string.toast_db_del_ok,Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-
+            Toast.makeText(this,R.string.toast_db_del_error,Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -454,6 +456,7 @@ public class MainActivity extends AppCompatActivity {
                         mDBFile = new FileInputStream(file);
                     } catch (FileNotFoundException e) {
                         Log.i(TAG, "DB File not existed.");
+                        Toast.makeText(this,R.string.toast_db_error,Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -464,6 +467,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "creator request code");
                 if(resultCode == RESULT_OK) {
                     Log.i(TAG, "REQUEST_CODE_CREATOR succeded.");
+                    Toast.makeText(this,R.string.toast_backup,Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(this,R.string.toast_backup_error,Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.List;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings({"ALL", "DefaultFileTemplate"})
+@SuppressWarnings({"ALL"})
 public class Fragment1 extends Fragment {
 
     private View mView;
@@ -44,7 +43,6 @@ public class Fragment1 extends Fragment {
             @Override
             public void updateList() {
                 DecimalFormat df = new DecimalFormat("#,###");
-
                 updateInfoLists();
                 mTxtTotal.setText(df.format(sum));
                 listAdapter.notifyDataSetChanged();

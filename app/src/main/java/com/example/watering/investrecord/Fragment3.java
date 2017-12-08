@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 /**
@@ -19,7 +21,6 @@ public class Fragment3 extends Fragment {
 
     private View mView;
     private MainActivity mActivity;
-
     private String selectedDate;
 
     public Fragment3() {
@@ -56,6 +57,13 @@ public class Fragment3 extends Fragment {
         date.init(date.getYear(), date.getMonth(), date.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar select = Calendar.getInstance();
+                select.set(year,monthOfYear,dayOfMonth);
+
+                if(Calendar.getInstance().before(select)) {
+                    Toast.makeText(mActivity.getApplicationContext(),R.string.toast_date_error,Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 selectedDate = String.format(Locale.getDefault(),"%04d-%02d-%02d",year,monthOfYear+1,dayOfMonth);
                 mActivity.inoutDialog(selectedDate);
             }

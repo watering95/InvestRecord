@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-@SuppressWarnings({"ALL", "DefaultFileTemplate"})
+@SuppressWarnings({"ALL"})
 public class Info_Dairy implements Serializable {
     private String date;
     private int id_account;
