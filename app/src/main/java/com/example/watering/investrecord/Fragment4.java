@@ -38,6 +38,7 @@ public class Fragment4 extends Fragment {
             @Override
             public void updateList() {
                 update();
+                mActivity.CallUpdate2();
             }
         };
         mActivity.setCallback4(callbackfromMain);
@@ -93,6 +94,10 @@ public class Fragment4 extends Fragment {
 
         if(id > 0) {
             account = ir.getAccount(String.valueOf(id));
+        }
+        else {
+            i_u = 0;
+            return;
         }
 
         if(account == null) {

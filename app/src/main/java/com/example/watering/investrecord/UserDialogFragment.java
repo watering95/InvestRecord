@@ -284,33 +284,30 @@ public class UserDialogFragment extends DialogFragment {
     }
 
     private void modifyInfoDiary(int select) {
-        List<Info_Dairy> daires = ir.getInfoDaires();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        Date date;
         String txtDate;
         int evaluation;
         int index = 0;
 
-        if(daires.isEmpty()) {
+        if(select == 0) {
             evaluation = ir.getInfoIO(ir.getCurrentAccount(), selectedDate).getEvaluation();
             calInfoDairy(select,0,selectedDate,evaluation);
-            return;
+            select = 1;
         }
 
-        try {
-             do {
-                txtDate = daires.get(index).getDate();
-                date = df.parse(txtDate);
-                evaluation = ir.getInfoIO(ir.getCurrentAccount(), txtDate).getEvaluation();
+        List<Info_Dairy> daires = ir.getInfoDaires();
 
-                if(df.parse(selectedDate).compareTo(date) > 0) {
-                    calInfoDairy(0,daires.get(index).getId(),selectedDate,evaluation);
-                }
-                else {
-                    calInfoDairy(1,daires.get(index).getId(),txtDate,evaluation);
-                    index++;
-                }
-            } while(df.parse(selectedDate).compareTo(date) < 0);
+        try {
+            Date date = df.parse(daires.get(index).getDate());
+
+             do {
+                 txtDate = daires.get(index).getDate();
+                 date = df.parse(txtDate);
+                 evaluation = ir.getInfoIO(ir.getCurrentAccount(),txtDate).getEvaluation();
+                 calInfoDairy(select,daires.get(index).getId(),txtDate,evaluation);
+                 index++;
+
+             } while(df.parse(selectedDate).compareTo(date) < 0);
         } catch (Exception e) {
             e.printStackTrace();
         }

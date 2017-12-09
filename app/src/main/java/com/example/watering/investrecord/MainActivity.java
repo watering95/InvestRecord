@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         this.m_callback4 = callback;
     }
 
-    private void CallUpdate1() {
+    public void CallUpdate1() {
         if(m_callback1 != null) {
             m_callback1.updateList();
         }
@@ -123,11 +123,6 @@ public class MainActivity extends AppCompatActivity {
     public void CallUpdate2() {
         if(m_callback2 != null) {
             m_callback2.updateList();
-        }
-    }
-    private void CallUpdate3() {
-        if(m_callback3 != null) {
-            m_callback3.updateList();
         }
     }
     private void CallUpdate4() {
@@ -205,10 +200,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ir.setCurrentAccount(accounts.get(position).getId());
-
-                CallUpdate1();
-                CallUpdate2();
-                CallUpdate3();
                 CallUpdate4();
             }
 
@@ -300,6 +291,7 @@ public class MainActivity extends AppCompatActivity {
                 ir.deleteAll();
                 updateGroupSpinner();
                 updateAccountSpinner();
+                CallUpdate2();
             }
         });
 
@@ -342,10 +334,6 @@ public class MainActivity extends AppCompatActivity {
         accountAdapter.notifyDataSetChanged();
         if(accounts.isEmpty()) ir.setCurrentAccount(-1);
         else ir.setCurrentAccount(accounts.get(0).getId());
-
-        CallUpdate1();
-        CallUpdate2();
-        CallUpdate3();
         CallUpdate4();
     }
 
@@ -384,6 +372,8 @@ public class MainActivity extends AppCompatActivity {
         File dbFile = new File(file);
         try {
             dbFile.delete();
+            updateGroupSpinner();
+            updateAccountSpinner();
             Toast.makeText(this,R.string.toast_db_del_ok,Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this,R.string.toast_db_del_error,Toast.LENGTH_SHORT).show();

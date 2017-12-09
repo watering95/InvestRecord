@@ -51,6 +51,7 @@ public class Fragment2 extends Fragment {
 
                 makeHTMLFile();
                 mWeb.reload();
+                mActivity.CallUpdate1();
             }
         };
         mActivity.setCallback2(callbackfromMain);

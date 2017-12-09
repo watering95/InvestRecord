@@ -44,7 +44,7 @@ class DBHelper extends SQLiteOpenHelper {
         StringBuilder sql;
 
         sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
-                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT ");
+                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT");
 
         for (String COLUMN : COLUMNS) {
             sql.append(", ").append(COLUMN);
