@@ -197,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ir.setCurrentAccount(accounts.get(position).getId());
+                CallUpdate1();
             }
 
             @Override
@@ -329,7 +330,6 @@ public class MainActivity extends AppCompatActivity {
         accountAdapter.notifyDataSetChanged();
         if(accounts.isEmpty()) ir.setCurrentAccount(-1);
         else ir.setCurrentAccount(accounts.get(0).getId());
-        CallUpdate1();
     }
 
     private void signIn() {
