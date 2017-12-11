@@ -38,7 +38,6 @@ public class Fragment4 extends Fragment {
             @Override
             public void updateList() {
                 update();
-                mActivity.CallUpdate2();
             }
         };
         mActivity.setCallback4(callbackfromMain);
@@ -63,6 +62,7 @@ public class Fragment4 extends Fragment {
         update();
 
         mView.findViewById(R.id.button_regist_frag4).setOnClickListener(mClickListener);
+        mView.findViewById(R.id.button_edit_frag4).setOnClickListener(mClickListener);
         mView.findViewById(R.id.button_delete_frag4).setOnClickListener(mClickListener);
     }
 
@@ -74,10 +74,10 @@ public class Fragment4 extends Fragment {
 
             switch(v.getId()) {
                 case R.id.button_regist_frag4:
-                    if(!account.isEmpty()) {
-                        if(i_u == 0) ir.insertAccount(institute,account,discript);
-                        if(i_u == 1) ir.updateAccount(ir.getCurrentAccount(),institute,account,discript);
-                    }
+                    if(!account.isEmpty()) ir.insertAccount(institute,account,discript);
+                    break;
+                case R.id.button_edit_frag4:
+                    if(!account.isEmpty()) ir.updateAccount(ir.getCurrentAccount(),institute,account,discript);
                     break;
                 case R.id.button_delete_frag4:
                     if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
@@ -97,6 +97,10 @@ public class Fragment4 extends Fragment {
         }
         else {
             i_u = 0;
+            mTxtAccount.setText("");
+            mTxtDiscription.setText("");
+            mTxtInstitute.setText("");
+
             return;
         }
 

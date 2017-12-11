@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         void updateList();
     }
 
-    private Callback m_callback1,m_callback2,m_callback3,m_callback4;
+    private Callback m_callback1,m_callback2,m_callback4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,9 +108,6 @@ public class MainActivity extends AppCompatActivity {
     public void setCallback2(Callback callback) {
         this.m_callback2 = callback;
     }
-    public void setCallback3(Callback callback) {
-        this.m_callback3 = callback;
-    }
     public void setCallback4(Callback callback) {
         this.m_callback4 = callback;
     }
@@ -125,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             m_callback2.updateList();
         }
     }
-    private void CallUpdate4() {
+    public void CallUpdate4() {
         if(m_callback4 != null) {
             m_callback4.updateList();
         }
@@ -200,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ir.setCurrentAccount(accounts.get(position).getId());
-                CallUpdate4();
             }
 
             @Override
@@ -291,7 +287,6 @@ public class MainActivity extends AppCompatActivity {
                 ir.deleteAll();
                 updateGroupSpinner();
                 updateAccountSpinner();
-                CallUpdate2();
             }
         });
 
@@ -334,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
         accountAdapter.notifyDataSetChanged();
         if(accounts.isEmpty()) ir.setCurrentAccount(-1);
         else ir.setCurrentAccount(accounts.get(0).getId());
-        CallUpdate4();
+        CallUpdate1();
     }
 
     private void signIn() {

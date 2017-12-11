@@ -12,6 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -33,6 +35,7 @@ public class UserDialogFragment extends DialogFragment {
     private List<Group> groups = new ArrayList<>();
     private final List<String> lists = new ArrayList<>();
     private EditText edit, txtInput, txtOutput, txtEvaluation;
+    private TextView txtDate;
     private String select, selectedDate;
     private MainActivity mActivity;
     private IRResolver ir;
@@ -207,6 +210,10 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     private void dialogInout() {
+        if(ir.getCurrentAccount() < 0) {
+            Toast.makeText(mActivity.getApplicationContext(),R.string.toast_no_account,Toast.LENGTH_SHORT).show();
+            return;
+        }
         view = inflater.inflate(R.layout.dialog_inout, null);
 
         DecimalFormat df = new DecimalFormat("#,###");
@@ -214,6 +221,9 @@ public class UserDialogFragment extends DialogFragment {
         txtInput = view.findViewById(R.id.editText_input);
         txtOutput = view.findViewById(R.id.editText_output);
         txtEvaluation = view.findViewById(R.id.editText_evaluation);
+        txtDate = view.findViewById(R.id.txtDate);
+
+        txtDate.setText(selectedDate);
 
         Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
 

@@ -13,25 +13,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/date"
-            android:layout_weight="1"
+            android:layout_weight="0.8"
             android:textAlignment="center"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/principal"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:textAlignment="center"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/evaluate"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:textAlignment="center"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/rate"
-            android:layout_weight="1"
+            android:layout_weight="1.2"
             android:textAlignment="center"/>
 
     </LinearLayout>

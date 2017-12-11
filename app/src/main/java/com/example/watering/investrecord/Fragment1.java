@@ -23,11 +23,15 @@ import java.util.List;
 public class Fragment1 extends Fragment {
 
     private View mView;
-    private TextView mTxtTotal;
+    private TextView mTxtTotalPrincipal;
+    private TextView mTxtTotalEvaluate;
+    private TextView mTxtTotalRate;
     private List1Adapter listAdapter;
     private IRResolver ir;
     private final ArrayList<Info_List1> lists = new ArrayList<>();
-    private int sum;
+    private int sum_principal;
+    private int sum_evaluate;
+    private double total_rate;
 
     public Fragment1() {
     }
@@ -36,7 +40,7 @@ public class Fragment1 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MainActivity mActivity = (MainActivity) getActivity();
+        final MainActivity mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
         MainActivity.Callback callbackfromMain = new MainActivity.Callback() {
@@ -44,8 +48,11 @@ public class Fragment1 extends Fragment {
             public void updateList() {
                 DecimalFormat df = new DecimalFormat("#,###");
                 updateInfoLists();
-                mTxtTotal.setText(df.format(sum));
+                mTxtTotalPrincipal.setText(df.format(sum_principal));
+                mTxtTotalEvaluate.setText(df.format(sum_evaluate));
+                mTxtTotalRate.setText(String.format("%.2f",total_rate));
                 listAdapter.notifyDataSetChanged();
+                mActivity.CallUpdate2();
             }
         };
         mActivity.setCallback1(callbackfromMain);
@@ -65,8 +72,13 @@ public class Fragment1 extends Fragment {
     private void initLayout() {
         DecimalFormat df = new DecimalFormat("#,###");
 
-        mTxtTotal = mView.findViewById(R.id.text_total);
-        mTxtTotal.setText(df.format(sum));
+        mTxtTotalPrincipal = mView.findViewById(R.id.text_total_principal);
+        mTxtTotalPrincipal.setText(df.format(sum_principal));
+        mTxtTotalEvaluate = mView.findViewById(R.id.text_total_evaluate);
+        mTxtTotalEvaluate.setText(df.format(sum_evaluate));
+        mTxtTotalRate = mView.findViewById(R.id.text_total_rate);
+        mTxtTotalRate.setText(String.format("%.2f",total_rate));
+
         ListView listView = mView.findViewById(R.id.listview_totalasset_frag1);
         listAdapter = new List1Adapter(mView.getContext(),lists);
         if(lists.size() != 0) listView.setAdapter(listAdapter);
@@ -82,7 +94,10 @@ public class Fragment1 extends Fragment {
         Info_Dairy dairy;
         Info_IO io;
 
-        sum = 0;
+        sum_evaluate = 0;
+        sum_principal = 0;
+        total_rate = 0;
+
         lists.clear();
         List<Account> accounts = ir.getAccounts();
 
@@ -117,9 +132,12 @@ public class Fragment1 extends Fragment {
 
             list1.setAccount(accounts.get(i));
             list1.setInfoList2(list2);
-            sum += list1.getList2().getEvaluation();
+            sum_evaluate += list1.getList2().getEvaluation();
+            sum_principal += dairy.getPrincipal();
 
             lists.add(list1);
         }
+
+        if(sum_principal != 0 && sum_evaluate != 0) total_rate = (double)sum_evaluate / (double)sum_principal * 100 - 100;
     }
 }

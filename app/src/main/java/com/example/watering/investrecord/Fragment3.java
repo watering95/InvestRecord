@@ -31,14 +31,6 @@ public class Fragment3 extends Fragment {
         super.onCreate(savedInstanceState);
 
         mActivity = (MainActivity) getActivity();
-
-        MainActivity.Callback callbackfromMain = new MainActivity.Callback() {
-            @Override
-            public void updateList() {
-
-            }
-        };
-        mActivity.setCallback3(callbackfromMain);
     }
 
     @Nullable
