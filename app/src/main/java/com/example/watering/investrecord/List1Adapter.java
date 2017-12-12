@@ -44,21 +44,24 @@ class List1Adapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if(convertView == null) {
-            convertView = inflater.inflate(R.layout.layout_list,parent,false);
+            convertView = inflater.inflate(R.layout.layout_list1,parent,false);
         }
 
-        TextView account = convertView.findViewById(R.id.list_1);
-        TextView principal = convertView.findViewById(R.id.list_2);
-        TextView evaluation = convertView.findViewById(R.id.list_3);
-        TextView rate = convertView.findViewById(R.id.list_4);
+        TextView txtAccount = convertView.findViewById(R.id.list1_1);
+        TextView principal = convertView.findViewById(R.id.list1_2);
+        TextView evaluation = convertView.findViewById(R.id.list1_3);
+        TextView rate = convertView.findViewById(R.id.list1_4);
+        TextView accountInfo = convertView.findViewById(R.id.list1_5);
 
         Info_List2 list2 = mData.get(position).getList2();
+        Account account = mData.get(position).getAccount();
         DecimalFormat df = new DecimalFormat("#,###");
 
-        account.setText(String.valueOf(mData.get(position).getAccount().getNumber()));
+        txtAccount.setText(String.valueOf(account.getNumber()));
         principal.setText(df.format(list2.getDairy().getPrincipal()));
         rate.setText(String.format(Locale.getDefault(),"%.2f",list2.getDairy().getRate()));
         evaluation.setText(df.format(list2.getEvaluation()));
+        accountInfo.setText(String.format(Locale.getDefault(),"%s %s",account.getInstitute(),account.getDiscription()));
 
         return convertView;
     }

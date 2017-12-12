@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         this.m_callback4 = callback;
     }
 
-    public void CallUpdate1() {
+    private void CallUpdate1() {
         if(m_callback1 != null) {
             m_callback1.updateList();
         }
@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     ir.setCurrentGroup(groups.get(position).getId());
                 }
                 updateAccountSpinner();
+                CallUpdate1();
             }
 
             @Override

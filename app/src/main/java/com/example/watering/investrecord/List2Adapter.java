@@ -44,14 +44,14 @@ class List2Adapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if(convertView == null) {
-            convertView = inflater.inflate(R.layout.layout_list,parent,false);
+            convertView = inflater.inflate(R.layout.layout_list2,parent,false);
         }
 
         Info_Dairy dairy;
-        TextView date = convertView.findViewById(R.id.list_1);
-        TextView principal = convertView.findViewById(R.id.list_2);
-        TextView evaluation = convertView.findViewById(R.id.list_3);
-        TextView rate = convertView.findViewById(R.id.list_4);
+        TextView date = convertView.findViewById(R.id.list2_1);
+        TextView principal = convertView.findViewById(R.id.list2_2);
+        TextView evaluation = convertView.findViewById(R.id.list2_3);
+        TextView rate = convertView.findViewById(R.id.list2_4);
         DecimalFormat df = new DecimalFormat("#,###");
 
         dairy = mData.get(position).getDairy();

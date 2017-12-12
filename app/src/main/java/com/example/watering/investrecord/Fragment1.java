@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -50,7 +51,7 @@ public class Fragment1 extends Fragment {
                 updateInfoLists();
                 mTxtTotalPrincipal.setText(df.format(sum_principal));
                 mTxtTotalEvaluate.setText(df.format(sum_evaluate));
-                mTxtTotalRate.setText(String.format("%.2f",total_rate));
+                mTxtTotalRate.setText(String.format(Locale.getDefault(),"%.2f",total_rate));
                 listAdapter.notifyDataSetChanged();
                 mActivity.CallUpdate2();
             }
@@ -77,7 +78,7 @@ public class Fragment1 extends Fragment {
         mTxtTotalEvaluate = mView.findViewById(R.id.text_total_evaluate);
         mTxtTotalEvaluate.setText(df.format(sum_evaluate));
         mTxtTotalRate = mView.findViewById(R.id.text_total_rate);
-        mTxtTotalRate.setText(String.format("%.2f",total_rate));
+        mTxtTotalRate.setText(String.format(Locale.getDefault(),"%.2f",total_rate));
 
         ListView listView = mView.findViewById(R.id.listview_totalasset_frag1);
         listAdapter = new List1Adapter(mView.getContext(),lists);
