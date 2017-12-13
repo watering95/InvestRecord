@@ -331,6 +331,9 @@ public class MainActivity extends AppCompatActivity {
         accountAdapter.notifyDataSetChanged();
         if(accounts.isEmpty()) ir.setCurrentAccount(-1);
         else ir.setCurrentAccount(accounts.get(0).getId());
+
+        Spinner mAccountSpinner = findViewById(R.id.spinner_account);
+        mAccountSpinner.setSelection(0);
     }
 
     private void signIn() {

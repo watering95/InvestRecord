@@ -109,16 +109,22 @@ public class Fragment2 extends Fragment {
             StringBuilder data = new StringBuilder();
             String date;
             int size = lists.size();
+            String eval,rate;
+
             if(size != 0) {
                 for (int i = size - 1; i > 0; i--) {
+                    eval = String.valueOf(lists.get(i).getEvaluation());
+                    rate = String.format("%.2f",lists.get(i).getDairy().getRate());
                     date = "new Date('" + lists.get(i).getDairy().getDate() + "')";
-                    data.append("[").append(date).append(", ").append(String.valueOf(lists.get(i).getEvaluation())).append("],\n");
+                    data.append("[").append(date).append(", ").append(eval).append(", ").append(rate).append("],\n");
                 }
+                eval = String.valueOf(lists.get(0).getEvaluation());
+                rate = String.format("%.2f",lists.get(0).getDairy().getRate());
                 date = "new Date('" + lists.get(0).getDairy().getDate() + "')";
-                data.append("[").append(date).append(", ").append(String.valueOf(lists.get(0).getEvaluation())).append("]\n");
+                data.append("[").append(date).append(", ").append(eval).append(", ").append(rate).append("]\n");
             }
             else {
-                data = new StringBuilder("[0 , 0]\n");
+                data = new StringBuilder("[0, 0, 0]\n");
             }
 
             String accountnumber;
@@ -131,24 +137,33 @@ public class Fragment2 extends Fragment {
             }
 
             String function = "function drawChart() {\n"
+                    + "var chartDiv = document.getElementById('chart_div');\n\n"
+
                     + "var data = new google.visualization.DataTable();\n"
                     + "data.addColumn('date','Day');\n"
                     + "data.addColumn('number','평가액');\n"
+                    + "data.addColumn('number','수익률');\n"
                     + "data.addRows([\n" + data + "]);\n\n"
-                    + "var options = {chart:{title:'계좌 평가액',subtitle:'" + accountnumber +"'},"
-                    + "legend:{position:\"top\"}};\n\n"
-                    + "var chart = new google.charts.Line(document.getElementById('linechart_material'));\n\n"
-                    + "chart.draw(data, google.charts.Line.convertOptions(options));\n"
+
+                    + "var options = {"
+                    + "title: '" + accountnumber +"',"
+                    + "series: {0: {targetAxisIndex: 0}, 1: {targetAxisIndex: 1}},"
+                    + "vAxes: {0: {title: '평가액'}, 1: {title: '수익률'}},"
+                    + "};\n\n"
+
+                    + "var chart = new google.visualization.LineChart(chartDiv);\n"
+                    + "chart.draw(data, options);\n"
+
                     + "}\n";
 
             String script = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n"
                     + "<script type=\"text/javascript\">\n"
-                    + "google.charts.load('current', {'packages':['line']});\n"
+                    + "google.charts.load('current', {'packages':['line', 'corechart']});\n"
                     + "google.charts.setOnLoadCallback(drawChart);\n"
                     + function
                     + "</script>\n";
 
-            String body = "<div id=\"linechart_material\"></div>\n";
+            String body = "<div id=\"chart_div\"></div>\n";
 
             String html = "<!DOCTYPE html>\n" + "<head>\n" + script + "</head>\n" + "<body>\n" + body + "</body>\n" + "</html>";
 
