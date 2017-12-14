@@ -11,27 +11,29 @@ import android.support.v4.app.FragmentPagerAdapter;
 @SuppressWarnings("ALL")
 class MainTabPagerAdapter extends FragmentPagerAdapter {
 
+    FragmentMain fragmentMain;
+    FragmentSub fragmentSub;
+
     public MainTabPagerAdapter(FragmentManager fm) {
         super(fm);
+
+        fragmentMain = new FragmentMain();
+        fragmentSub = new FragmentSub();
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new Fragment1();
+                return fragmentMain;
             case 1:
-                return new Fragment2();
-            case 2:
-                return new Fragment3();
-            case 3:
-                return new Fragment4();
+                return fragmentSub;
             default:
                 return null;
         }
     }
     @Override
     public int getCount() {
-        return 4;
+        return 2;
     }
 }

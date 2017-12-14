@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,10 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -51,13 +48,11 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ViewPager mViewPager;
-    private ArrayAdapter<String> groupAdapter;
-    private ArrayAdapter<String> accountAdapter;
-    private final List<String> grouplists = new ArrayList<>();
-    private final List<String> accountlists = new ArrayList<>();
-    private List<Group> groups = new ArrayList<>();
-    private List<Account> accounts = new ArrayList<>();
+    public FragmentMain fragmentMain;
+    public FragmentSub fragmentSub;
+
+    private ViewPager mMainViewPager;
+
     public final IRResolver ir = new IRResolver();
 
     private DriveClient mDriveClient;
@@ -71,21 +66,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CREATOR = 2;
     private static final int REQUEST_CODE_OPENER = 3;
 
-    interface Callback {
-        void updateList();
-    }
-
-    private Callback m_callback1,m_callback2,m_callback4;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initLayout();
-        initGroupSpinner();
-        initAccountSpinner();
-        initDataBase();
     }
 
     @Override
@@ -113,110 +99,31 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void setCallback1(Callback callback) {
-        this.m_callback1 = callback;
-    }
-    public void setCallback2(Callback callback) {
-        this.m_callback2 = callback;
-    }
-    public void setCallback4(Callback callback) {
-        this.m_callback4 = callback;
-    }
-
-    private void CallUpdate1() {
-        if(m_callback1 != null) {
-            m_callback1.updateList();
-        }
-    }
-    public void CallUpdate2() {
-        if(m_callback2 != null) {
-            m_callback2.updateList();
-        }
-    }
-    public void CallUpdate4() {
-        if(m_callback4 != null) {
-            m_callback4.updateList();
-        }
-    }
-
     private void initLayout() {
         Toolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        TabLayout mTabLayout = findViewById(R.id.main_tab);
-        mTabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("통합자산"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("계좌별이력"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("입출금입력"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("계좌관리"));
-        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        mViewPager = findViewById(R.id.main_viewpager);
-        MainTabPagerAdapter mPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        final ToggleButton tb = findViewById(R.id.button_title);
+        tb.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                mViewPager.setCurrentItem(tab.getPosition());
+            public void onClick(View v) {
+                if(tb.isChecked()) {
 
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-    }
-    private void initDataBase() {
-        ir.getContentResolver(getContentResolver());
-        updateGroupSpinner();
-        updateAccountSpinner();
-    }
-    private void initGroupSpinner() {
-        groupAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, grouplists);
-
-        Spinner mGroupSpinner = findViewById(R.id.spinner_group);
-        mGroupSpinner.setAdapter(groupAdapter);
-        mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(groups.size() != 0 ) {
-                    ir.setCurrentGroup(groups.get(position).getId());
                 }
-                updateAccountSpinner();
-                CallUpdate1();
-            }
+                else {
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+                }
             }
         });
-    }
-    private void initAccountSpinner() {
-        accountAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, accountlists);
-        Spinner mAccountSpinner = findViewById(R.id.spinner_account);
-        mAccountSpinner.setAdapter(accountAdapter);
-        mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ir.setCurrentAccount(accounts.get(position).getId());
-                CallUpdate1();
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        mMainViewPager = findViewById(R.id.main_viewpager);
+        MainTabPagerAdapter mMainPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager());
+        mMainViewPager.setAdapter(mMainPagerAdapter);
 
-            }
-        });
+        fragmentMain = (FragmentMain) mMainPagerAdapter.getItem(0);
+        fragmentSub = (FragmentSub) mMainPagerAdapter.getItem(1);
     }
 
     public void inoutDialog(String selectedDate) {
@@ -240,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 if(!name.isEmpty()) ir.insertGroup(name);
-                updateGroupSpinner();
+                fragmentMain.updateGroupSpinner();
             }
 
             @Override
@@ -255,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
-                updateGroupSpinner();
+                fragmentMain.updateGroupSpinner();
             }
 
             @Override
@@ -272,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 ir.deleteGroup("name",new String[] {name});
-                updateGroupSpinner();
+                fragmentMain.updateGroupSpinner();
             }
 
             @Override
@@ -303,53 +210,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDeleteAll() {
                 ir.deleteAll();
-                updateGroupSpinner();
-                updateAccountSpinner();
+                fragmentMain.updateGroupSpinner();
+                fragmentMain.updateAccountSpinner();
             }
         });
 
         dialog.show(getFragmentManager(), "dialog");
-    }
-
-    private void updateGroupList() {
-        grouplists.clear();
-        groups = ir.getGroups();
-
-        if(groups.isEmpty()) return;
-
-        for(int i = 0; i < groups.size(); i++) {
-            grouplists.add(groups.get(i).getName());
-        }
-    }
-    private void updateAccountList() {
-        String str;
-        Account account;
-
-        accountlists.clear();
-        accounts = ir.getAccounts();
-
-        if(accounts.isEmpty()) return;
-
-        for (int i = 0; i < accounts.size(); i++) {
-            account = accounts.get(i);
-            str = account.getNumber() + " " + account.getInstitute() + " " + account.getDiscription();
-            accountlists.add(str);
-        }
-    }
-    private void updateGroupSpinner() {
-        updateGroupList();
-        groupAdapter.notifyDataSetChanged();
-        if(groups.isEmpty()) ir.setCurrentGroup(-1);
-        else ir.setCurrentGroup(groups.get(0).getId());
-    }
-    public void updateAccountSpinner() {
-        updateAccountList();
-        accountAdapter.notifyDataSetChanged();
-        if(accounts.isEmpty()) ir.setCurrentAccount(-1);
-        else ir.setCurrentAccount(accounts.get(0).getId());
-
-        Spinner mAccountSpinner = findViewById(R.id.spinner_account);
-        mAccountSpinner.setSelection(0);
     }
 
     private void signIn(int code) {
@@ -398,8 +264,8 @@ public class MainActivity extends AppCompatActivity {
         File dbFile = new File(file);
         try {
             dbFile.delete();
-            updateGroupSpinner();
-            updateAccountSpinner();
+            fragmentMain.updateGroupSpinner();
+            fragmentMain.updateAccountSpinner();
             Toast.makeText(this,R.string.toast_db_del_ok,Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this,R.string.toast_db_del_error,Toast.LENGTH_SHORT).show();
@@ -491,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,R.string.toast_db_error,Toast.LENGTH_SHORT).show();
             return;
         }
-        initDataBase();
+        fragmentMain.initDataBase();
         Toast.makeText(this,R.string.toast_db_restore_ok,Toast.LENGTH_SHORT).show();
     }
 

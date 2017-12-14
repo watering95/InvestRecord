@@ -34,13 +34,15 @@ public class Fragment4 extends Fragment {
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
-        MainActivity.Callback callbackfromMain = new MainActivity.Callback() {
+        final FragmentMain fragmentMain = mActivity.fragmentMain;
+
+        FragmentMain.Callback callbackfromMain = new FragmentMain.Callback() {
             @Override
             public void updateList() {
                 update();
             }
         };
-        mActivity.setCallback4(callbackfromMain);
+        fragmentMain.setCallback4(callbackfromMain);
     }
 
     @Nullable
@@ -68,6 +70,8 @@ public class Fragment4 extends Fragment {
 
     private final Button.OnClickListener mClickListener = new View.OnClickListener() {
         public void onClick(View v) {
+            final FragmentMain fragmentMain = (FragmentMain) getParentFragment();
+
             String account = mTxtAccount.getText().toString();
             String institute = mTxtInstitute.getText().toString();
             String discript = mTxtDiscription.getText().toString();
@@ -84,7 +88,7 @@ public class Fragment4 extends Fragment {
                     break;
             }
 
-            mActivity.updateAccountSpinner();
+            fragmentMain.updateAccountSpinner();
         }
     };
 

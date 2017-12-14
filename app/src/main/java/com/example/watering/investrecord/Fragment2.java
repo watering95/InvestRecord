@@ -42,19 +42,21 @@ public class Fragment2 extends Fragment {
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
+        final FragmentMain fragmentMain = mActivity.fragmentMain;;
+
         makeHTMLFile();
 
-        MainActivity.Callback callbackfromMain = new MainActivity.Callback() {
+        FragmentMain.Callback callbackfromMain = new FragmentMain.Callback() {
             @Override
             public void updateList() {
                 updateListView();
 
                 makeHTMLFile();
                 mWeb.reload();
-                mActivity.CallUpdate4();
+                fragmentMain.CallUpdate4();
             }
         };
-        mActivity.setCallback2(callbackfromMain);
+        fragmentMain.setCallback2(callbackfromMain);
     }
 
     @Nullable
