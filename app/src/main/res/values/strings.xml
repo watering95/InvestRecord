@@ -9,6 +9,7 @@
     <string name="delete_all">전부삭제</string>
     <string name="DB_delete">DB 파일 삭제</string>
     <string name="DB_backup">DB 파일 백업</string>
+    <string name="DB_restore">DB 파일 복원</string>
     <string name="total_principal">총자산</string>
     <string name="total_evaluate">총평가액</string>
     <string name="total_rate">총수익율</string>
@@ -29,6 +30,8 @@
     <string name="toast_db_error">DB 파일을 찾지 못했습니다.</string>
     <string name="toast_db_del_ok">DB 파일을 삭제했습니다.</string>
     <string name="toast_db_del_error">DB 파일을 삭제하지 못했습니다.</string>
+    <string name="toast_db_restore_error"> DB 파일을 복구하지 못했습니다.</string>
+    <string name="toast_db_restore_ok"> DB 파일을 복구하였습니다.</string>
     <string name="toast_backup">Backup을 완료하였습니다.</string>
     <string name="toast_backup_error">Backup하지 못했습니다.</string>
     <string name="toast_no_account">선택된 계좌가 없습니다.</string>

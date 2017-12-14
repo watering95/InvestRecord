@@ -181,6 +181,7 @@ public class UserDialogFragment extends DialogFragment {
         Button btn_delete = view.findViewById(R.id.button_delete_all);
         Button btn_delete_file = view.findViewById(R.id.button_delete_db);
         Button btn_backup_file = view.findViewById(R.id.button_backup_db);
+        Button btn_restore_file = view.findViewById(R.id.button_restore_db);
 
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,6 +199,12 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 listener.onWorkComplete("backup");
+            }
+        });
+        btn_restore_file.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onWorkComplete("restore");
             }
         });
 

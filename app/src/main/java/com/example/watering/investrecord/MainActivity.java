@@ -25,16 +25,24 @@ import com.google.android.gms.drive.CreateFileActivityOptions;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
+import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.OpenFileActivityOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,11 +62,14 @@ public class MainActivity extends AppCompatActivity {
 
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
+    private DriveId mCurrentDriveId;
+    private DriveContents mDriveContents;
 
     private static final String TAG = "InvestRecord";
-    private static final int REQUEST_CODE_SIGN_IN = 0;
-    private static final int REQUEST_CODE_CREATOR = 1;
-    private FileInputStream mDBFile;
+    private static final int REQUEST_CODE_SIGN_IN_UP = 0;
+    private static final int REQUEST_CODE_SIGN_IN_DOWN = 1;
+    private static final int REQUEST_CODE_CREATOR = 2;
+    private static final int REQUEST_CODE_OPENER = 3;
 
     interface Callback {
         void updateList();
@@ -276,11 +287,16 @@ public class MainActivity extends AppCompatActivity {
         UserDialogFragment dialog = UserDialogFragment.newInstance(3, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
-                if(name.equals("del")) {
-                    deleteDBFile();
-                }
-                else if(name.equals("backup")) {
-                    signIn();
+                switch(name) {
+                    case "del":
+                        deleteDBFile();
+                        break;
+                    case "backup":
+                        signIn(REQUEST_CODE_SIGN_IN_UP);
+                        break;
+                    case "restore":
+                        signIn(REQUEST_CODE_SIGN_IN_DOWN);
+                        break;
                 }
             }
 
@@ -336,14 +352,25 @@ public class MainActivity extends AppCompatActivity {
         mAccountSpinner.setSelection(0);
     }
 
-    private void signIn() {
+    private void signIn(int code) {
         Log.i(TAG, "Start sign in");
         GoogleSignInClient mGoogleSignInClient = buildGoogleSignInClient();
-        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), code);
     }
     private void saveFileToDrive() {
         Log.i(TAG, "Load DB File");
-        final FileInputStream file = mDBFile;
+
+        final FileInputStream fileInputStream;
+
+        try {
+            String file = getFilesDir().toString();
+            file = file.substring(0,file.length()-5) + "databases/InvestRecord.db";
+            fileInputStream = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            Log.i(TAG, "DB File not existed.");
+            Toast.makeText(this,R.string.toast_db_error,Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         mDriveResourceClient
         .createContents()
@@ -351,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
             new Continuation<DriveContents, Task<Void>>() {
                 @Override
                 public Task<Void> then(@NonNull Task<DriveContents> task) throws Exception {
-                    return createFileIntentSender(task.getResult(), file);
+                    return createFileIntentSender(task.getResult(), fileInputStream);
                 }
             }
         )
@@ -377,6 +404,95 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(this,R.string.toast_db_del_error,Toast.LENGTH_SHORT).show();
         }
+    }
+    private void downloadFileFromDrive() {
+        Log.i(TAG, "Open Drive file.");
+
+        List<String> mimeList = new ArrayList<>();
+        mimeList.clear();
+        mimeList.add("application/x-sqlite3");
+
+        final OpenFileActivityOptions openFileActivityOptions =
+            new OpenFileActivityOptions.Builder()
+                .setMimeType(mimeList)
+                .build();
+
+        mDriveClient.newOpenFileActivityIntentSender(openFileActivityOptions)
+            .addOnSuccessListener(new OnSuccessListener<IntentSender>() {
+                @Override
+                public void onSuccess(IntentSender intentSender) {
+                    try {
+                        startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER,null,0,0,0);
+                    } catch(IntentSender.SendIntentException e) {
+                        Log.w(TAG,"Unable to send intent", e);
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Unable to create OpenFileActivityIntent.", e);
+            }
+        });
+    }
+    private void loadCurrentFile() {
+        Log.d(TAG, "Retrieving...");
+        final DriveFile file = mCurrentDriveId.asDriveFile();
+
+        mDriveResourceClient.getMetadata(file)
+            .continueWithTask(new Continuation<Metadata, Task<DriveContents>>() {
+                @Override
+                public Task<DriveContents> then(@NonNull Task<Metadata> task) {
+                    if(task.isSuccessful()) {
+                        return mDriveResourceClient.openFile(file, DriveFile.MODE_READ_ONLY);
+                    } else {
+                        return Tasks.forException(task.getException());
+                    }
+                }
+            }).addOnSuccessListener(new OnSuccessListener<DriveContents>() {
+                @Override
+                public void onSuccess(DriveContents driveContents) {
+                    mDriveContents = driveContents;
+                    refreshDBFromCurrentFile();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Unable to retrieve file metadata and contents.", e);
+            }
+        });
+    }
+    private void refreshDBFromCurrentFile() {
+        Log.d(TAG, "Refreshing...");
+        if(mCurrentDriveId == null) {
+
+            return;
+        }
+
+        try {
+            String file = getFilesDir().toString();
+            file = file.substring(0,file.length()-5) + "databases/InvestRecord.db";
+            final FileOutputStream dbFileOutputStream = new FileOutputStream(file);
+
+            InputStream inputStream = mDriveContents.getInputStream();
+
+            byte[] writeBuffer = new byte[1024];
+
+            try {
+                while(inputStream.read(writeBuffer,0,writeBuffer.length) != -1) {
+                    dbFileOutputStream.write(writeBuffer);
+                }
+            } catch(IOException e_io) {
+                Log.i(TAG, "Be Failed to restore the DB File.");
+                Toast.makeText(this,R.string.toast_db_restore_error,Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (FileNotFoundException e) {
+            Log.i(TAG, "DB File not existed.");
+            Toast.makeText(this,R.string.toast_db_error,Toast.LENGTH_SHORT).show();
+            return;
+        }
+        initDataBase();
+        Toast.makeText(this,R.string.toast_db_restore_ok,Toast.LENGTH_SHORT).show();
     }
 
     private GoogleSignInClient buildGoogleSignInClient() {
@@ -432,24 +548,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_CODE_SIGN_IN:
+            case REQUEST_CODE_SIGN_IN_UP:
+            case REQUEST_CODE_SIGN_IN_DOWN:
                 Log.i(TAG, "Sign in request code");
                 if(resultCode == RESULT_OK) {
                     Log.i(TAG, "Singed in successfully.");
                     mDriveClient = Drive.getDriveClient(this, GoogleSignIn.getLastSignedInAccount(this));
                     mDriveResourceClient = Drive.getDriveResourceClient(this, GoogleSignIn.getLastSignedInAccount(this));
-
-                    try {
-                        String file = getFilesDir().toString();
-                        file = file.substring(0,file.length()-5) + "databases/InvestRecord.db";
-                        mDBFile = new FileInputStream(file);
-                    } catch (FileNotFoundException e) {
-                        Log.i(TAG, "DB File not existed.");
-                        Toast.makeText(this,R.string.toast_db_error,Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    saveFileToDrive();
+                    if(requestCode == REQUEST_CODE_SIGN_IN_UP) saveFileToDrive();
+                    else if(requestCode == REQUEST_CODE_SIGN_IN_DOWN) downloadFileFromDrive();
                 }
                 break;
             case REQUEST_CODE_CREATOR:
@@ -462,6 +569,14 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this,R.string.toast_backup_error,Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case REQUEST_CODE_OPENER:
+                if( resultCode == RESULT_OK) {
+                    mCurrentDriveId = data.getParcelableExtra(OpenFileActivityOptions.EXTRA_RESPONSE_DRIVE_ID);
+                    loadCurrentFile();
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode,resultCode,data);
         }
     }
 }
