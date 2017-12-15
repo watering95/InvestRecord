@@ -12,12 +12,12 @@ import android.view.ViewGroup;
  */
 
 @SuppressWarnings({"ALL"})
-public class FragmentSub extends Fragment {
+public class FragmentSub2 extends Fragment {
 
     private View mView;
     private IRResolver ir;
 
-    public FragmentSub() {
+    public FragmentSub2() {
     }
 
     @Override
@@ -31,7 +31,7 @@ public class FragmentSub extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_sub, container, false);
+        mView = inflater.inflate(R.layout.fragment_sub2, container, false);
 
         initLayout();
 

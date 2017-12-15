@@ -9,14 +9,14 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 
 @SuppressWarnings("ALL")
-class FragMainTabPagerAdapter extends FragmentPagerAdapter {
+class FragSub1TabPagerAdapter extends FragmentPagerAdapter {
 
     public Fragment1 fragment1;
     public Fragment2 fragment2;
     public Fragment3 fragment3;
     public Fragment4 fragment4;
 
-    public FragMainTabPagerAdapter(FragmentManager fm) {
+    public FragSub1TabPagerAdapter(FragmentManager fm) {
         super(fm);
         fragment1 = new Fragment1();
         fragment2 = new Fragment2();

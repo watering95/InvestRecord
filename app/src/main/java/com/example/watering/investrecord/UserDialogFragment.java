@@ -346,6 +346,6 @@ public class UserDialogFragment extends DialogFragment {
                 ir.updateInfoDairy(id,date,principal,rate);
                 break;
         }
-        mActivity.fragmentMain.CallUpdate2();
+        mActivity.fragmentSub1.CallUpdate2();
     }
 }

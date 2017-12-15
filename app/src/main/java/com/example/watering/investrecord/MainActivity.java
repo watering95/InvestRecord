@@ -4,16 +4,17 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v4.view.ViewPager;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -45,13 +46,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.NavigableMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    public FragmentMain fragmentMain;
-    public FragmentSub fragmentSub;
+    public FragmentSub1 fragmentSub1;
+    public FragmentSub2 fragmentSub2;
 
-    private ViewPager mMainViewPager;
+    DrawerLayout drawerLayout;
 
     public final IRResolver ir = new IRResolver();
 
@@ -95,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_setting:
                 settingDialog();
                 break;
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                break;
         }
         return true;
     }
@@ -103,27 +108,30 @@ public class MainActivity extends AppCompatActivity {
         Toolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        final ToggleButton tb = findViewById(R.id.button_title);
-        tb.setOnClickListener(new View.OnClickListener() {
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.navigation_view);
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                if(tb.isChecked()) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                item.setChecked(true);
+                drawerLayout.closeDrawers();
 
-                }
-                else {
+                int id = item.getItemId();
 
+                switch(id) {
+                    case R.id.navigation_item_sub1:
+                        break;
+                    case R.id.navigation_item_sub2:
+                        break;
                 }
+
+                return true;
             }
         });
-
-        mMainViewPager = findViewById(R.id.main_viewpager);
-        MainTabPagerAdapter mMainPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager());
-        mMainViewPager.setAdapter(mMainPagerAdapter);
-
-        fragmentMain = (FragmentMain) mMainPagerAdapter.getItem(0);
-        fragmentSub = (FragmentSub) mMainPagerAdapter.getItem(1);
     }
 
     public void inoutDialog(String selectedDate) {
@@ -147,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 if(!name.isEmpty()) ir.insertGroup(name);
-                fragmentMain.updateGroupSpinner();
+                fragmentSub1.updateGroupSpinner();
             }
 
             @Override
@@ -162,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
-                fragmentMain.updateGroupSpinner();
+                fragmentSub1.updateGroupSpinner();
             }
 
             @Override
@@ -179,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 ir.deleteGroup("name",new String[] {name});
-                fragmentMain.updateGroupSpinner();
+                fragmentSub1.updateGroupSpinner();
             }
 
             @Override
@@ -210,8 +218,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDeleteAll() {
                 ir.deleteAll();
-                fragmentMain.updateGroupSpinner();
-                fragmentMain.updateAccountSpinner();
+                fragmentSub1.updateGroupSpinner();
+                fragmentSub1.updateAccountSpinner();
             }
         });
 
@@ -264,8 +272,8 @@ public class MainActivity extends AppCompatActivity {
         File dbFile = new File(file);
         try {
             dbFile.delete();
-            fragmentMain.updateGroupSpinner();
-            fragmentMain.updateAccountSpinner();
+            fragmentSub1.updateGroupSpinner();
+            fragmentSub1.updateAccountSpinner();
             Toast.makeText(this,R.string.toast_db_del_ok,Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this,R.string.toast_db_del_error,Toast.LENGTH_SHORT).show();
@@ -357,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,R.string.toast_db_error,Toast.LENGTH_SHORT).show();
             return;
         }
-        fragmentMain.initDataBase();
+        fragmentSub1.initDataBase();
         Toast.makeText(this,R.string.toast_db_restore_ok,Toast.LENGTH_SHORT).show();
     }
 

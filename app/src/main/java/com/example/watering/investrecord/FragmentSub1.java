@@ -11,23 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by watering on 17. 10. 21.
  */
 
 @SuppressWarnings({"ALL"})
-public class FragmentMain extends Fragment {
+public class FragmentSub1 extends Fragment {
 
     private Fragment1 fragment1 = new Fragment1();
     private Fragment2 fragment2 = new Fragment2();
@@ -52,7 +46,7 @@ public class FragmentMain extends Fragment {
 
     private Callback m_callback1,m_callback2,m_callback4;
 
-    public FragmentMain() {
+    public FragmentSub1() {
     }
 
     @Override
@@ -66,7 +60,7 @@ public class FragmentMain extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_main, container, false);
+        mView = inflater.inflate(R.layout.fragment_sub1, container, false);
 
         initLayout();
         initGroupSpinner();
@@ -86,7 +80,7 @@ public class FragmentMain extends Fragment {
         mFragMainTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         mFragMainViewPager = mView.findViewById(R.id.frag_main_viewpager);
-        FragMainTabPagerAdapter mFragMainPagerAdapter = new FragMainTabPagerAdapter(mActivity.getSupportFragmentManager());
+        FragSub1TabPagerAdapter mFragMainPagerAdapter = new FragSub1TabPagerAdapter(mActivity.getSupportFragmentManager());
         mFragMainViewPager.setAdapter(mFragMainPagerAdapter);
         mFragMainViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mFragMainTabLayout));
 

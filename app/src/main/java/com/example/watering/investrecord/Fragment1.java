@@ -1,6 +1,5 @@
 package com.example.watering.investrecord;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -45,9 +44,9 @@ public class Fragment1 extends Fragment {
         final MainActivity mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
-        final FragmentMain fragmentMain = mActivity.fragmentMain;
+        final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
 
-        FragmentMain.Callback callbackfromMain = new FragmentMain.Callback() {
+        FragmentSub1.Callback callbackfromMain = new FragmentSub1.Callback() {
             @Override
             public void updateList() {
                 DecimalFormat df = new DecimalFormat("#,###");
@@ -57,12 +56,12 @@ public class Fragment1 extends Fragment {
                 mTxtTotalRate.setText(String.format(Locale.getDefault(),"%.2f",total_rate));
                 listAdapter.notifyDataSetChanged();
 
-                fragmentMain.CallUpdate2();
+                fragmentSub1.CallUpdate2();
             }
         };
 
 
-        fragmentMain.setCallback1(callbackfromMain);
+        fragmentSub1.setCallback1(callbackfromMain);
     }
 
     @Nullable
