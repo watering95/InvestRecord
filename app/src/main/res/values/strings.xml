@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">나의 자산</string>
-    <string name="title1">나의 자산</string>
+    <string name="title1">나의 계좌</string>
     <string name="title2">나의 가계부</string>
+    <string name="navigation_title">나의 자산</string>
     <string name="group">그룹</string>
     <string name="account">계좌번호</string>
     <string name="group_name">그룹명</string>
@@ -37,5 +38,4 @@
     <string name="toast_backup">Backup을 완료하였습니다.</string>
     <string name="toast_backup_error">Backup하지 못했습니다.</string>
     <string name="toast_no_account">선택된 계좌가 없습니다.</string>
-    <string name="title_activity_sub">나의 가계부</string>
 </resources>

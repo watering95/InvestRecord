@@ -30,8 +30,7 @@ public class FragmentSub1 extends Fragment {
 
     private View mView;
     private IRResolver ir;
-    private ViewPager mFragMainViewPager;
-    private MainActivity mActivity;
+    private ViewPager mFragSub1ViewPager;
 
     private ArrayAdapter<String> groupAdapter;
     private ArrayAdapter<String> accountAdapter;
@@ -53,8 +52,7 @@ public class FragmentSub1 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mActivity = (MainActivity) getActivity();
-        ir = mActivity.ir;
+        ir = ((MainActivity) getActivity()).ir;
     }
 
     @Nullable
@@ -71,7 +69,7 @@ public class FragmentSub1 extends Fragment {
     }
 
     private void initLayout() {
-        TabLayout mFragMainTabLayout = mView.findViewById(R.id.frag_main_tab);
+        TabLayout mFragMainTabLayout = mView.findViewById(R.id.frag_sub1_tab);
         mFragMainTabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
         mFragMainTabLayout.addTab(mFragMainTabLayout.newTab().setText("통합자산"));
         mFragMainTabLayout.addTab(mFragMainTabLayout.newTab().setText("계좌별이력"));
@@ -79,15 +77,15 @@ public class FragmentSub1 extends Fragment {
         mFragMainTabLayout.addTab(mFragMainTabLayout.newTab().setText("계좌관리"));
         mFragMainTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        mFragMainViewPager = mView.findViewById(R.id.frag_main_viewpager);
-        FragSub1TabPagerAdapter mFragMainPagerAdapter = new FragSub1TabPagerAdapter(mActivity.getSupportFragmentManager());
-        mFragMainViewPager.setAdapter(mFragMainPagerAdapter);
-        mFragMainViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mFragMainTabLayout));
+        mFragSub1ViewPager = mView.findViewById(R.id.frag_sub1_viewpager);
+        FragSub1TabPagerAdapter mFragSub1PagerAdapter = new FragSub1TabPagerAdapter(getChildFragmentManager());
+        mFragSub1ViewPager.setAdapter(mFragSub1PagerAdapter);
+        mFragSub1ViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mFragMainTabLayout));
 
         mFragMainTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                mFragMainViewPager.setCurrentItem(tab.getPosition());
+                mFragSub1ViewPager.setCurrentItem(tab.getPosition());
 
             }
 
@@ -102,10 +100,10 @@ public class FragmentSub1 extends Fragment {
             }
         });
 
-        fragment1 = (Fragment1) mFragMainPagerAdapter.getItem(0);
-        fragment2 = (Fragment2) mFragMainPagerAdapter.getItem(1);
-        fragment3 = (Fragment3) mFragMainPagerAdapter.getItem(2);
-        fragment4 = (Fragment4) mFragMainPagerAdapter.getItem(3);
+        fragment1 = (Fragment1) mFragSub1PagerAdapter.getItem(0);
+        fragment2 = (Fragment2) mFragSub1PagerAdapter.getItem(1);
+        fragment3 = (Fragment3) mFragSub1PagerAdapter.getItem(2);
+        fragment4 = (Fragment4) mFragSub1PagerAdapter.getItem(3);
     }
 
     public void setCallback1(Callback callback) {
@@ -135,12 +133,12 @@ public class FragmentSub1 extends Fragment {
     }
 
     public void initDataBase() {
-        ir.getContentResolver(mActivity.getContentResolver());
+        ir.getContentResolver(getActivity().getContentResolver());
         updateGroupSpinner();
         updateAccountSpinner();
     }
     private void initGroupSpinner() {
-        groupAdapter = new ArrayAdapter<>(mActivity, R.layout.support_simple_spinner_dropdown_item, grouplists);
+        groupAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, grouplists);
 
         Spinner mGroupSpinner = mView.findViewById(R.id.spinner_group);
         mGroupSpinner.setAdapter(groupAdapter);
@@ -161,7 +159,7 @@ public class FragmentSub1 extends Fragment {
         });
     }
     private void initAccountSpinner() {
-        accountAdapter = new ArrayAdapter<>(mActivity, R.layout.support_simple_spinner_dropdown_item, accountlists);
+        accountAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, accountlists);
         Spinner mAccountSpinner = mView.findViewById(R.id.spinner_account);
         mAccountSpinner.setAdapter(accountAdapter);
         mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

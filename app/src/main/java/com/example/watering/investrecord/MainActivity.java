@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     public FragmentSub1 fragmentSub1;
     public FragmentSub2 fragmentSub2;
 
-    DrawerLayout drawerLayout;
+    private DrawerLayout drawerLayout;
 
     public final IRResolver ir = new IRResolver();
 

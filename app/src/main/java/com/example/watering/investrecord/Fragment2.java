@@ -42,7 +42,7 @@ public class Fragment2 extends Fragment {
         mActivity = (MainActivity) getActivity();
         ir = mActivity.ir;
 
-        final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;;
+        final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
 
         makeHTMLFile();
 
@@ -69,6 +69,13 @@ public class Fragment2 extends Fragment {
         openWebView();
 
         return mView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        makeHTMLFile();
+        mWeb.reload();
     }
 
     private void initLayout() {

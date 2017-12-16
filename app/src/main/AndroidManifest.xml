@@ -25,7 +25,7 @@
         <provider
             android:name=".IRProvider"
             android:authorities="watering.investrecord.provider"
-            android:exported="true"></provider>
+            android:exported="true"/>
 
     </application>
 
