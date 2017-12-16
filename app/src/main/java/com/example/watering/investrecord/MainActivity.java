@@ -1,5 +1,7 @@
 package com.example.watering.investrecord;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
@@ -46,10 +48,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.NavigableMap;
 
 public class MainActivity extends AppCompatActivity {
 
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
     public FragmentSub1 fragmentSub1;
     public FragmentSub2 fragmentSub2;
 
@@ -111,6 +114,14 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        fragmentSub1 = new FragmentSub1();
+        fragmentSub2 = new FragmentSub2();
+
+        fragmentManager = getSupportFragmentManager();
+
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.frame, fragmentSub1).commit();
+
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.navigation_view);
 
@@ -124,8 +135,12 @@ public class MainActivity extends AppCompatActivity {
 
                 switch(id) {
                     case R.id.navigation_item_sub1:
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.frame, fragmentSub1).commit();
                         break;
                     case R.id.navigation_item_sub2:
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.frame, fragmentSub2).commit();
                         break;
                 }
 

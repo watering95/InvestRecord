@@ -19,6 +19,11 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
         </android.support.v7.widget.Toolbar>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/frame"
+            android:layout_below="@id/toolbar"/>
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
@@ -30,7 +35,5 @@
         app:menu="@menu/drawer">
 
     </android.support.design.widget.NavigationView>
-
-
 
 </android.support.v4.widget.DrawerLayout>
