@@ -2,20 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_addGroup"
+        android:id="@+id/menu_sub1_addGroup"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/group_regist"/>
     <item
-        android:id="@+id/menu_editGroup"
+        android:id="@+id/menu_sub1_editGroup"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/group_edit"/>
     <item
-        android:id="@+id/menu_delGroup"
+        android:id="@+id/menu_sub1_delGroup"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/group_delete"/>
-    <item
-        android:id="@+id/menu_setting"
-        android:icon="@mipmap/ic_launcher"
-        android:title="@string/setting"/>
 
 </menu>

@@ -9,5 +9,8 @@
         <item
             android:id="@+id/navigation_item_sub2"
             android:title="@string/title2"/>
+        <item
+            android:id="@+id/navigation_item_setting"
+            android:title="@string/setting"/>
     </group>
 </menu>

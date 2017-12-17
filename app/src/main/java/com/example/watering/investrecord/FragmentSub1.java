@@ -7,6 +7,9 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -53,6 +56,8 @@ public class FragmentSub1 extends Fragment {
         super.onCreate(savedInstanceState);
 
         ir = ((MainActivity) getActivity()).ir;
+
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -66,6 +71,29 @@ public class FragmentSub1 extends Fragment {
         initDataBase();
 
         return mView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_toolbar_sub1,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_sub1_addGroup:
+                addGroupDialog();
+                break;
+            case R.id.menu_sub1_editGroup:
+                editGroupDialog();
+                break;
+            case R.id.menu_sub1_delGroup:
+                delGroupDialog();
+                break;
+        }
+        return true;
     }
 
     private void initLayout() {
@@ -215,5 +243,54 @@ public class FragmentSub1 extends Fragment {
 
         Spinner mAccountSpinner = mView.findViewById(R.id.spinner_account);
         mAccountSpinner.setSelection(0);
+    }
+
+    private void addGroupDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+                if(!name.isEmpty()) ir.insertGroup(name);
+                updateGroupSpinner();
+            }
+
+            @Override
+            public void onDeleteAll() {
+
+            }
+        });
+        dialog.show(getFragmentManager(), "dialog");
+    }
+    private void editGroupDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+                if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
+                updateGroupSpinner();
+            }
+
+            @Override
+            public void onDeleteAll() {
+
+            }
+
+        });
+        dialog.initData(ir.getGroups());
+        dialog.show(getFragmentManager(), "dialog");
+    }
+    private void delGroupDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+                ir.deleteGroup("name",new String[] {name});
+                updateGroupSpinner();
+            }
+
+            @Override
+            public void onDeleteAll() {
+
+            }
+        });
+        dialog.initData(ir.getGroups());
+        dialog.show(getFragmentManager(), "dialog");
     }
 }

@@ -1,21 +1,20 @@
 package com.example.watering.investrecord;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.graphics.Color;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -58,14 +57,15 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
 
-    public final IRResolver ir = new IRResolver();
-
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
     private DriveId mCurrentDriveId;
     private DriveContents mDriveContents;
 
+    public final IRResolver ir = new IRResolver();
+
     private static final String TAG = "InvestRecord";
+
     private static final int REQUEST_CODE_SIGN_IN_UP = 0;
     private static final int REQUEST_CODE_SIGN_IN_DOWN = 1;
     private static final int REQUEST_CODE_CREATOR = 2;
@@ -80,35 +80,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar,menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+
         switch (item.getItemId()) {
-            case R.id.menu_addGroup:
-                addGroupDialog();
-                break;
-            case R.id.menu_editGroup:
-                editGroupDialog();
-                break;
-            case R.id.menu_delGroup:
-                delGroupDialog();
-                break;
-            case R.id.menu_setting:
-                settingDialog();
-                break;
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
         }
-        return true;
+        return false;
     }
 
     private void initLayout() {
-        Toolbar mToolbar = findViewById(R.id.toolbar);
+        final Toolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -138,10 +122,15 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navigation_item_sub1:
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.frame, fragmentSub1).commit();
+                        mToolbar.setTitle(R.string.title1);
                         break;
                     case R.id.navigation_item_sub2:
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.frame, fragmentSub2).commit();
+                        mToolbar.setTitle(R.string.title2);
+                        break;
+                    case R.id.navigation_item_setting:
+                        settingDialog();
                         break;
                 }
 
@@ -164,55 +153,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dialog.setSelectedDate(selectedDate);
-        dialog.show(getFragmentManager(), "dialog");
-    }
-    private void addGroupDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                if(!name.isEmpty()) ir.insertGroup(name);
-                fragmentSub1.updateGroupSpinner();
-            }
-
-            @Override
-            public void onDeleteAll() {
-
-            }
-        });
-        dialog.show(getFragmentManager(), "dialog");
-    }
-    private void editGroupDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
-                fragmentSub1.updateGroupSpinner();
-            }
-
-            @Override
-            public void onDeleteAll() {
-
-            }
-
-        });
-        dialog.initData(ir.getGroups());
-        dialog.show(getFragmentManager(), "dialog");
-    }
-    private void delGroupDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                ir.deleteGroup("name",new String[] {name});
-                fragmentSub1.updateGroupSpinner();
-            }
-
-            @Override
-            public void onDeleteAll() {
-
-            }
-        });
-        dialog.initData(ir.getGroups());
-        dialog.show(getFragmentManager(), "dialog");
+        dialog.show(fragmentManager, "dialog");
     }
     private void settingDialog() {
         UserDialogFragment dialog = UserDialogFragment.newInstance(3, new UserDialogFragment.UserListener() {
@@ -239,13 +180,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        dialog.show(getFragmentManager(), "dialog");
+        dialog.show(fragmentManager, "dialog");
     }
 
-    private void signIn(int code) {
-        Log.i(TAG, "Start sign in");
-        GoogleSignInClient mGoogleSignInClient = buildGoogleSignInClient();
-        startActivityForResult(mGoogleSignInClient.getSignInIntent(), code);
+    private void deleteDBFile() {
+        String file = getFilesDir().toString();
+        file = file.substring(0,file.length()-5) + "databases/InvestRecord.db";
+
+        File dbFile = new File(file);
+        try {
+            dbFile.delete();
+            fragmentSub1.updateGroupSpinner();
+            fragmentSub1.updateAccountSpinner();
+            Toast.makeText(this,R.string.toast_db_del_ok,Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this,R.string.toast_db_del_error,Toast.LENGTH_SHORT).show();
+        }
     }
     private void saveFileToDrive() {
         Log.i(TAG, "Load DB File");
@@ -263,37 +213,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mDriveResourceClient
-        .createContents()
-        .continueWithTask(
-            new Continuation<DriveContents, Task<Void>>() {
-                @Override
-                public Task<Void> then(@NonNull Task<DriveContents> task) throws Exception {
-                    return createFileIntentSender(task.getResult(), fileInputStream);
-                }
-            }
-        )
-        .addOnFailureListener(
-            new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Failed to create new contents.", e);
-                }
-            }
-        );
-    }
-    private void deleteDBFile() {
-        String file = getFilesDir().toString();
-        file = file.substring(0,file.length()-5) + "databases/InvestRecord.db";
-
-        File dbFile = new File(file);
-        try {
-            dbFile.delete();
-            fragmentSub1.updateGroupSpinner();
-            fragmentSub1.updateAccountSpinner();
-            Toast.makeText(this,R.string.toast_db_del_ok,Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this,R.string.toast_db_del_error,Toast.LENGTH_SHORT).show();
-        }
+                .createContents()
+                .continueWithTask(
+                        new Continuation<DriveContents, Task<Void>>() {
+                            @Override
+                            public Task<Void> then(@NonNull Task<DriveContents> task) throws Exception {
+                                return createFileIntentSender(task.getResult(), fileInputStream);
+                            }
+                        }
+                )
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Failed to create new contents.", e);
+                            }
+                        }
+                );
     }
     private void downloadFileFromDrive() {
         Log.i(TAG, "Open Drive file.");
@@ -303,21 +239,21 @@ public class MainActivity extends AppCompatActivity {
         mimeList.add("application/x-sqlite3");
 
         final OpenFileActivityOptions openFileActivityOptions =
-            new OpenFileActivityOptions.Builder()
-                .setMimeType(mimeList)
-                .build();
+                new OpenFileActivityOptions.Builder()
+                        .setMimeType(mimeList)
+                        .build();
 
         mDriveClient.newOpenFileActivityIntentSender(openFileActivityOptions)
-            .addOnSuccessListener(new OnSuccessListener<IntentSender>() {
-                @Override
-                public void onSuccess(IntentSender intentSender) {
-                    try {
-                        startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER,null,0,0,0);
-                    } catch(IntentSender.SendIntentException e) {
-                        Log.w(TAG,"Unable to send intent", e);
+                .addOnSuccessListener(new OnSuccessListener<IntentSender>() {
+                    @Override
+                    public void onSuccess(IntentSender intentSender) {
+                        try {
+                            startIntentSenderForResult(intentSender, REQUEST_CODE_OPENER,null,0,0,0);
+                        } catch(IntentSender.SendIntentException e) {
+                            Log.w(TAG,"Unable to send intent", e);
+                        }
                     }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.e(TAG, "Unable to create OpenFileActivityIntent.", e);
@@ -329,22 +265,22 @@ public class MainActivity extends AppCompatActivity {
         final DriveFile file = mCurrentDriveId.asDriveFile();
 
         mDriveResourceClient.getMetadata(file)
-            .continueWithTask(new Continuation<Metadata, Task<DriveContents>>() {
-                @Override
-                public Task<DriveContents> then(@NonNull Task<Metadata> task) {
-                    if(task.isSuccessful()) {
-                        return mDriveResourceClient.openFile(file, DriveFile.MODE_READ_ONLY);
-                    } else {
-                        return Tasks.forException(task.getException());
+                .continueWithTask(new Continuation<Metadata, Task<DriveContents>>() {
+                    @Override
+                    public Task<DriveContents> then(@NonNull Task<Metadata> task) {
+                        if(task.isSuccessful()) {
+                            return mDriveResourceClient.openFile(file, DriveFile.MODE_READ_ONLY);
+                        } else {
+                            return Tasks.forException(task.getException());
+                        }
                     }
-                }
-            }).addOnSuccessListener(new OnSuccessListener<DriveContents>() {
-                @Override
-                public void onSuccess(DriveContents driveContents) {
-                    mDriveContents = driveContents;
-                    refreshDBFromCurrentFile();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
+                }).addOnSuccessListener(new OnSuccessListener<DriveContents>() {
+            @Override
+            public void onSuccess(DriveContents driveContents) {
+                mDriveContents = driveContents;
+                refreshDBFromCurrentFile();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.e(TAG, "Unable to retrieve file metadata and contents.", e);
@@ -385,11 +321,16 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this,R.string.toast_db_restore_ok,Toast.LENGTH_SHORT).show();
     }
 
+    private void signIn(int code) {
+        Log.i(TAG, "Start sign in");
+        GoogleSignInClient mGoogleSignInClient = buildGoogleSignInClient();
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), code);
+    }
     private GoogleSignInClient buildGoogleSignInClient() {
         GoogleSignInOptions signInOptions =
-            new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(Drive.SCOPE_FILE)
-                .build();
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestScopes(Drive.SCOPE_FILE)
+                        .build();
         return GoogleSignIn.getClient(this,signInOptions);
     }
     private Task<Void> createFileIntentSender(DriveContents driveContents, FileInputStream file) {
@@ -410,28 +351,28 @@ public class MainActivity extends AppCompatActivity {
         String filename = String.format(Locale.getDefault(),"InvestRecord_%d%02d%02d.db",today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DATE));
 
         MetadataChangeSet metadataChangeSet =
-            new MetadataChangeSet.Builder()
-                .setMimeType("application/x-sqlite3")
-                .setTitle(filename)
-                .build();
+                new MetadataChangeSet.Builder()
+                        .setMimeType("application/x-sqlite3")
+                        .setTitle(filename)
+                        .build();
 
         CreateFileActivityOptions createFileActivityOptions =
-            new CreateFileActivityOptions.Builder()
-                .setInitialMetadata(metadataChangeSet)
-                .setInitialDriveContents(driveContents)
-                .build();
+                new CreateFileActivityOptions.Builder()
+                        .setInitialMetadata(metadataChangeSet)
+                        .setInitialDriveContents(driveContents)
+                        .build();
 
         return mDriveClient
-            .newCreateFileActivityIntentSender(createFileActivityOptions)
-            .continueWith(
-               new Continuation<IntentSender, Void>() {
-                   @Override
-                   public Void then(@NonNull Task<IntentSender> task) throws Exception {
-                       startIntentSenderForResult(task.getResult(), REQUEST_CODE_CREATOR, null, 0, 0, 0);
-                       return null;
-                   }
-               }
-            );
+                .newCreateFileActivityIntentSender(createFileActivityOptions)
+                .continueWith(
+                        new Continuation<IntentSender, Void>() {
+                            @Override
+                            public Void then(@NonNull Task<IntentSender> task) throws Exception {
+                                startIntentSenderForResult(task.getResult(), REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                                return null;
+                            }
+                        }
+                );
     }
 
     @Override
@@ -446,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
                     mDriveClient = Drive.getDriveClient(this, GoogleSignIn.getLastSignedInAccount(this));
                     mDriveResourceClient = Drive.getDriveResourceClient(this, GoogleSignIn.getLastSignedInAccount(this));
                     if(requestCode == REQUEST_CODE_SIGN_IN_UP) saveFileToDrive();
-                    else if(requestCode == REQUEST_CODE_SIGN_IN_DOWN) downloadFileFromDrive();
+                    else downloadFileFromDrive();
                 }
                 break;
             case REQUEST_CODE_CREATOR:
