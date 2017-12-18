@@ -24,6 +24,14 @@ public class IRResolver {
     private static final int CODE_ACCOUNT = 1;
     private static final int CODE_INFO_IO = 2;
     private static final int CODE_INFO_DAIRY = 3;
+    private static final int CODE_CARD = 4;
+    private static final int CODE_CATEGORY_MAIN = 5;
+    private static final int CODE_CATEGORY_SUB = 6;
+    private static final int CODE_INCOME = 7;
+    private static final int CODE_OUT = 8;
+    private static final int CODE_OUT_CARD = 9;
+    private static final int CODE_OUT_CASH = 10;
+    private static final int CODE_OUT_SCHEDULE = 11;
 
     private final List<Group> groups = new ArrayList<>();
     private final List<Account> accounts = new ArrayList<>();
@@ -33,6 +41,14 @@ public class IRResolver {
     private static final String URI_ACCOUNT = "content://watering.investrecord.provider/account";
     private static final String URI_INFO_IO = "content://watering.investrecord.provider/info_io";
     private static final String URI_INFO_DAIRY = "content://watering.investrecord.provider/info_dairy";
+    private static final String URI_CARD = "content://watering.investrecord.provider/card";
+    private static final String URI_CATEGORY_MAIN = "content://watering.investrecord.provider/category_main";
+    private static final String URI_CATEGORY_SUB = "content://watering.investrecord.provider/category_sub";
+    private static final String URI_INCOME = "content://watering.investrecord.provider/income";
+    private static final String URI_OUT = "content://watering.investrecord.provider/out";
+    private static final String URI_OUT_CARD = "content://watering.investrecord.provider/out_card";
+    private static final String URI_OUT_CASH = "content://watering.investrecord.provider/out_cash";
+    private static final String URI_OUT_SCHEDULE = "content://watering.investrecord.provider/out_schedule";
 
     public void getContentResolver(ContentResolver cr) {
         this.cr = cr;
