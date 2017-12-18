@@ -28,6 +28,9 @@
     <string name="group_edit">그룹 편집</string>
     <string name="group_delete">그룹 삭제</string>
     <string name="setting">설정</string>
+    <string name="statistic">통계</string>
+    <string name="income">수입</string>
+    <string name="spending">지출</string>
     <string name="toast_htmlfile">HTML 파일 생성 실패</string>
     <string name="toast_date_error">오늘 이전 날짜로 선택해 주세요.</string>
     <string name="toast_db_error">DB 파일을 찾지 못했습니다.</string>

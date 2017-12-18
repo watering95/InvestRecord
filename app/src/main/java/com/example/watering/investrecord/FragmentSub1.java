@@ -97,20 +97,21 @@ public class FragmentSub1 extends Fragment {
     }
 
     private void initLayout() {
-        TabLayout mFragMainTabLayout = mView.findViewById(R.id.frag_sub1_tab);
-        mFragMainTabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
-        mFragMainTabLayout.addTab(mFragMainTabLayout.newTab().setText("통합자산"));
-        mFragMainTabLayout.addTab(mFragMainTabLayout.newTab().setText("계좌별이력"));
-        mFragMainTabLayout.addTab(mFragMainTabLayout.newTab().setText("입출금입력"));
-        mFragMainTabLayout.addTab(mFragMainTabLayout.newTab().setText("계좌관리"));
-        mFragMainTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        TabLayout mFragSub1TabLayout = mView.findViewById(R.id.frag_sub1_tab);
+
+        mFragSub1TabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
+        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText("통합자산"));
+        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText("계좌별이력"));
+        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText("입출금입력"));
+        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText("계좌관리"));
+        mFragSub1TabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         mFragSub1ViewPager = mView.findViewById(R.id.frag_sub1_viewpager);
         FragSub1TabPagerAdapter mFragSub1PagerAdapter = new FragSub1TabPagerAdapter(getChildFragmentManager());
         mFragSub1ViewPager.setAdapter(mFragSub1PagerAdapter);
-        mFragSub1ViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mFragMainTabLayout));
+        mFragSub1ViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mFragSub1TabLayout));
 
-        mFragMainTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mFragSub1TabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mFragSub1ViewPager.setCurrentItem(tab.getPosition());
