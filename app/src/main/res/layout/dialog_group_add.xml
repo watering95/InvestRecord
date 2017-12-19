@@ -12,7 +12,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText_dlg_addgroup"
+        android:id="@+id/editText_dlg_group_add"
         android:inputType="text"
         android:ems="10"/>
 

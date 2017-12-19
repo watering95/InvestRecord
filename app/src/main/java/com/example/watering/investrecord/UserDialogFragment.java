@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,14 +38,11 @@ public class UserDialogFragment extends DialogFragment {
     private UserListener listener;
     private List<Group> groups = new ArrayList<>();
     private final List<String> lists = new ArrayList<>();
-    private EditText edit, txtInput, txtOutput, txtEvaluation;
-    private TextView txtDate;
-    private String select, selectedDate;
+    private String selectedDate;
     private MainActivity mActivity;
     private IRResolver ir;
     private View view;
     private ArrayAdapter<String> adapter;
-    private ListView list;
     private LayoutInflater inflater;
     private AlertDialog.Builder builder;
 
@@ -62,13 +61,13 @@ public class UserDialogFragment extends DialogFragment {
 
         switch (type) {
             case 0:
-                dialogAddGroup();
+                dialogGroupAdd();
                 break;
             case 1:
-                dialogEditGroup();
+                dialogGroupEdit();
                 break;
             case 2:
-                dialogDelGroup();
+                dialogGroupDel();
                 break;
             case 3:
                 dialogSetting();
@@ -116,9 +115,11 @@ public class UserDialogFragment extends DialogFragment {
         this.selectedDate = selectedDate;
     }
 
-    private void dialogAddGroup() {
-        view = inflater.inflate(R.layout.dialog_addgroup, null);
-        edit = view.findViewById(R.id.editText_dlg_addgroup);
+    private void dialogGroupAdd() {
+        view = inflater.inflate(R.layout.dialog_group_add, null);
+
+        final EditText edit = view.findViewById(R.id.editText_dlg_group_add);
+
         builder.setView(view).setTitle("그룹 추가");
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
@@ -133,24 +134,25 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
-    private void dialogEditGroup() {
+    private void dialogGroupEdit() {
+        view = inflater.inflate(R.layout.dialog_group_edit, null);
+
+        ListView list = view.findViewById(R.id.listView_dlg_editGroup);
+        final EditText edit = view.findViewById(R.id.editText_dlg_group_edit);
+
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
 
-        view = inflater.inflate(R.layout.dialog_editgroup, null);
-
-        list = view.findViewById(R.id.listView_dlg_editGroup);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                select = groups.get(position).getName();
+                String select = groups.get(position).getName();
                 ir.setCurrentGroup(groups.get(position).getId());
                 edit.setText(select);
             }
         });
 
-        edit = view.findViewById(R.id.editText_dlg_editGroup);
         builder.setView(view).setTitle("그룹 수정");
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             @Override
@@ -165,18 +167,20 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
-    private void dialogDelGroup() {
+    private void dialogGroupDel() {
+        view = inflater.inflate(R.layout.dialog_group_del, null);
+
+        final String[] select = new String[1];
+        ListView list = view.findViewById(R.id.listView_dlg_group_del);
+
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
 
-        view = inflater.inflate(R.layout.dialog_delgroup, null);
-
-        list = view.findViewById(R.id.listView_dlg_delGroup);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                select = groups.get(position).getName();
+                select[0] = groups.get(position).getName();
                 ir.setCurrentGroup(groups.get(position).getId());
             }
         });
@@ -185,7 +189,7 @@ public class UserDialogFragment extends DialogFragment {
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onWorkComplete(select);
+                listener.onWorkComplete(select[0]);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -197,6 +201,7 @@ public class UserDialogFragment extends DialogFragment {
     }
     private void dialogSetting() {
         view = inflater.inflate(R.layout.dialog_setting, null);
+
         Button btn_delete = view.findViewById(R.id.button_dlg_setting_delete_all);
         Button btn_delete_file = view.findViewById(R.id.button_dlg_setting_delete_db);
         Button btn_backup_file = view.findViewById(R.id.button_dlg_setting_backup_db);
@@ -236,22 +241,23 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     private void dialogInout() {
+        view = inflater.inflate(R.layout.dialog_inout, null);
+
+        final EditText txtInput = view.findViewById(R.id.editText_dlg_inout_input);
+        final EditText txtOutput = view.findViewById(R.id.editText_dlg_inout_output);
+        final EditText txtEvaluation = view.findViewById(R.id.editText_dlg_inout_evaluation);
+        TextView txtDate = view.findViewById(R.id.textView_dlg_inout_date);
+
         if(ir.getCurrentAccount() < 0) {
             Toast.makeText(mActivity.getApplicationContext(),R.string.toast_no_account,Toast.LENGTH_SHORT).show();
             return;
         }
-        view = inflater.inflate(R.layout.dialog_inout, null);
+
+        Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
 
         DecimalFormat df = new DecimalFormat("#,###");
 
-        txtInput = view.findViewById(R.id.editText_dlg_inout_input);
-        txtOutput = view.findViewById(R.id.editText_dlg_inout_output);
-        txtEvaluation = view.findViewById(R.id.editText_dlg_inout_evaluation);
-        txtDate = view.findViewById(R.id.textView_dlg_inout_date);
-
         txtDate.setText(selectedDate);
-
-        Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
 
         if(io == null) {
             i_u = 0;
@@ -354,6 +360,7 @@ public class UserDialogFragment extends DialogFragment {
     }
     private void dialogSpend() {
         view = inflater.inflate(R.layout.dialog_spend, null);
+
         builder.setView(view).setTitle("지출 입력");
         builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
             @Override
@@ -370,6 +377,7 @@ public class UserDialogFragment extends DialogFragment {
     }
     private void dialogIncome() {
         view = inflater.inflate(R.layout.dialog_income, null);
+
         builder.setView(view).setTitle("수입 입력");
         builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
             @Override
@@ -387,8 +395,28 @@ public class UserDialogFragment extends DialogFragment {
     }
     private void dialogCategoryAdd() {
         view = inflater.inflate(R.layout.dialog_category_add, null);
+
+        RadioGroup radioGroup = view.findViewById(R.id.radio_dlg_category_add);
+        final Spinner spinner = view.findViewById(R.id.spinner_dlg_category_add_main);
+        EditText editText = view.findViewById(R.id.editText_dlg_category_add_name);
+
+        if(radioGroup.getCheckedRadioButtonId() == R.id.radiobtn_dlg_category_main) {
+            spinner.setEnabled(false);
+        }
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                if(i == R.id.radiobtn_dlg_category_main) {
+                    spinner.setEnabled(false);
+                }
+                else {
+                    spinner.setEnabled(true);
+                }
+            }
+        });
+
         builder.setView(view).setTitle("카테고리 추가");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("추가",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 listener.onWorkComplete("");
