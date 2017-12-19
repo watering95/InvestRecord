@@ -79,6 +79,12 @@ public class UserDialogFragment extends DialogFragment {
             case 5:
                 dialogDate();
                 break;
+            case 6:
+                dialogSpend();
+                break;
+            case 7:
+                dialogIncome();
+                break;
             default:
                 return null;
         }
@@ -336,6 +342,39 @@ public class UserDialogFragment extends DialogFragment {
 
             }
         });
+    }
+    private void dialogSpend() {
+        view = inflater.inflate(R.layout.dialog_spend, null);
+        builder.setView(view).setTitle("지출 입력");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete("");
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+    private void dialogIncome() {
+        view = inflater.inflate(R.layout.dialog_income, null);
+        builder.setView(view).setTitle("수입 입력");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete("");
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
     }
 
     private void modifyInfoDiary(int select) {

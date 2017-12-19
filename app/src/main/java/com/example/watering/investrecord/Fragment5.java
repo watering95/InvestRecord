@@ -73,7 +73,14 @@ public class Fragment5 extends Fragment {
         floating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                UserDialogFragment dialog = UserDialogFragment.newInstance(6, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
 
+                    }
+                });
+
+                dialog.show(getFragmentManager(), "dialog");
             }
         });
     }

@@ -7,8 +7,8 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("ALL")
-public class Out implements Serializable {
-    private int id_out;
+public class Spend implements Serializable {
+    private int id_spend;
     private int id_category_sub;
     private String date_use;
     private int amount;

@@ -7,8 +7,8 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("ALL")
-public class OutCard implements Serializable {
-    private int id_out_card;
-    private int id_out;
-    private int id_card;
+public class SpendCash implements Serializable {
+    private int id_spend_cash;
+    private int id_spend;
+    private String date_draw;
 }

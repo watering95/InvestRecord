@@ -49,10 +49,10 @@ public class IRProvider extends ContentProvider {
     private CategoryMainDBHelper DB_category_main;
     private CategorySubDBHelper DB_category_sub;
     private IncomeDBHelper DB_income;
-    private OutDBHelper DB_out;
-    private OutCardDBHelper DB_out_card;
-    private OutCashDBHelper DB_out_cash;
-    private OutScheduleDBHelper DB_out_schedule;
+    private SpendDBHelper DB_out;
+    private SpendCardDBHelper DB_out_card;
+    private SpendCashDBHelper DB_out_cash;
+    private SpendScheduleDBHelper DB_out_schedule;
 
     private static final UriMatcher Matcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -79,10 +79,10 @@ public class IRProvider extends ContentProvider {
         DB_category_main = new CategoryMainDBHelper(getContext());
         DB_category_sub = new CategorySubDBHelper(getContext());
         DB_income = new IncomeDBHelper(getContext());
-        DB_out = new OutDBHelper(getContext());
-        DB_out_card = new OutCardDBHelper(getContext());
-        DB_out_cash = new OutCashDBHelper(getContext());
-        DB_out_schedule = new OutScheduleDBHelper(getContext());
+        DB_out = new SpendDBHelper(getContext());
+        DB_out_card = new SpendCardDBHelper(getContext());
+        DB_out_cash = new SpendCashDBHelper(getContext());
+        DB_out_schedule = new SpendScheduleDBHelper(getContext());
 
         return true;
     }

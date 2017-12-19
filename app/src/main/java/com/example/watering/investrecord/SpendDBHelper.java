@@ -7,12 +7,12 @@ import android.content.Context;
  */
 
 @SuppressWarnings({"ALL"})
-class OutDBHelper extends DBHelper {
+class SpendDBHelper extends DBHelper {
 
-    public OutDBHelper(Context context) {
+    public SpendDBHelper(Context context) {
         super(context);
 
-        TABLE_NAME = "tbl_out";
+        TABLE_NAME = "tbl_spend";
         COLUMNS = new String [] {"details TEXT","id_sub INTEGER","date_use TEXT","amount INTEGER"};
     }
 }
