@@ -15,7 +15,7 @@
             android:layout_weight="4"
             android:text="@string/account"/>
         <EditText
-            android:id="@+id/editText_account_frag4"
+            android:id="@+id/editText_frag4_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -35,7 +35,7 @@
             android:layout_weight="4"
             android:text="@string/institute"/>
         <EditText
-            android:id="@+id/editText_institute"
+            android:id="@+id/editText_frag4_institute"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -55,7 +55,7 @@
             android:layout_weight="4"
             android:text="@string/description"/>
         <EditText
-            android:id="@+id/editText_description"
+            android:id="@+id/editText_frag4_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -73,19 +73,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/button_regist_frag4"
+            android:id="@+id/button_frag4_regist"
             android:text="@string/regist"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/button_edit_frag4"
+            android:id="@+id/button_frag4_edit"
             android:text="@string/edit"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:id="@+id/button_delete_frag4"
+            android:id="@+id/button_frag4_delete"
             android:text="@string/delete"/>
 
     </LinearLayout>

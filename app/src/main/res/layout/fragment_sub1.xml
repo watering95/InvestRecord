@@ -42,7 +42,7 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="4"/>
         <Spinner
-            android:id="@+id/spinner_account"
+            android:id="@+id/spinner_frag_sub1_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"/>
@@ -51,7 +51,7 @@
 
     <android.support.v4.view.ViewPager
         android:layout_margin="5dp"
-        android:id="@+id/frag_sub1_viewpager"
+        android:id="@+id/viewpager_frag_sub1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

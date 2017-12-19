@@ -8,11 +8,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtDate"
+        android:id="@+id/textView_dlg_inout_date"
         android:textSize="17sp"/>
 
     <DatePicker
-        android:id="@+id/datePicker_dialog"
+        android:id="@+id/datePicker_dlg_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"/>

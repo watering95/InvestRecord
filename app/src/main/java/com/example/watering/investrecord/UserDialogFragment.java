@@ -109,7 +109,7 @@ public class UserDialogFragment extends DialogFragment {
 
     private void dialogAddGroup() {
         view = inflater.inflate(R.layout.dialog_addgroup, null);
-        edit = view.findViewById(R.id.edit_groupname_add);
+        edit = view.findViewById(R.id.editText_dlg_addgroup);
         builder.setView(view).setTitle("그룹 추가");
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
@@ -129,7 +129,7 @@ public class UserDialogFragment extends DialogFragment {
 
         view = inflater.inflate(R.layout.dialog_editgroup, null);
 
-        list = view.findViewById(R.id.listGroup_edit);
+        list = view.findViewById(R.id.listView_dlg_editGroup);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -141,7 +141,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        edit = view.findViewById(R.id.edit_groupname_edit);
+        edit = view.findViewById(R.id.editText_dlg_editGroup);
         builder.setView(view).setTitle("그룹 수정");
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             @Override
@@ -161,7 +161,7 @@ public class UserDialogFragment extends DialogFragment {
 
         view = inflater.inflate(R.layout.dialog_delgroup, null);
 
-        list = view.findViewById(R.id.listGroup_del);
+        list = view.findViewById(R.id.listView_dlg_delGroup);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -188,10 +188,10 @@ public class UserDialogFragment extends DialogFragment {
     }
     private void dialogSetting() {
         view = inflater.inflate(R.layout.dialog_setting, null);
-        Button btn_delete = view.findViewById(R.id.button_delete_all);
-        Button btn_delete_file = view.findViewById(R.id.button_delete_db);
-        Button btn_backup_file = view.findViewById(R.id.button_backup_db);
-        Button btn_restore_file = view.findViewById(R.id.button_restore_db);
+        Button btn_delete = view.findViewById(R.id.button_dlg_setting_delete_all);
+        Button btn_delete_file = view.findViewById(R.id.button_dlg_setting_delete_db);
+        Button btn_backup_file = view.findViewById(R.id.button_dlg_setting_backup_db);
+        Button btn_restore_file = view.findViewById(R.id.button_dlg_setting_restore_db);
 
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,10 +235,10 @@ public class UserDialogFragment extends DialogFragment {
 
         DecimalFormat df = new DecimalFormat("#,###");
 
-        txtInput = view.findViewById(R.id.editText_input);
-        txtOutput = view.findViewById(R.id.editText_output);
-        txtEvaluation = view.findViewById(R.id.editText_evaluation);
-        txtDate = view.findViewById(R.id.txtDate);
+        txtInput = view.findViewById(R.id.editText_dlg_inout_input);
+        txtOutput = view.findViewById(R.id.editText_dlg_inout_output);
+        txtEvaluation = view.findViewById(R.id.editText_dlg_inout_evaluation);
+        txtDate = view.findViewById(R.id.textView_dlg_inout_date);
 
         txtDate.setText(selectedDate);
 
@@ -312,7 +312,7 @@ public class UserDialogFragment extends DialogFragment {
     private void dialogDate() {
         view = inflater.inflate(R.layout.dialog_date, null);
 
-        DatePicker datePicker = view.findViewById(R.id.datePicker_dialog);
+        DatePicker datePicker = view.findViewById(R.id.datePicker_dlg_date);
         final String[] date = new String[1];
 
         datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), new DatePicker.OnDateChangedListener() {

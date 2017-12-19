@@ -57,15 +57,15 @@ public class Fragment4 extends Fragment {
 
     private void initLayout() {
 
-        mTxtAccount = mView.findViewById(R.id.editText_account_frag4);
-        mTxtInstitute = mView.findViewById(R.id.editText_institute);
-        mTxtDiscription = mView.findViewById(R.id.editText_description);
+        mTxtAccount = mView.findViewById(R.id.editText_frag4_account);
+        mTxtInstitute = mView.findViewById(R.id.editText_frag4_institute);
+        mTxtDiscription = mView.findViewById(R.id.editText_frag4_description);
 
         update();
 
-        mView.findViewById(R.id.button_regist_frag4).setOnClickListener(mClickListener);
-        mView.findViewById(R.id.button_edit_frag4).setOnClickListener(mClickListener);
-        mView.findViewById(R.id.button_delete_frag4).setOnClickListener(mClickListener);
+        mView.findViewById(R.id.button_frag4_regist).setOnClickListener(mClickListener);
+        mView.findViewById(R.id.button_frag4_edit).setOnClickListener(mClickListener);
+        mView.findViewById(R.id.button_frag4_delete).setOnClickListener(mClickListener);
     }
 
     private final Button.OnClickListener mClickListener = new View.OnClickListener() {
@@ -77,13 +77,13 @@ public class Fragment4 extends Fragment {
             String discript = mTxtDiscription.getText().toString();
 
             switch(v.getId()) {
-                case R.id.button_regist_frag4:
+                case R.id.button_frag4_regist:
                     if(!account.isEmpty()) ir.insertAccount(institute,account,discript);
                     break;
-                case R.id.button_edit_frag4:
+                case R.id.button_frag4_edit:
                     if(!account.isEmpty()) ir.updateAccount(ir.getCurrentAccount(),institute,account,discript);
                     break;
-                case R.id.button_delete_frag4:
+                case R.id.button_frag4_delete:
                     if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
                     break;
             }

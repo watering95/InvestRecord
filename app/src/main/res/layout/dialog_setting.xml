@@ -8,22 +8,22 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button_delete_all"
+        android:id="@+id/button_dlg_setting_delete_all"
         android:text="@string/delete_all"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button_delete_db"
+        android:id="@+id/button_dlg_setting_delete_db"
         android:text="@string/DB_delete"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button_backup_db"
+        android:id="@+id/button_dlg_setting_backup_db"
         android:text="@string/DB_backup"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button_restore_db"
+        android:id="@+id/button_dlg_setting_restore_db"
         android:text="@string/DB_restore"/>
 
 </LinearLayout>

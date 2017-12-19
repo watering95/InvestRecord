@@ -61,7 +61,7 @@ public class FragmentSub2 extends Fragment {
     }
 
     private void initLayout() {
-        TabLayout mFragSub2TabLayout = mView.findViewById(R.id.frag_sub2_tab);
+        TabLayout mFragSub2TabLayout = mView.findViewById(R.id.tab_frag_sub2);
 
         mFragSub2TabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
         mFragSub2TabLayout.addTab(mFragSub2TabLayout.newTab().setText(R.string.spending));
@@ -69,7 +69,7 @@ public class FragmentSub2 extends Fragment {
         mFragSub2TabLayout.addTab(mFragSub2TabLayout.newTab().setText(R.string.statistic));
         mFragSub2TabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        mFragSub2ViewPager = mView.findViewById(R.id.frag_sub2_viewpager);
+        mFragSub2ViewPager = mView.findViewById(R.id.viewpager_frag_sub2);
         FragSub2TabPagerAdapter mFragSub2PagerAdapter = new FragSub2TabPagerAdapter(getChildFragmentManager());
         mFragSub2ViewPager.setAdapter(mFragSub2PagerAdapter);
         mFragSub2ViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mFragSub2TabLayout));

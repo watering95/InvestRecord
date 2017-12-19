@@ -44,7 +44,7 @@ public class Fragment3 extends Fragment {
     }
 
     private void initLayout() {
-        DatePicker date = mView.findViewById(R.id.date);
+        DatePicker date = mView.findViewById(R.id.datePicker_frag3);
         selectedDate = String.format(Locale.getDefault(),"%04d-%02d-%02d", date.getYear(), date.getMonth(), date.getDayOfMonth());
         date.init(date.getYear(), date.getMonth(), date.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
             @Override

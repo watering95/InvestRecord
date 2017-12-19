@@ -48,10 +48,10 @@ class List2Adapter extends BaseAdapter {
         }
 
         Info_Dairy dairy;
-        TextView date = convertView.findViewById(R.id.list2_1);
-        TextView principal = convertView.findViewById(R.id.list2_2);
-        TextView evaluation = convertView.findViewById(R.id.list2_3);
-        TextView rate = convertView.findViewById(R.id.list2_4);
+        TextView date = convertView.findViewById(R.id.textView_layout_list2_1);
+        TextView principal = convertView.findViewById(R.id.textView_layout_list2_2);
+        TextView evaluation = convertView.findViewById(R.id.textView_layout_list2_3);
+        TextView rate = convertView.findViewById(R.id.textView_layout_list2_4);
         DecimalFormat df = new DecimalFormat("#,###");
 
         dairy = mData.get(position).getDairy();

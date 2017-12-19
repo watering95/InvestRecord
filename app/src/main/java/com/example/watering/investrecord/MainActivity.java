@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initLayout() {
-        final Toolbar mToolbar = findViewById(R.id.toolbar);
+        final Toolbar mToolbar = findViewById(R.id.toolbar_main);
         mToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -105,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
 
         fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.frame, fragmentSub1).commit();
+        fragmentTransaction.add(R.id.frame_main, fragmentSub1).commit();
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.navigation_view);
+        drawerLayout = findViewById(R.id.drawer_main_layout);
+        NavigationView navigationView = findViewById(R.id.navigation_main);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -121,12 +121,12 @@ public class MainActivity extends AppCompatActivity {
                 switch(id) {
                     case R.id.navigation_item_sub1:
                         fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.frame, fragmentSub1).commit();
+                        fragmentTransaction.replace(R.id.frame_main, fragmentSub1).commit();
                         mToolbar.setTitle(R.string.title1);
                         break;
                     case R.id.navigation_item_sub2:
                         fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.frame, fragmentSub2).commit();
+                        fragmentTransaction.replace(R.id.frame_main, fragmentSub2).commit();
                         mToolbar.setTitle(R.string.title2);
                         break;
                     case R.id.navigation_item_setting:

@@ -79,7 +79,7 @@ public class Fragment2 extends Fragment {
     }
 
     private void initLayout() {
-        ListView listView = mView.findViewById(R.id.listview_totalasset_frag2);
+        ListView listView = mView.findViewById(R.id.listview_frag2_totalasset);
         list2Adapter = new List2Adapter(mView.getContext(),lists);
         listView.setAdapter(list2Adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -184,7 +184,7 @@ public class Fragment2 extends Fragment {
         }
     }
     private void openWebView() {
-        mWeb = mView.findViewById(R.id.web);
+        mWeb = mView.findViewById(R.id.webView_frag2);
         mWeb.setWebViewClient(new WebViewClient());
         WebSettings set = mWeb.getSettings();
         set.setJavaScriptEnabled(true);

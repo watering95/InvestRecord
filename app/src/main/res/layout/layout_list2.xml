@@ -9,27 +9,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:id="@+id/list2_1"
+        android:id="@+id/textView_layout_list2_1"
         android:textAlignment="center"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:id="@+id/list2_2"
+        android:id="@+id/textView_layout_list2_2"
         android:layout_gravity="end"
         android:textAlignment="textEnd"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:id="@+id/list2_3"
+        android:id="@+id/textView_layout_list2_3"
         android:layout_gravity="end"
         android:textAlignment="textEnd"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1.2"
-        android:id="@+id/list2_4"
+        android:id="@+id/textView_layout_list2_4"
         android:layout_gravity="end"
         android:textAlignment="textEnd"/>
 

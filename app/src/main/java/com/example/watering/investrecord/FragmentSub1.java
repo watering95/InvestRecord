@@ -106,7 +106,7 @@ public class FragmentSub1 extends Fragment {
         mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText("계좌관리"));
         mFragSub1TabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        mFragSub1ViewPager = mView.findViewById(R.id.frag_sub1_viewpager);
+        mFragSub1ViewPager = mView.findViewById(R.id.viewpager_frag_sub1);
         FragSub1TabPagerAdapter mFragSub1PagerAdapter = new FragSub1TabPagerAdapter(getChildFragmentManager());
         mFragSub1ViewPager.setAdapter(mFragSub1PagerAdapter);
         mFragSub1ViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mFragSub1TabLayout));
@@ -189,7 +189,7 @@ public class FragmentSub1 extends Fragment {
     }
     private void initAccountSpinner() {
         accountAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, accountlists);
-        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_account);
+        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
         mAccountSpinner.setAdapter(accountAdapter);
         mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -242,7 +242,7 @@ public class FragmentSub1 extends Fragment {
         if(accounts.isEmpty()) ir.setCurrentAccount(-1);
         else ir.setCurrentAccount(accounts.get(0).getId());
 
-        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_account);
+        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
         mAccountSpinner.setSelection(0);
     }
 

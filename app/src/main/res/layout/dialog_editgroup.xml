@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <ListView
-        android:id="@+id/listGroup_edit"
+        android:id="@+id/listView_dlg_editGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"/>
@@ -23,7 +23,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/edit_groupname_edit"
+            android:id="@+id/editText_dlg_editGroup"
             android:inputType="text"
             android:ems="10"/>
 

@@ -47,11 +47,11 @@ class List1Adapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.layout_list1,parent,false);
         }
 
-        TextView txtAccount = convertView.findViewById(R.id.list1_1);
-        TextView principal = convertView.findViewById(R.id.list1_2);
-        TextView evaluation = convertView.findViewById(R.id.list1_3);
-        TextView rate = convertView.findViewById(R.id.list1_4);
-        TextView accountInfo = convertView.findViewById(R.id.list1_5);
+        TextView txtAccount = convertView.findViewById(R.id.textView_layout_list1_1);
+        TextView principal = convertView.findViewById(R.id.textView_layout_list1_2);
+        TextView evaluation = convertView.findViewById(R.id.textView_layout_list1_3);
+        TextView rate = convertView.findViewById(R.id.textView_layout_list1_4);
+        TextView accountInfo = convertView.findViewById(R.id.textView_layout_list1_5);
 
         Info_List2 list2 = mData.get(position).getList2();
         Account account = mData.get(position).getAccount();

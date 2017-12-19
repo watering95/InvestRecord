@@ -78,14 +78,14 @@ public class Fragment1 extends Fragment {
     private void initLayout() {
         DecimalFormat df = new DecimalFormat("#,###");
 
-        mTxtTotalPrincipal = mView.findViewById(R.id.text_total_principal);
+        mTxtTotalPrincipal = mView.findViewById(R.id.textView_frag1_total_principal);
         mTxtTotalPrincipal.setText(df.format(sum_principal));
-        mTxtTotalEvaluate = mView.findViewById(R.id.text_total_evaluate);
+        mTxtTotalEvaluate = mView.findViewById(R.id.textView_frag1_total_evaluate);
         mTxtTotalEvaluate.setText(df.format(sum_evaluate));
-        mTxtTotalRate = mView.findViewById(R.id.text_total_rate);
+        mTxtTotalRate = mView.findViewById(R.id.textView_frag1_total_rate);
         mTxtTotalRate.setText(String.format(Locale.getDefault(),"%.2f",total_rate));
 
-        ListView listView = mView.findViewById(R.id.listview_totalasset_frag1);
+        ListView listView = mView.findViewById(R.id.listview_frag1_totalasset);
         listAdapter = new List1Adapter(mView.getContext(),lists);
         if(lists.size() != 0) listView.setAdapter(listAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
