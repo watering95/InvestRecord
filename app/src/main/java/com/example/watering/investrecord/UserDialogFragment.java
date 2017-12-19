@@ -85,6 +85,15 @@ public class UserDialogFragment extends DialogFragment {
             case 7:
                 dialogIncome();
                 break;
+            case 8:
+                dialogCategoryAdd();
+                break;
+            case 9:
+                dialogCategoryEdit();
+                break;
+            case 10:
+                dialogCategoryDel();
+                break;
             default:
                 return null;
         }
@@ -375,6 +384,54 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
+    }
+    private void dialogCategoryAdd() {
+        view = inflater.inflate(R.layout.dialog_category_add, null);
+        builder.setView(view).setTitle("카테고리 추가");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete("");
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+    private void dialogCategoryEdit() {
+        view = inflater.inflate(R.layout.dialog_category_edit, null);
+        builder.setView(view).setTitle("카테고리 편집");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete("");
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+    private void dialogCategoryDel() {
+        view = inflater.inflate(R.layout.dialog_category_del, null);
+        builder.setView(view).setTitle("카테고리 삭제");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete("");
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
     }
 
     private void modifyInfoDiary(int select) {

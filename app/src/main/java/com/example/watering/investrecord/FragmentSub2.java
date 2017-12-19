@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -60,6 +61,22 @@ public class FragmentSub2 extends Fragment {
         inflater.inflate(R.menu.menu_toolbar_sub2,menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_sub2_category_add:
+                addCategoryDialog();
+                break;
+            case R.id.menu_sub2_category_edit:
+                editCategoryDialog();
+                break;
+            case R.id.menu_sub2_category_del:
+                delCategoryDialog();
+                break;
+        }
+        return true;
+    }
+
     private void initLayout() {
         TabLayout mFragSub2TabLayout = mView.findViewById(R.id.tab_frag_sub2);
 
@@ -96,8 +113,32 @@ public class FragmentSub2 extends Fragment {
         fragment6 = (Fragment6) mFragSub2PagerAdapter.getItem(1);
         fragment7 = (Fragment7) mFragSub2PagerAdapter.getItem(2);
     }
-
     private void initDataBase() {
 
+    }
+
+    private void addCategoryDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(8, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+            }
+        });
+        dialog.show(getFragmentManager(), "dialog");
+    }
+    private void editCategoryDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(9, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+            }
+        });
+        dialog.show(getFragmentManager(), "dialog");
+    }
+    private void delCategoryDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(10, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+            }
+        });
+        dialog.show(getFragmentManager(), "dialog");
     }
 }
