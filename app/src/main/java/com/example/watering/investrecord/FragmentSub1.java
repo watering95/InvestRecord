@@ -253,11 +253,6 @@ public class FragmentSub1 extends Fragment {
                 if(!name.isEmpty()) ir.insertGroup(name);
                 updateGroupSpinner();
             }
-
-            @Override
-            public void onDeleteAll() {
-
-            }
         });
         dialog.show(getFragmentManager(), "dialog");
     }
@@ -268,12 +263,6 @@ public class FragmentSub1 extends Fragment {
                 if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
                 updateGroupSpinner();
             }
-
-            @Override
-            public void onDeleteAll() {
-
-            }
-
         });
         dialog.initData(ir.getGroups());
         dialog.show(getFragmentManager(), "dialog");
@@ -284,11 +273,6 @@ public class FragmentSub1 extends Fragment {
             public void onWorkComplete(String name) {
                 ir.deleteGroup("name",new String[] {name});
                 updateGroupSpinner();
-            }
-
-            @Override
-            public void onDeleteAll() {
-
             }
         });
         dialog.initData(ir.getGroups());

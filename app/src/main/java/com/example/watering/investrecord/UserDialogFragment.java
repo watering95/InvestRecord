@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -47,7 +49,6 @@ public class UserDialogFragment extends DialogFragment {
 
     public interface UserListener {
         void onWorkComplete(String name);
-        void onDeleteAll();
     }
 
     @Override
@@ -74,6 +75,9 @@ public class UserDialogFragment extends DialogFragment {
                 break;
             case 4:
                 dialogInout();
+                break;
+            case 5:
+                dialogDate();
                 break;
             default:
                 return null;
@@ -186,7 +190,7 @@ public class UserDialogFragment extends DialogFragment {
         btn_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onDeleteAll();
+                listener.onWorkComplete("delall");
             }
         });
         btn_delete_file.setOnClickListener(new View.OnClickListener() {
@@ -295,6 +299,40 @@ public class UserDialogFragment extends DialogFragment {
         builder.setNeutralButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+    }
+    private void dialogDate() {
+        view = inflater.inflate(R.layout.dialog_date, null);
+
+        DatePicker datePicker = view.findViewById(R.id.datePicker_dialog);
+        final String[] date = new String[1];
+
+        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar select = Calendar.getInstance();
+                select.set(year, monthOfYear, dayOfMonth);
+
+                if (Calendar.getInstance().before(select)) {
+                    Toast.makeText(mActivity.getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                date[0] = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
+
+            }
+        });
+        builder.setView(view).setTitle("날짜 선택");
+        builder.setPositiveButton("선택",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete(date[0]);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
 
             }
         });

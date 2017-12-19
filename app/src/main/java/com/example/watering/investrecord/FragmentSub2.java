@@ -64,9 +64,9 @@ public class FragmentSub2 extends Fragment {
         TabLayout mFragSub2TabLayout = mView.findViewById(R.id.frag_sub2_tab);
 
         mFragSub2TabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
-        mFragSub2TabLayout.addTab(mFragSub2TabLayout.newTab().setText(R.string.statistic));
         mFragSub2TabLayout.addTab(mFragSub2TabLayout.newTab().setText(R.string.spending));
         mFragSub2TabLayout.addTab(mFragSub2TabLayout.newTab().setText(R.string.income));
+        mFragSub2TabLayout.addTab(mFragSub2TabLayout.newTab().setText(R.string.statistic));
         mFragSub2TabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         mFragSub2ViewPager = mView.findViewById(R.id.frag_sub2_viewpager);

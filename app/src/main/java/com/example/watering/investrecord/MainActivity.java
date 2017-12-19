@@ -145,11 +145,6 @@ public class MainActivity extends AppCompatActivity {
             public void onWorkComplete(String name) {
 
             }
-
-            @Override
-            public void onDeleteAll() {
-
-            }
         });
 
         dialog.setSelectedDate(selectedDate);
@@ -160,6 +155,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWorkComplete(String name) {
                 switch(name) {
+                    case "delall":
+                        ir.deleteAll();
+                        fragmentSub1.updateGroupSpinner();
+                        fragmentSub1.updateAccountSpinner();
+                        break;
                     case "del":
                         deleteDBFile();
                         break;
@@ -170,13 +170,6 @@ public class MainActivity extends AppCompatActivity {
                         signIn(REQUEST_CODE_SIGN_IN_DOWN);
                         break;
                 }
-            }
-
-            @Override
-            public void onDeleteAll() {
-                ir.deleteAll();
-                fragmentSub1.updateGroupSpinner();
-                fragmentSub1.updateAccountSpinner();
             }
         });
 
