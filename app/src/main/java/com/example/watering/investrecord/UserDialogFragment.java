@@ -34,17 +34,22 @@ import java.util.Locale;
 
 @SuppressWarnings("ALL")
 public class UserDialogFragment extends DialogFragment {
-    private int type, i_u;
-    private UserListener listener;
-    private List<Group> groups = new ArrayList<>();
-    private final List<String> lists = new ArrayList<>();
-    private String selectedDate;
     private MainActivity mActivity;
     private IRResolver ir;
-    private View view;
-    private ArrayAdapter<String> adapter;
     private LayoutInflater inflater;
     private AlertDialog.Builder builder;
+    private View view;
+
+    private ArrayAdapter<String> adapter1, adapter2;
+    private List<Group> groups = new ArrayList<>();
+    private List<String> lists1 = new ArrayList<>();
+    private List<String> lists2 = new ArrayList<>();
+    private List<CategoryMain> categoryMains = new ArrayList<>();
+    private List<CategorySub> categorySubs = new ArrayList<>();
+
+    private String selectedDate;
+    private int type, i_u, selectedMainId, selectedSubId;
+    private UserListener listener;
 
     public interface UserListener {
         void onWorkComplete(String name);
@@ -108,7 +113,7 @@ public class UserDialogFragment extends DialogFragment {
     public void initData(List<Group> lists) {
         this.groups = lists;
         for(int i=0; i<groups.size(); i++) {
-            this.lists.add(groups.get(i).getName());
+            this.lists1.add(groups.get(i).getName());
         }
     }
     public void setSelectedDate(String selectedDate) {
@@ -140,10 +145,10 @@ public class UserDialogFragment extends DialogFragment {
         ListView list = view.findViewById(R.id.listView_dlg_editGroup);
         final EditText edit = view.findViewById(R.id.editText_dlg_group_edit);
 
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
+        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists1);
 
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        list.setAdapter(adapter);
+        list.setAdapter(adapter1);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -173,10 +178,10 @@ public class UserDialogFragment extends DialogFragment {
         final String[] select = new String[1];
         ListView list = view.findViewById(R.id.listView_dlg_group_del);
 
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists);
+        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists1);
 
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        list.setAdapter(adapter);
+        list.setAdapter(adapter1);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -396,9 +401,27 @@ public class UserDialogFragment extends DialogFragment {
     private void dialogCategoryAdd() {
         view = inflater.inflate(R.layout.dialog_category_add, null);
 
-        RadioGroup radioGroup = view.findViewById(R.id.radio_dlg_category_add);
+        final RadioGroup radioGroup = view.findViewById(R.id.radio_dlg_category_add);
         final Spinner spinner = view.findViewById(R.id.spinner_dlg_category_add_main);
-        EditText editText = view.findViewById(R.id.editText_dlg_category_add_name);
+        final EditText editText = view.findViewById(R.id.editText_dlg_category_add_name);
+        Button button = view.findViewById(R.id.button_dlg_category_add);
+
+        updateCategoryMainList();
+
+        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists1);
+        spinner.setAdapter(adapter1);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedMainId = categoryMains.get(i).getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         if(radioGroup.getCheckedRadioButtonId() == R.id.radiobtn_dlg_category_main) {
             spinner.setEnabled(false);
@@ -415,11 +438,27 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String str =editText.getText().toString();
+                if(!str.isEmpty()) {
+                    if (radioGroup.getCheckedRadioButtonId() == R.id.radiobtn_dlg_category_main) {
+                        ir.insertCategoryMain(str);
+                        updateCategoryMainList();
+                        adapter1.notifyDataSetChanged();
+                    } else {
+                        ir.insertCategorySub(str, selectedMainId);
+                    }
+                    Toast.makeText(getContext(),"카테고리 추가",Toast.LENGTH_SHORT).show();
+                    editText.setText("");
+               }
+            }
+        });
         builder.setView(view).setTitle("카테고리 추가");
-        builder.setPositiveButton("추가",new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                listener.onWorkComplete("");
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -431,11 +470,80 @@ public class UserDialogFragment extends DialogFragment {
     }
     private void dialogCategoryEdit() {
         view = inflater.inflate(R.layout.dialog_category_edit, null);
+
+        Spinner spinner_main = view.findViewById(R.id.spinner_dlg_category_edit_main);
+        Spinner spinner_sub = view.findViewById(R.id.spinner_dlg_category_edit_sub);
+        final EditText editText_main = view.findViewById(R.id.editText_dlg_category_edit_main);
+        final EditText editText_sub = view.findViewById(R.id.editText_dlg_category_edit_sub);
+        Button button = view.findViewById(R.id.button_dlg_category_edit);
+
+        updateCategoryMainList();
+        if(categoryMains.size() > 0) {
+            selectedMainId = categoryMains.get(0).getId();
+            editText_main.setText(ir.getCategoryMain(String.valueOf(selectedMainId)).getName());
+        }
+
+        updateCategorySubList();
+        if (categorySubs.size() > 0) {
+            selectedSubId = categorySubs.get(0).getId();
+            editText_sub.setText(ir.getCategorySub(String.valueOf(selectedSubId)).getName());
+        }
+
+        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists1);
+        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists2);
+        spinner_main.setAdapter(adapter1);
+        spinner_sub.setAdapter(adapter2);
+
+        spinner_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(categoryMains.size() > 0) {
+                    selectedMainId = categoryMains.get(i).getId();
+                    editText_main.setText(ir.getCategoryMain(String.valueOf(selectedMainId)).getName());
+                    updateCategorySubList();
+                    adapter2.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        spinner_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (categorySubs.size() > 0) {
+                    selectedSubId = categorySubs.get(i).getId();
+                    editText_sub.setText(ir.getCategorySub(String.valueOf(selectedSubId)).getName());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String name_main = editText_main.getText().toString();
+                String name_sub = editText_sub.getText().toString();
+                ir.updateCategoryMain(selectedMainId,name_main);
+                ir.updateCategorySub(selectedSubId,name_sub,selectedMainId);
+
+                updateCategoryMainList();
+                updateCategorySubList();
+                adapter1.notifyDataSetChanged();
+                adapter2.notifyDataSetChanged();
+            }
+        });
         builder.setView(view).setTitle("카테고리 편집");
         builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                listener.onWorkComplete("");
+
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -447,6 +555,73 @@ public class UserDialogFragment extends DialogFragment {
     }
     private void dialogCategoryDel() {
         view = inflater.inflate(R.layout.dialog_category_del, null);
+
+        final Spinner spinner_main = view.findViewById(R.id.spinner_dlg_category_del_main);
+        final Spinner spinner_sub = view.findViewById(R.id.spinner_dlg_category_del_sub);
+        Button button_main = view.findViewById(R.id.button_dlg_category_del_main);
+        Button button_sub = view.findViewById(R.id.button_dlg_category_del_sub);
+
+        updateCategoryMainList();
+        if(categoryMains.size() > 0) {
+            selectedMainId = categoryMains.get(0).getId();
+        }
+
+        updateCategorySubList();
+        if (categorySubs.size() > 0) {
+            selectedSubId = categorySubs.get(0).getId();
+        }
+
+        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists1);
+        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists2);
+        spinner_main.setAdapter(adapter1);
+        spinner_sub.setAdapter(adapter2);
+
+        spinner_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedMainId = categoryMains.get(i).getId();
+                updateCategorySubList();
+                adapter2.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        spinner_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedSubId = categorySubs.get(i).getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        button_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ir.deleteCategoryMain("_id",new String[] {String.valueOf(selectedMainId)});
+                updateCategoryMainList();
+                updateCategorySubList();
+                adapter1.notifyDataSetChanged();
+                adapter2.notifyDataSetChanged();
+            }
+        });
+        button_sub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ir.deleteCategorySub("_id",new String[] {String.valueOf(selectedSubId)});
+                updateCategoryMainList();
+                updateCategorySubList();
+                adapter1.notifyDataSetChanged();
+                adapter2.notifyDataSetChanged();
+            }
+        });
+
         builder.setView(view).setTitle("카테고리 삭제");
         builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
             @Override
@@ -509,5 +684,26 @@ public class UserDialogFragment extends DialogFragment {
                 break;
         }
         mActivity.fragmentSub1.CallUpdate2();
+    }
+
+    private void updateCategoryMainList() {
+        lists1.clear();
+        categoryMains = ir.getCategoryMains();
+
+        if(categoryMains.isEmpty()) return;
+
+        for (int i = 0; i < categoryMains.size(); i++) {
+            lists1.add(categoryMains.get(i).getName());
+        }
+    }
+    private void updateCategorySubList() {
+        lists2.clear();
+        categorySubs = ir.getCategorySubs(selectedMainId);
+
+        if(categorySubs.isEmpty()) return;
+
+        for (int i = 0; i < categorySubs.size(); i++) {
+            lists2.add(categorySubs.get(i).getName());
+        }
     }
 }

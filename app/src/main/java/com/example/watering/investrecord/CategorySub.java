@@ -11,4 +11,24 @@ public class CategorySub implements Serializable {
     private int id_category_sub;
     private String name;
     private int getId_category_main;
+
+    public void setId(int id) {
+        this.id_category_sub = id;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setCategoryMain(int id) {
+        this.getId_category_main = id;
+    }
+
+    public int getId() {
+        return id_category_sub;
+    }
+    public String getName() {
+        return name;
+    }
+    public int getCategoryMain() {
+        return getId_category_main;
+    }
 }

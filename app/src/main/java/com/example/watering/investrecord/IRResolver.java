@@ -36,6 +36,8 @@ public class IRResolver {
     private final List<Group> groups = new ArrayList<>();
     private final List<Account> accounts = new ArrayList<>();
     private final List<Info_Dairy> dairies = new ArrayList<>();
+    private final List<CategoryMain> categoryMains = new ArrayList<>();
+    private final List<CategorySub> categorySubs = new ArrayList<>();
 
     private static final String URI_GROUP = "content://watering.investrecord.provider/group";
     private static final String URI_ACCOUNT = "content://watering.investrecord.provider/account";
@@ -72,6 +74,18 @@ public class IRResolver {
         dairies.clear();
         getData(CODE_INFO_DAIRY, URI_INFO_DAIRY,"id_account=?",selectionArgs,"date DESC");
         return dairies;
+    }
+    public List<CategoryMain> getCategoryMains() {
+        categoryMains.clear();
+        getData(CODE_CATEGORY_MAIN, URI_CATEGORY_MAIN,null,null,null);
+        return categoryMains;
+    }
+    public List<CategorySub> getCategorySubs(int id_main) {
+        String[] selectionArgs = new String[] {String.valueOf(id_main)};
+
+        categorySubs.clear();
+        getData(CODE_CATEGORY_SUB, URI_CATEGORY_SUB,"id_main=?",selectionArgs,null);
+        return categorySubs;
     }
 
     public Account getAccount(String id_account) {
@@ -151,6 +165,50 @@ public class IRResolver {
 
         return dairy;
     }
+    public CategoryMain getCategoryMain(String id_main) {
+        Cursor c;
+        CategoryMain categoryMain = new CategoryMain();
+
+        String where = "_id=?";
+        String[] selectionArgs = {id_main};
+
+        c = cr.query(Uri.parse(URI_CATEGORY_MAIN), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        categoryMain.setId(c.getInt(c.getColumnIndex("_id")));
+        categoryMain.setName(c.getString(c.getColumnIndex("name")));
+        categoryMain.setKind(c.getString(c.getColumnIndex("kind")));
+
+        c.close();
+
+        return categoryMain;
+    }
+    public CategorySub getCategorySub(String id_sub) {
+        Cursor c;
+        CategorySub categorySub = new CategorySub();
+
+        String where = "_id=?";
+        String[] selectionArgs = {id_sub};
+
+        c = cr.query(Uri.parse(URI_CATEGORY_SUB), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        categorySub.setId(c.getInt(c.getColumnIndex("_id")));
+        categorySub.setName(c.getString(c.getColumnIndex("name")));
+        categorySub.setCategoryMain(c.getInt(c.getColumnIndex("id_main")));
+
+        c.close();
+
+        return categorySub;
+    }
 
     public int getSum(String[] column, String selectedDate) {
         Cursor c;
@@ -191,6 +249,19 @@ public class IRResolver {
 
         cv.put("name",name);
         cr.insert(Uri.parse(URI_GROUP),cv);
+    }
+    public void insertCategoryMain(String name) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("name",name);
+        cr.insert(Uri.parse(URI_CATEGORY_MAIN),cv);
+    }
+    public void insertCategorySub(String name,int main) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("name",name);
+        cv.put("id_main",main);
+        cr.insert(Uri.parse(URI_CATEGORY_SUB),cv);
     }
     public void insertAccount(String institute, String number, String discription) {
 
@@ -251,6 +322,12 @@ public class IRResolver {
     private void deleteInfoDairy() {
         cr.delete(Uri.parse(URI_INFO_DAIRY), null, null);
     }
+    public void deleteCategoryMain(String where, String[] args) {
+        cr.delete(Uri.parse(URI_CATEGORY_MAIN),where,args);
+    }
+    public void deleteCategorySub(String where, String[] args) {
+        cr.delete(Uri.parse(URI_CATEGORY_SUB),where,args);
+    }
 
     public void updateGroup(int id, String name) {
         ContentValues cv = new ContentValues();
@@ -296,6 +373,25 @@ public class IRResolver {
         cv.put("rate",String.format(Locale.getDefault(),"%.2f",rate));
 
         cr.update(Uri.parse(URI_INFO_DAIRY),cv,where,selectionArgs);
+    }
+    public void updateCategoryMain(int id, String name) {
+        ContentValues cv = new ContentValues();
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        cv.put("name",name);
+
+        cr.update(Uri.parse(URI_CATEGORY_MAIN),cv,where,selectionArgs);
+    }
+    public void updateCategorySub(int id, String name, int main_id) {
+        ContentValues cv = new ContentValues();
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        cv.put("name",name);
+        cv.put("main_id",main_id);
+
+        cr.update(Uri.parse(URI_GROUP),cv,where,selectionArgs);
     }
 
     public void setCurrentGroup(int group) {
@@ -356,6 +452,23 @@ public class IRResolver {
                     dairy.setAccount(cursor.getInt(4));
 
                     dairies.add(dairy);
+                    break;
+                case CODE_CATEGORY_MAIN:
+                    CategoryMain categoryMain = new CategoryMain();
+
+                    categoryMain.setId(cursor.getInt(0));
+                    categoryMain.setName(cursor.getString(1));
+
+                    categoryMains.add(categoryMain);
+                    break;
+                case CODE_CATEGORY_SUB:
+                    CategorySub categorySub = new CategorySub();
+
+                    categorySub.setId(cursor.getInt(0));
+                    categorySub.setName(cursor.getString(1));
+                    categorySub.setCategoryMain(cursor.getInt(2));
+
+                    categorySubs.add(categorySub);
                     break;
             }
         }

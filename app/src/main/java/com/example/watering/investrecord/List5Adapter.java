@@ -5,11 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Created by watering on 17. 11. 17.

@@ -13,13 +13,13 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Main"
+                android:text="@string/main"
                 android:checked="true"
                 android:id="@+id/radiobtn_dlg_category_main"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sub"
+                android:text="@string/sub"
                 android:id="@+id/radiobtn_dlg_category_sub"/>
         </RadioGroup>
     <LinearLayout
@@ -46,6 +46,12 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ems="5"
             android:id="@+id/editText_dlg_category_add_name"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add"
+            android:id="@+id/button_dlg_category_add"/>
     </LinearLayout>
 </LinearLayout>
