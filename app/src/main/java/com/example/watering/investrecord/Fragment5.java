@@ -48,7 +48,7 @@ public class Fragment5 extends Fragment {
         editText_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserDialogFragment dialog = UserDialogFragment.newInstance(5, new UserDialogFragment.UserListener() {
+                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.editText_frag5_date, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
                         editText_date.setText(date);
@@ -73,7 +73,7 @@ public class Fragment5 extends Fragment {
         floating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserDialogFragment dialog = UserDialogFragment.newInstance(6, new UserDialogFragment.UserListener() {
+                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag5, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
 

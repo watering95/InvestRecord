@@ -31,18 +31,18 @@ public class Info_Dairy implements Serializable {
     }
 
     public String getDate() {
-        return date;
+        return this.date;
     }
     public int getAccount() {
-        return id_account;
+        return this.id_account;
     }
     public int getPrincipal() {
-        return principal;
+        return this.principal;
     }
     public double getRate() {
-        return rate;
+        return this.rate;
     }
     public int getId() {
-        return id;
+        return this.id;
     }
 }

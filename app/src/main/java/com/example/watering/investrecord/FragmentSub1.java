@@ -82,17 +82,14 @@ public class FragmentSub1 extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_sub1_addGroup:
-                addGroupDialog();
-                break;
-            case R.id.menu_sub1_editGroup:
-                editGroupDialog();
-                break;
-            case R.id.menu_sub1_delGroup:
-                delGroupDialog();
-                break;
-        }
+        UserDialogFragment dialog = UserDialogFragment.newInstance(item.getItemId(), new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+                updateGroupSpinner();
+            }
+        });
+        dialog.initData(ir.getGroups());
+        dialog.show(getFragmentManager(), "dialog");
         return true;
     }
 
@@ -244,38 +241,5 @@ public class FragmentSub1 extends Fragment {
 
         Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
         mAccountSpinner.setSelection(0);
-    }
-
-    private void addGroupDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                if(!name.isEmpty()) ir.insertGroup(name);
-                updateGroupSpinner();
-            }
-        });
-        dialog.show(getFragmentManager(), "dialog");
-    }
-    private void editGroupDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
-                updateGroupSpinner();
-            }
-        });
-        dialog.initData(ir.getGroups());
-        dialog.show(getFragmentManager(), "dialog");
-    }
-    private void delGroupDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                ir.deleteGroup("name",new String[] {name});
-                updateGroupSpinner();
-            }
-        });
-        dialog.initData(ir.getGroups());
-        dialog.show(getFragmentManager(), "dialog");
     }
 }

@@ -31,16 +31,15 @@ public class Account implements Serializable {
     }
 
     public int getId() {
-        return id_account;
+        return this.id_account;
     }
-
     public String getNumber() {
-        return number;
+        return this.number;
     }
     public String getInstitute() {
-        return institute;
+        return this.institute;
     }
     public String getDiscription() {
-        return discription;
+        return this.discription;
     }
 }

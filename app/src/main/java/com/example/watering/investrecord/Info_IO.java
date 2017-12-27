@@ -35,21 +35,21 @@ public class Info_IO implements Serializable {
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
     public String getDate() {
-        return date;
+        return this.date;
     }
     public int getAccount() {
-        return id_account;
+        return this.id_account;
     }
     public int getInput() {
-        return input;
+        return this.input;
     }
     public int getOutput() {
-        return output;
+        return this.output;
     }
     public int getEvaluation() {
-        return evaluation;
+        return this.evaluation;
     }
 }

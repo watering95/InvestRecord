@@ -23,12 +23,12 @@ public class CategoryMain implements Serializable {
     }
 
     public int getId() {
-        return id_category_main;
+        return this.id_category_main;
     }
     public String getName() {
-        return name;
+        return this.name;
     }
     public String getKind() {
-        return kind;
+        return this.kind;
     }
 }

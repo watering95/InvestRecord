@@ -63,17 +63,12 @@ public class FragmentSub2 extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_sub2_category_add:
-                addCategoryDialog();
-                break;
-            case R.id.menu_sub2_category_edit:
-                editCategoryDialog();
-                break;
-            case R.id.menu_sub2_category_del:
-                delCategoryDialog();
-                break;
-        }
+        UserDialogFragment dialog = UserDialogFragment.newInstance(item.getItemId(), new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+            }
+        });
+        dialog.show(getFragmentManager(), "dialog");
         return true;
     }
 
@@ -115,30 +110,5 @@ public class FragmentSub2 extends Fragment {
     }
     private void initDataBase() {
 
-    }
-
-    private void addCategoryDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(8, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-            }
-        });
-        dialog.show(getFragmentManager(), "dialog");
-    }
-    private void editCategoryDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(9, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-            }
-        });
-        dialog.show(getFragmentManager(), "dialog");
-    }
-    private void delCategoryDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(10, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-            }
-        });
-        dialog.show(getFragmentManager(), "dialog");
     }
 }

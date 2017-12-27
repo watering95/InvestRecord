@@ -23,12 +23,12 @@ public class CategorySub implements Serializable {
     }
 
     public int getId() {
-        return id_category_sub;
+        return this.id_category_sub;
     }
     public String getName() {
-        return name;
+        return this.name;
     }
     public int getCategoryMain() {
-        return getId_category_main;
+        return this.getId_category_main;
     }
 }

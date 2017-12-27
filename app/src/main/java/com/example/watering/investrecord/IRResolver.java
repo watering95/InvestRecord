@@ -38,6 +38,7 @@ public class IRResolver {
     private final List<Info_Dairy> dairies = new ArrayList<>();
     private final List<CategoryMain> categoryMains = new ArrayList<>();
     private final List<CategorySub> categorySubs = new ArrayList<>();
+    private final List<Card> cards = new ArrayList<>();
 
     private static final String URI_GROUP = "content://watering.investrecord.provider/group";
     private static final String URI_ACCOUNT = "content://watering.investrecord.provider/account";
@@ -86,6 +87,11 @@ public class IRResolver {
         categorySubs.clear();
         getData(CODE_CATEGORY_SUB, URI_CATEGORY_SUB,"id_main=?",selectionArgs,null);
         return categorySubs;
+    }
+    public List<Card> getCards() {
+        cards.clear();
+        getData(CODE_CARD, URI_CARD,null,null,null);
+        return cards;
     }
 
     public Account getAccount(String id_account) {
@@ -250,19 +256,6 @@ public class IRResolver {
         cv.put("name",name);
         cr.insert(Uri.parse(URI_GROUP),cv);
     }
-    public void insertCategoryMain(String name) {
-        ContentValues cv = new ContentValues();
-
-        cv.put("name",name);
-        cr.insert(Uri.parse(URI_CATEGORY_MAIN),cv);
-    }
-    public void insertCategorySub(String name,int main) {
-        ContentValues cv = new ContentValues();
-
-        cv.put("name",name);
-        cv.put("id_main",main);
-        cr.insert(Uri.parse(URI_CATEGORY_SUB),cv);
-    }
     public void insertAccount(String institute, String number, String discription) {
 
         if(currentGroup == -1) return;
@@ -303,6 +296,29 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_INFO_DAIRY),cv);
     }
+    public void insertCategoryMain(String name,String kind) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("name",name);
+        cv.put("kind",kind);
+        cr.insert(Uri.parse(URI_CATEGORY_MAIN),cv);
+    }
+    public void insertCategorySub(String name,int main) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("name",name);
+        cv.put("id_main",main);
+        cr.insert(Uri.parse(URI_CATEGORY_SUB),cv);
+    }
+    public void insertCard(String name,String num,String com,int date) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("name",name);
+        cv.put("number",num);
+        cv.put("company",com);
+        cv.put("date_draw",date);
+        cr.insert(Uri.parse(URI_CARD),cv);
+    }
 
     public void deleteAll() {
         deleteGroup(null,null);
@@ -319,14 +335,17 @@ public class IRResolver {
     public void deleteInfoIO(String where, String[] args) {
         cr.delete(Uri.parse(URI_INFO_IO),where,args);
     }
-    private void deleteInfoDairy() {
-        cr.delete(Uri.parse(URI_INFO_DAIRY), null, null);
-    }
     public void deleteCategoryMain(String where, String[] args) {
         cr.delete(Uri.parse(URI_CATEGORY_MAIN),where,args);
     }
     public void deleteCategorySub(String where, String[] args) {
         cr.delete(Uri.parse(URI_CATEGORY_SUB),where,args);
+    }
+    public void deleteCard(String where, String[] args) {
+        cr.delete(Uri.parse(URI_CARD),where,args);
+    }
+    private void deleteInfoDairy() {
+        cr.delete(Uri.parse(URI_INFO_DAIRY), null, null);
     }
 
     public void updateGroup(int id, String name) {
@@ -392,6 +411,18 @@ public class IRResolver {
         cv.put("main_id",main_id);
 
         cr.update(Uri.parse(URI_GROUP),cv,where,selectionArgs);
+    }
+    public void updateCard(int id, String name, String num, String com, int date) {
+        ContentValues cv = new ContentValues();
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        cv.put("name",name);
+        cv.put("company",com);
+        cv.put("number",num);
+        cv.put("date_draw",date);
+
+        cr.update(Uri.parse(URI_CARD),cv,where,selectionArgs);
     }
 
     public void setCurrentGroup(int group) {
@@ -469,6 +500,17 @@ public class IRResolver {
                     categorySub.setCategoryMain(cursor.getInt(2));
 
                     categorySubs.add(categorySub);
+                    break;
+                case CODE_CARD:
+                    Card card = new Card();
+
+                    card.setId(cursor.getInt(0));
+                    card.setName(cursor.getString(1));
+                    card.setNumber(cursor.getString(2));
+                    card.setCompany(cursor.getString(3));
+                    card.setDrawDate(cursor.getInt(4));
+
+                    cards.add(card);
                     break;
             }
         }

@@ -46,13 +46,14 @@ public class UserDialogFragment extends DialogFragment {
     private List<String> lists2 = new ArrayList<>();
     private List<CategoryMain> categoryMains = new ArrayList<>();
     private List<CategorySub> categorySubs = new ArrayList<>();
+    private List<Card> cards = new ArrayList<>();
 
     private String selectedDate;
-    private int type, i_u, selectedMainId, selectedSubId;
+    private int type, i_u, selectedMainId, selectedSubId, selectedId;
     private UserListener listener;
 
     public interface UserListener {
-        void onWorkComplete(String name);
+        void onWorkComplete(String str);
     }
 
     @Override
@@ -66,40 +67,48 @@ public class UserDialogFragment extends DialogFragment {
 
         switch (type) {
             case 0:
-                dialogGroupAdd();
-                break;
-            case 1:
-                dialogGroupEdit();
-                break;
-            case 2:
-                dialogGroupDel();
-                break;
-            case 3:
-                dialogSetting();
-                break;
-            case 4:
                 dialogInout();
                 break;
-            case 5:
+            case R.id.menu_sub1_addGroup:
+                dialogGroupAdd();
+                break;
+            case R.id.menu_sub1_editGroup:
+                dialogGroupEdit();
+                break;
+            case R.id.menu_sub1_delGroup:
+                dialogGroupDel();
+                break;
+            case R.id.navigation_item_setting:
+                dialogSetting();
+                break;
+            case R.id.editText_frag5_date:
+            case R.id.editText_frag6_date:
                 dialogDate();
                 break;
-            case 6:
+            case R.id.floating_frag5:
                 dialogSpend();
                 break;
-            case 7:
+            case R.id.floating_frag6:
                 dialogIncome();
                 break;
-            case 8:
+            case R.id.menu_sub2_category_add:
                 dialogCategoryAdd();
                 break;
-            case 9:
+            case R.id.menu_sub2_category_edit:
                 dialogCategoryEdit();
                 break;
-            case 10:
+            case R.id.menu_sub2_category_del:
                 dialogCategoryDel();
                 break;
-            default:
-                return null;
+            case R.id.menu_sub2_card_add:
+                dialogCardAdd();
+                break;
+            case R.id.menu_sub2_card_edit:
+                dialogCardEdit();
+                break;
+            case R.id.menu_sub2_card_del:
+                dialogCardDel();
+                break;
         }
         return builder.create();
     }
@@ -129,7 +138,9 @@ public class UserDialogFragment extends DialogFragment {
         builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onWorkComplete(edit.getText().toString());
+                String name = edit.getText().toString();
+                if(!name.isEmpty()) ir.insertGroup(name);
+                listener.onWorkComplete(null);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -155,6 +166,7 @@ public class UserDialogFragment extends DialogFragment {
                 String select = groups.get(position).getName();
                 ir.setCurrentGroup(groups.get(position).getId());
                 edit.setText(select);
+                listener.onWorkComplete(null);
             }
         });
 
@@ -162,7 +174,8 @@ public class UserDialogFragment extends DialogFragment {
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onWorkComplete(edit.getText().toString());
+                String name = edit.getText().toString();
+                if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -187,6 +200,7 @@ public class UserDialogFragment extends DialogFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 select[0] = groups.get(position).getName();
                 ir.setCurrentGroup(groups.get(position).getId());
+                listener.onWorkComplete(null);
             }
         });
 
@@ -194,7 +208,7 @@ public class UserDialogFragment extends DialogFragment {
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onWorkComplete(select[0]);
+                ir.deleteGroup("name",new String[] {select[0]});
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -370,7 +384,7 @@ public class UserDialogFragment extends DialogFragment {
         builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                listener.onWorkComplete("");
+                listener.onWorkComplete(null);
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -387,7 +401,7 @@ public class UserDialogFragment extends DialogFragment {
         builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                listener.onWorkComplete("");
+                listener.onWorkComplete(null);
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -401,7 +415,8 @@ public class UserDialogFragment extends DialogFragment {
     private void dialogCategoryAdd() {
         view = inflater.inflate(R.layout.dialog_category_add, null);
 
-        final RadioGroup radioGroup = view.findViewById(R.id.radio_dlg_category_add);
+        final RadioGroup radioGroup1 = view.findViewById(R.id.radio_dlg_category_add_1);
+        final RadioGroup radioGroup2 = view.findViewById(R.id.radio_dlg_category_add_2);
         final Spinner spinner = view.findViewById(R.id.spinner_dlg_category_add_main);
         final EditText editText = view.findViewById(R.id.editText_dlg_category_add_name);
         Button button = view.findViewById(R.id.button_dlg_category_add);
@@ -423,10 +438,10 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        if(radioGroup.getCheckedRadioButtonId() == R.id.radiobtn_dlg_category_main) {
+        if(radioGroup2.getCheckedRadioButtonId() == R.id.radiobtn_dlg_category_main) {
             spinner.setEnabled(false);
         }
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        radioGroup2.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 if(i == R.id.radiobtn_dlg_category_main) {
@@ -441,14 +456,23 @@ public class UserDialogFragment extends DialogFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String str =editText.getText().toString();
-                if(!str.isEmpty()) {
-                    if (radioGroup.getCheckedRadioButtonId() == R.id.radiobtn_dlg_category_main) {
-                        ir.insertCategoryMain(str);
+                String name =editText.getText().toString();
+                String kind = "";
+                if(!name.isEmpty()) {
+                    if (radioGroup2.getCheckedRadioButtonId() == R.id.radiobtn_dlg_category_main) {
+                        switch (radioGroup1.getCheckedRadioButtonId()) {
+                            case R.id.radiobtn_dlg_category_spend:
+                                kind = "spend";
+                                break;
+                            case R.id.radiobtn_dlg_category_income:
+                                kind = "income";
+                                break;
+                        }
+                        ir.insertCategoryMain(name, kind);
                         updateCategoryMainList();
                         adapter1.notifyDataSetChanged();
                     } else {
-                        ir.insertCategorySub(str, selectedMainId);
+                        ir.insertCategorySub(name, selectedMainId);
                     }
                     Toast.makeText(getContext(),"카테고리 추가",Toast.LENGTH_SHORT).show();
                     editText.setText("");
@@ -636,6 +660,128 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    private void dialogCardAdd() {
+        view = inflater.inflate(R.layout.dialog_card_add, null);
+
+        final EditText editText_name = view.findViewById(R.id.editText_dlg_card_add_name);
+        final EditText editText_num = view.findViewById(R.id.editText_dlg_card_add_num);
+        final EditText editText_com = view.findViewById(R.id.editText_dlg_card_add_com);
+        final EditText editText_date = view.findViewById(R.id.editText_dlg_card_add_date);
+
+        builder.setView(view).setTitle("카드 추가");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String name = editText_name.getText().toString();
+                String com = editText_com.getText().toString();
+                String num = editText_num.getText().toString();
+                String date = editText_date.getText().toString();
+
+                ir.insertCard(name,num,com,Integer.parseInt(date));
+                listener.onWorkComplete(null);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+    private void dialogCardEdit() {
+        view = inflater.inflate(R.layout.dialog_card_edit, null);
+
+        final EditText editText_name = view.findViewById(R.id.editText_dlg_card_edit_name);
+        final EditText editText_num = view.findViewById(R.id.editText_dlg_card_edit_num);
+        final EditText editText_com = view.findViewById(R.id.editText_dlg_card_edit_com);
+        final EditText editText_date = view.findViewById(R.id.editText_dlg_card_edit_date);
+
+        Spinner spinner = view.findViewById(R.id.spinner_dlg_card_edit_name);
+
+        updateCardList();
+
+        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists1);
+        spinner.setAdapter(adapter1);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (cards.size() > 0) {
+                    Card card = cards.get(i);
+                    selectedId = card.getId();
+                    editText_name.setText(card.getName());
+                    editText_com.setText(card.getCompany());
+                    editText_num.setText(card.getNumber());
+                    editText_date.setText(String.valueOf(card.getDrawDate()));
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        builder.setView(view).setTitle("카드 편집");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String name = editText_name.getText().toString();
+                String num = editText_num.getText().toString();
+                String com = editText_com.getText().toString();
+                String date = editText_date.getText().toString();
+
+                ir.updateCard(selectedId,name,num,com,Integer.parseInt(date));
+                listener.onWorkComplete(null);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+    private void dialogCardDel() {
+        view = inflater.inflate(R.layout.dialog_card_del, null);
+
+        Spinner spinner = view.findViewById(R.id.spinner_dlg_card_del_name);
+
+        updateCardList();
+
+        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists1);
+        spinner.setAdapter(adapter1);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (cards.size() > 0) {
+                    Card card = cards.get(i);
+                    selectedId = card.getId();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        builder.setView(view).setTitle("카드 삭제");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ir.deleteCard("_id", new String[] {String.valueOf(selectedId)});
+                listener.onWorkComplete("");
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
 
     private void modifyInfoDiary(int select) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -704,6 +850,16 @@ public class UserDialogFragment extends DialogFragment {
 
         for (int i = 0; i < categorySubs.size(); i++) {
             lists2.add(categorySubs.get(i).getName());
+        }
+    }
+    private void updateCardList() {
+        lists1.clear();
+        cards = ir.getCards();
+
+        if(cards.isEmpty()) return;
+
+        for (int i = 0; i < cards.size(); i++) {
+            lists1.add(cards.get(i).getName());
         }
     }
 }

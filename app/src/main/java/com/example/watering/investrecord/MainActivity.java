@@ -116,9 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 item.setChecked(true);
                 drawerLayout.closeDrawers();
 
-                int id = item.getItemId();
-
-                switch(id) {
+                switch(item.getItemId()) {
                     case R.id.navigation_item_sub1:
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.frame_main, fragmentSub1).commit();
@@ -140,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void inoutDialog(String selectedDate) {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(4, new UserDialogFragment.UserListener() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
 
@@ -151,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.show(fragmentManager, "dialog");
     }
     private void settingDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(3, new UserDialogFragment.UserListener() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.navigation_item_setting, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
                 switch(name) {

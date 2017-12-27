@@ -6,9 +6,26 @@
     android:orientation="vertical">
 
     <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/radio_dlg_category_add_1"
+        android:orientation="horizontal">
+        <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/radio_dlg_category_add"
+            android:text="@string/spending"
+            android:checked="true"
+            android:id="@+id/radiobtn_dlg_category_spend"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/income"
+            android:id="@+id/radiobtn_dlg_category_income"/>
+    </RadioGroup>
+    <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/radio_dlg_category_add_2"
             android:orientation="horizontal">
             <RadioButton
                 android:layout_width="wrap_content"
