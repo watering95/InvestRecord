@@ -83,6 +83,7 @@ public class UserDialogFragment extends DialogFragment {
                 break;
             case R.id.editText_frag5_date:
             case R.id.editText_frag6_date:
+            case R.id.editText_dlg_spend_date:
                 dialogDate();
                 break;
             case R.id.floating_frag5:
@@ -109,6 +110,15 @@ public class UserDialogFragment extends DialogFragment {
             case R.id.menu_sub2_card_del:
                 dialogCardDel();
                 break;
+            case R.id.menu_sub2_approval_add:
+                dialogApprovalAdd();
+                break;
+            case R.id.menu_sub2_approval_edit:
+                dialogApprovalEdit();
+                break;
+            case R.id.menu_sub2_approval_del:
+                dialogApprovalDel();
+                break;
         }
         return builder.create();
     }
@@ -129,95 +139,6 @@ public class UserDialogFragment extends DialogFragment {
         this.selectedDate = selectedDate;
     }
 
-    private void dialogGroupAdd() {
-        view = inflater.inflate(R.layout.dialog_group_add, null);
-
-        final EditText edit = view.findViewById(R.id.editText_dlg_group_add);
-
-        builder.setView(view).setTitle("그룹 추가");
-        builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String name = edit.getText().toString();
-                if(!name.isEmpty()) ir.insertGroup(name);
-                listener.onWorkComplete(null);
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-    }
-    private void dialogGroupEdit() {
-        view = inflater.inflate(R.layout.dialog_group_edit, null);
-
-        ListView list = view.findViewById(R.id.listView_dlg_editGroup);
-        final EditText edit = view.findViewById(R.id.editText_dlg_group_edit);
-
-        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists1);
-
-        list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        list.setAdapter(adapter1);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String select = groups.get(position).getName();
-                ir.setCurrentGroup(groups.get(position).getId());
-                edit.setText(select);
-                listener.onWorkComplete(null);
-            }
-        });
-
-        builder.setView(view).setTitle("그룹 수정");
-        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String name = edit.getText().toString();
-                if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-    }
-    private void dialogGroupDel() {
-        view = inflater.inflate(R.layout.dialog_group_del, null);
-
-        final String[] select = new String[1];
-        ListView list = view.findViewById(R.id.listView_dlg_group_del);
-
-        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists1);
-
-        list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        list.setAdapter(adapter1);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                select[0] = groups.get(position).getName();
-                ir.setCurrentGroup(groups.get(position).getId());
-                listener.onWorkComplete(null);
-            }
-        });
-
-        builder.setView(view).setTitle("그룹 삭제");
-        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ir.deleteGroup("name",new String[] {select[0]});
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-    }
     private void dialogSetting() {
         view = inflater.inflate(R.layout.dialog_setting, null);
 
@@ -377,8 +298,74 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+
     private void dialogSpend() {
         view = inflater.inflate(R.layout.dialog_spend, null);
+
+        final EditText editText_date = view.findViewById(R.id.editText_dlg_spend_date);
+        EditText editText_details = view.findViewById(R.id.editText_dlg_spend_details);
+        EditText editText_amount = view.findViewById(R.id.editText_dlg_spend_amount);
+        Spinner spinner_category_main = view.findViewById(R.id.spinner_dlg_spend_category_main);
+        Spinner spinner_category_sub = view.findViewById(R.id.spinner_dlg_spend_category_sub);
+        Spinner spinner_approval = view.findViewById(R.id.spinner_dlg_spend_approval);
+
+        editText_date.setText(selectedDate);
+        editText_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.editText_dlg_spend_date, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
+                        editText_date.setText(date);
+                        selectedDate = date;
+                    }
+                });
+                dialog.setSelectedDate(selectedDate);
+                dialog.show(getFragmentManager(), "dialog");
+            }
+        });
+
+        updateCategoryMainList(1);
+        if(categoryMains.size() > 0) {
+            selectedMainId = categoryMains.get(0).getId();
+        }
+
+        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists1);
+        spinner_category_main.setAdapter(adapter1);
+
+        spinner_category_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedMainId = categoryMains.get(i).getId();
+                updateCategorySubList();
+                adapter2.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        updateCategorySubList();
+        if (categorySubs.size() > 0) {
+            selectedSubId = categorySubs.get(0).getId();
+        }
+
+        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists2);
+        spinner_category_sub.setAdapter(adapter2);
+
+        spinner_category_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedSubId = categorySubs.get(i).getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         builder.setView(view).setTitle("지출 입력");
         builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
@@ -412,6 +399,97 @@ public class UserDialogFragment extends DialogFragment {
         });
 
     }
+
+    private void dialogGroupAdd() {
+        view = inflater.inflate(R.layout.dialog_group_add, null);
+
+        final EditText edit = view.findViewById(R.id.editText_dlg_group_add);
+
+        builder.setView(view).setTitle("그룹 추가");
+        builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String name = edit.getText().toString();
+                if(!name.isEmpty()) ir.insertGroup(name);
+                listener.onWorkComplete(null);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+    }
+    private void dialogGroupEdit() {
+        view = inflater.inflate(R.layout.dialog_group_edit, null);
+
+        ListView list = view.findViewById(R.id.listView_dlg_editGroup);
+        final EditText edit = view.findViewById(R.id.editText_dlg_group_edit);
+
+        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists1);
+
+        list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        list.setAdapter(adapter1);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String select = groups.get(position).getName();
+                ir.setCurrentGroup(groups.get(position).getId());
+                edit.setText(select);
+                listener.onWorkComplete(null);
+            }
+        });
+
+        builder.setView(view).setTitle("그룹 수정");
+        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String name = edit.getText().toString();
+                if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+    }
+    private void dialogGroupDel() {
+        view = inflater.inflate(R.layout.dialog_group_del, null);
+
+        final String[] select = new String[1];
+        ListView list = view.findViewById(R.id.listView_dlg_group_del);
+
+        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists1);
+
+        list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        list.setAdapter(adapter1);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                select[0] = groups.get(position).getName();
+                ir.setCurrentGroup(groups.get(position).getId());
+                listener.onWorkComplete(null);
+            }
+        });
+
+        builder.setView(view).setTitle("그룹 삭제");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ir.deleteGroup("name",new String[] {select[0]});
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+    }
+
     private void dialogCategoryAdd() {
         view = inflater.inflate(R.layout.dialog_category_add, null);
 
@@ -421,7 +499,7 @@ public class UserDialogFragment extends DialogFragment {
         final EditText editText = view.findViewById(R.id.editText_dlg_category_add_name);
         Button button = view.findViewById(R.id.button_dlg_category_add);
 
-        updateCategoryMainList();
+        updateCategoryMainList(0);
 
         adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists1);
         spinner.setAdapter(adapter1);
@@ -469,7 +547,7 @@ public class UserDialogFragment extends DialogFragment {
                                 break;
                         }
                         ir.insertCategoryMain(name, kind);
-                        updateCategoryMainList();
+                        updateCategoryMainList(0);
                         adapter1.notifyDataSetChanged();
                     } else {
                         ir.insertCategorySub(name, selectedMainId);
@@ -501,7 +579,7 @@ public class UserDialogFragment extends DialogFragment {
         final EditText editText_sub = view.findViewById(R.id.editText_dlg_category_edit_sub);
         Button button = view.findViewById(R.id.button_dlg_category_edit);
 
-        updateCategoryMainList();
+        updateCategoryMainList(0);
         if(categoryMains.size() > 0) {
             selectedMainId = categoryMains.get(0).getId();
             editText_main.setText(ir.getCategoryMain(String.valueOf(selectedMainId)).getName());
@@ -557,7 +635,7 @@ public class UserDialogFragment extends DialogFragment {
                 ir.updateCategoryMain(selectedMainId,name_main);
                 ir.updateCategorySub(selectedSubId,name_sub,selectedMainId);
 
-                updateCategoryMainList();
+                updateCategoryMainList(0);
                 updateCategorySubList();
                 adapter1.notifyDataSetChanged();
                 adapter2.notifyDataSetChanged();
@@ -585,7 +663,7 @@ public class UserDialogFragment extends DialogFragment {
         Button button_main = view.findViewById(R.id.button_dlg_category_del_main);
         Button button_sub = view.findViewById(R.id.button_dlg_category_del_sub);
 
-        updateCategoryMainList();
+        updateCategoryMainList(0);
         if(categoryMains.size() > 0) {
             selectedMainId = categoryMains.get(0).getId();
         }
@@ -629,7 +707,7 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 ir.deleteCategoryMain("_id",new String[] {String.valueOf(selectedMainId)});
-                updateCategoryMainList();
+                updateCategoryMainList(0);
                 updateCategorySubList();
                 adapter1.notifyDataSetChanged();
                 adapter2.notifyDataSetChanged();
@@ -639,7 +717,7 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 ir.deleteCategorySub("_id",new String[] {String.valueOf(selectedSubId)});
-                updateCategoryMainList();
+                updateCategoryMainList(0);
                 updateCategorySubList();
                 adapter1.notifyDataSetChanged();
                 adapter2.notifyDataSetChanged();
@@ -660,6 +738,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+
     private void dialogCardAdd() {
         view = inflater.inflate(R.layout.dialog_card_add, null);
 
@@ -783,6 +862,59 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
 
+    private void dialogApprovalAdd() {
+        view = inflater.inflate(R.layout.dialog_approval_add, null);
+
+        builder.setView(view).setTitle("지출항목 추가");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete(null);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+    private void dialogApprovalEdit() {
+        view = inflater.inflate(R.layout.dialog_approval_edit, null);
+
+        builder.setView(view).setTitle("지출항목 편집");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete(null);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+    private void dialogApprovalDel() {
+        view = inflater.inflate(R.layout.dialog_approval_del, null);
+
+        builder.setView(view).setTitle("지출항목 삭제");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ir.deleteCard("_id", new String[] {String.valueOf(selectedId)});
+                listener.onWorkComplete("");
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+
     private void modifyInfoDiary(int select) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String txtDate;
@@ -832,9 +964,10 @@ public class UserDialogFragment extends DialogFragment {
         mActivity.fragmentSub1.CallUpdate2();
     }
 
-    private void updateCategoryMainList() {
+    private void updateCategoryMainList(int c) {
         lists1.clear();
-        categoryMains = ir.getCategoryMains();
+
+        categoryMains = ir.getCategoryMains(c);
 
         if(categoryMains.isEmpty()) return;
 

@@ -79,7 +79,7 @@ public class Fragment5 extends Fragment {
 
                     }
                 });
-
+                dialog.setSelectedDate(selectedDate);
                 dialog.show(getFragmentManager(), "dialog");
             }
         });

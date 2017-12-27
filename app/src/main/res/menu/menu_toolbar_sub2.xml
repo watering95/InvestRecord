@@ -2,28 +2,57 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/item_category"
+        android:title="@string/manage_category">
+        <menu>
+            <item
         android:id="@+id/menu_sub2_category_add"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/category_add"/>
-    <item
+            <item
         android:id="@+id/menu_sub2_category_edit"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/category_edit"/>
-    <item
+            <item
         android:id="@+id/menu_sub2_category_del"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/category_del"/>
+        </menu>
+    </item>
     <item
+        android:id="@+id/item_card"
+        android:title="@string/manage_card">
+        <menu>
+            <item
         android:id="@+id/menu_sub2_card_add"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/card_add"/>
-    <item
+            <item
         android:id="@+id/menu_sub2_card_edit"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/card_edit"/>
-    <item
+            <item
         android:id="@+id/menu_sub2_card_del"
         android:icon="@mipmap/ic_launcher"
         android:title="@string/card_del"/>
-
+        </menu>
+    </item>
+    <item
+        android:id="@+id/item_approval"
+        android:title="@string/manage_approval">
+        <menu>
+            <item
+                android:id="@+id/menu_sub2_approval_add"
+                android:icon="@mipmap/ic_launcher"
+                android:title="@string/approval_add"/>
+            <item
+                android:id="@+id/menu_sub2_approval_edit"
+                android:icon="@mipmap/ic_launcher"
+                android:title="@string/approval_edit"/>
+            <item
+                android:id="@+id/menu_sub2_approval_del"
+                android:icon="@mipmap/ic_launcher"
+                android:title="@string/approval_del"/>
+        </menu>
+    </item>
 </menu>

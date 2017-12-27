@@ -76,9 +76,26 @@ public class IRResolver {
         getData(CODE_INFO_DAIRY, URI_INFO_DAIRY,"id_account=?",selectionArgs,"date DESC");
         return dairies;
     }
-    public List<CategoryMain> getCategoryMains() {
+    public List<CategoryMain> getCategoryMains(int c) {
         categoryMains.clear();
-        getData(CODE_CATEGORY_MAIN, URI_CATEGORY_MAIN,null,null,null);
+        String selection = null;
+        String[] selectionArgs = null;
+
+        switch(c) {
+            case 0:
+                selection = null;
+                selectionArgs = null;
+                break;
+            case 1:
+                selection = "kind=?";
+                selectionArgs = new String[] {"spend"};
+                break;
+            case 2:
+                selection = "kind=?";
+                selectionArgs = new String[] {"income"};
+                break;
+        }
+        getData(CODE_CATEGORY_MAIN, URI_CATEGORY_MAIN,selection,selectionArgs,null);
         return categoryMains;
     }
     public List<CategorySub> getCategorySubs(int id_main) {
