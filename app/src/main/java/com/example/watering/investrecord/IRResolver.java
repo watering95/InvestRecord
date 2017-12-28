@@ -28,10 +28,10 @@ public class IRResolver {
     private static final int CODE_CATEGORY_MAIN = 5;
     private static final int CODE_CATEGORY_SUB = 6;
     private static final int CODE_INCOME = 7;
-    private static final int CODE_OUT = 8;
-    private static final int CODE_OUT_CARD = 9;
-    private static final int CODE_OUT_CASH = 10;
-    private static final int CODE_OUT_SCHEDULE = 11;
+    private static final int CODE_SPEND = 8;
+    private static final int CODE_SPEND_CARD = 9;
+    private static final int CODE_SPEND_CASH = 10;
+    private static final int CODE_SPEND_SCHEDULE = 11;
 
     private final List<Group> groups = new ArrayList<>();
     private final List<Account> accounts = new ArrayList<>();
@@ -39,6 +39,10 @@ public class IRResolver {
     private final List<CategoryMain> categoryMains = new ArrayList<>();
     private final List<CategorySub> categorySubs = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
+    private final List<Spend> spends = new ArrayList<>();
+    private final List<SpendCard> spends_card = new ArrayList<>();
+    private final List<SpendCash> spends_cash = new ArrayList<>();
+    private final List<SpendSchedule> spends_schedule = new ArrayList<>();
 
     private static final String URI_GROUP = "content://watering.investrecord.provider/group";
     private static final String URI_ACCOUNT = "content://watering.investrecord.provider/account";
@@ -48,10 +52,10 @@ public class IRResolver {
     private static final String URI_CATEGORY_MAIN = "content://watering.investrecord.provider/category_main";
     private static final String URI_CATEGORY_SUB = "content://watering.investrecord.provider/category_sub";
     private static final String URI_INCOME = "content://watering.investrecord.provider/income";
-    private static final String URI_OUT = "content://watering.investrecord.provider/out";
-    private static final String URI_OUT_CARD = "content://watering.investrecord.provider/out_card";
-    private static final String URI_OUT_CASH = "content://watering.investrecord.provider/out_cash";
-    private static final String URI_OUT_SCHEDULE = "content://watering.investrecord.provider/out_schedule";
+    private static final String URI_SPEND = "content://watering.investrecord.provider/out";
+    private static final String URI_SPEND_CARD = "content://watering.investrecord.provider/out_card";
+    private static final String URI_SPEND_CASH = "content://watering.investrecord.provider/out_cash";
+    private static final String URI_SPEND_SCHEDULE = "content://watering.investrecord.provider/out_schedule";
 
     public void getContentResolver(ContentResolver cr) {
         this.cr = cr;
@@ -109,6 +113,13 @@ public class IRResolver {
         cards.clear();
         getData(CODE_CARD, URI_CARD,null,null,null);
         return cards;
+    }
+    public List<Spend> getSpends(String date) {
+        String[] selectionArgs = new String[] {String.valueOf(date)};
+
+        spends.clear();
+        getData(CODE_SPEND, URI_SPEND, "date_use=?",selectionArgs,null);
+        return spends;
     }
 
     public Account getAccount(String id_account) {
@@ -336,6 +347,43 @@ public class IRResolver {
         cv.put("date_draw",date);
         cr.insert(Uri.parse(URI_CARD),cv);
     }
+    public void insertSpend(int id_open, String details, String date, int amount, int id_category) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("id_open",id_open);
+        cv.put("details",details);
+        cv.put("id_sub",id_category);
+        cv.put("date_use",date);
+        cv.put("amount",amount);
+
+        cr.insert(Uri.parse(URI_SPEND),cv);
+    }
+    public void insertSpendCard(int id_spend, int id_card) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("id_spend",id_spend);
+        cv.put("id_card",id_card);
+
+        cr.insert(Uri.parse(URI_SPEND_CARD),cv);
+    }
+    public void insertSpendCash(int id_spend, int id_account) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("id_spend",id_spend);
+        cv.put("id_account",id_account);
+
+        cr.insert(Uri.parse(URI_SPEND_CASH),cv);
+    }
+    public void insertSpendSchedule(int id_spend,String date_draw,int id_account,int id_card) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("id_spend",id_spend);
+        cv.put("date_draw",date_draw);
+        cv.put("id_account",id_account);
+        cv.put("id_card",id_card);
+
+        cr.insert(Uri.parse(URI_SPEND_SCHEDULE),cv);
+    }
 
     public void deleteAll() {
         deleteGroup(null,null);
@@ -528,6 +576,47 @@ public class IRResolver {
                     card.setDrawDate(cursor.getInt(4));
 
                     cards.add(card);
+                    break;
+                case CODE_SPEND:
+                    Spend spend = new Spend();
+
+                    spend.setId(cursor.getInt(0));
+                    spend.setIdOpen(cursor.getInt(1));
+                    spend.setDetails(cursor.getString(2));
+                    spend.setCategory(cursor.getInt(3));
+                    spend.setDate(cursor.getString(4));
+                    spend.setAmount(cursor.getInt(5));
+
+                    spends.add(spend);
+                    break;
+                case CODE_SPEND_CARD:
+                    SpendCard spend_card = new SpendCard();
+
+                    spend_card.setId(cursor.getInt(0));
+                    spend_card.setSpend(cursor.getInt(1));
+                    spend_card.setCard(cursor.getInt(2));
+
+                    spends_card.add(spend_card);
+                    break;
+                case CODE_SPEND_CASH:
+                    SpendCash spend_cash = new SpendCash();
+
+                    spend_cash.setId(cursor.getInt(0));
+                    spend_cash.setSpend(cursor.getInt(1));
+                    spend_cash.setAccount(cursor.getInt(2));
+
+                    spends_cash.add(spend_cash);
+                    break;
+                case CODE_SPEND_SCHEDULE:
+                    SpendSchedule spend_schedule = new SpendSchedule();
+
+                    spend_schedule.setId(cursor.getInt(0));
+                    spend_schedule.setSpend(cursor.getInt(1));
+                    spend_schedule.setDate(cursor.getString(2));
+                    spend_schedule.setAccount(cursor.getInt(3));
+                    spend_schedule.setCard(cursor.getInt(4));
+
+                    spends_schedule.add(spend_schedule);
                     break;
             }
         }

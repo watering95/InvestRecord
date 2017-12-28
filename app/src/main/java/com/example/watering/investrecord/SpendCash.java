@@ -10,5 +10,25 @@ import java.io.Serializable;
 public class SpendCash implements Serializable {
     private int id_spend_cash;
     private int id_spend;
-    private String date_draw;
+    private int id_account;
+
+    public void setId(int id) {
+        this.id_spend_cash = id;
+    }
+    public void setSpend(int id) {
+        this.id_spend = id;
+    }
+    public void setAccount(int id) {
+        this.id_account = id;
+    }
+
+    public int getId() {
+        return this.id_spend_cash;
+    }
+    public int getSpend() {
+        return this.id_spend;
+    }
+    public int getAccount() {
+        return this.id_account;
+    }
 }

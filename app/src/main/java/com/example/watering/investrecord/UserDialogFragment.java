@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -40,16 +42,19 @@ public class UserDialogFragment extends DialogFragment {
     private AlertDialog.Builder builder;
     private View view;
 
-    private ArrayAdapter<String> adapter1, adapter2;
-    private List<Group> groups = new ArrayList<>();
+    private ArrayAdapter<String> adapter1, adapter2, adapter3, adapter4;
     private List<String> lists1 = new ArrayList<>();
     private List<String> lists2 = new ArrayList<>();
+    private List<String> lists3 = new ArrayList<>();
+    private List<String> lists4 = new ArrayList<>();
+    private List<Group> groups = new ArrayList<>();
+    private List<Account> accounts = new ArrayList<>();
     private List<CategoryMain> categoryMains = new ArrayList<>();
     private List<CategorySub> categorySubs = new ArrayList<>();
     private List<Card> cards = new ArrayList<>();
 
     private String selectedDate;
-    private int type, i_u, selectedMainId, selectedSubId, selectedId;
+    private int type, i_u, selectedMainId, selectedSubId, selectedCardId, selectedAccountId, selectedId;
     private UserListener listener;
 
     public interface UserListener {
@@ -137,6 +142,214 @@ public class UserDialogFragment extends DialogFragment {
     }
     public void setSelectedDate(String selectedDate) {
         this.selectedDate = selectedDate;
+    }
+
+    private void dialogSpend() {
+        view = inflater.inflate(R.layout.dialog_spend, null);
+
+        final EditText editText_date = view.findViewById(R.id.editText_dlg_spend_date);
+        final EditText editText_details = view.findViewById(R.id.editText_dlg_spend_details);
+        final EditText editText_amount = view.findViewById(R.id.editText_dlg_spend_amount);
+        Spinner spinner_category_main = view.findViewById(R.id.spinner_dlg_spend_category_main);
+        Spinner spinner_category_sub = view.findViewById(R.id.spinner_dlg_spend_category_sub);
+        Spinner spinner_approval_1 = view.findViewById(R.id.spinner_dlg_spend_approval_1);
+        final Spinner spinner_approval_2 = view.findViewById(R.id.spinner_dlg_spend_approval_2);
+        final CheckBox checkBox = view.findViewById(R.id.checkbox_dlg_spend_schedule);
+        final EditText editText_date_schedule = view.findViewById(R.id.editText_dlg_spend_date_schedule);
+
+        editText_date.setText(selectedDate);
+        editText_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.editText_dlg_spend_date, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
+                        editText_date.setText(date);
+                        selectedDate = date;
+                    }
+                });
+                dialog.setSelectedDate(selectedDate);
+                dialog.show(getFragmentManager(), "dialog");
+            }
+        });
+
+        updateCategoryMainList(1);
+        if(categoryMains.size() > 0) {
+            selectedMainId = categoryMains.get(0).getId();
+        }
+        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists1);
+        spinner_category_main.setAdapter(adapter1);
+        spinner_category_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedMainId = categoryMains.get(i).getId();
+                updateCategorySubList();
+                adapter2.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        updateCategorySubList();
+        if (categorySubs.size() > 0) {
+            selectedSubId = categorySubs.get(0).getId();
+        }
+        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists2);
+        spinner_category_sub.setAdapter(adapter2);
+        spinner_category_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedSubId = categorySubs.get(i).getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        List<String> lists_approval = new ArrayList<>();
+        lists_approval.clear();
+        lists_approval.add("현금");
+        lists_approval.add("카드");
+        lists_approval.add("자동이체");
+
+        type = 0;
+        ArrayAdapter<String> adapter_approval = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists_approval);
+        spinner_approval_1.setAdapter(adapter_approval);
+        spinner_approval_1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                type = i;
+                switch(type) {
+                    case 0:
+                        spinner_approval_2.setAdapter(adapter3);
+                        break;
+                    case 1:
+                        spinner_approval_2.setAdapter(adapter4);
+                        break;
+                    case 2:
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                type = 0;
+            }
+        });
+
+        checkBox.setChecked(false);
+        editText_date_schedule.setEnabled(false);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                editText_date_schedule.setEnabled(b);
+            }
+        });
+        updateAccountList();
+        if(accounts.size() > 0) {
+            selectedAccountId = accounts.get(0).getId();
+        }
+        adapter3 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists3);
+
+        updateCardList();
+        if(cards.size() > 0) {
+            selectedCardId = cards.get(0).getId();
+        }
+        adapter4 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists4);
+
+        switch(type) {
+            case 0:
+                spinner_approval_2.setAdapter(adapter3);
+                break;
+            case 1:
+                spinner_approval_2.setAdapter(adapter4);
+                break;
+        }
+        spinner_approval_2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                switch(type) {
+                    case 0:
+                        selectedAccountId = accounts.get(i).getId();
+                        break;
+                    case 1:
+                        selectedCardId = accounts.get(i).getId();
+                        break;
+                    case 2:
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        builder.setView(view).setTitle("지출 입력");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String details = editText_details.getText().toString();
+                int amount = Integer.parseInt(editText_amount.getText().toString());
+                List<Spend> spends = ir.getSpends(selectedDate);
+                Calendar today = Calendar.getInstance();
+                int id_open = today.YEAR*1000000+today.MONTH*10000+today.DAY_OF_MONTH*100+spends.size();
+
+                ir.insertSpend(id_open,details,selectedDate,amount,selectedSubId);
+                if(checkBox.isChecked()) {
+                    String date = editText_date_schedule.getText().toString();
+                    switch (type) {
+                        case 0:
+                            ir.insertSpendSchedule(id_open, date, selectedAccountId, -1);
+                            break;
+                        case 1:
+                            ir.insertSpendSchedule(id_open, date, -1, selectedCardId);
+                            break;
+                    }
+                }
+                else {
+                    switch(type) {
+                        case 0:
+                            ir.insertSpendCash(id_open, selectedAccountId);
+                            break;
+                        case 1:
+                            ir.insertSpendCard(id_open, selectedCardId);
+                            break;
+                    }
+                }
+                listener.onWorkComplete(null);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+    private void dialogIncome() {
+        view = inflater.inflate(R.layout.dialog_income, null);
+
+        builder.setView(view).setTitle("수입 입력");
+        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete(null);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
     }
 
     private void dialogSetting() {
@@ -297,107 +510,6 @@ public class UserDialogFragment extends DialogFragment {
 
             }
         });
-    }
-
-    private void dialogSpend() {
-        view = inflater.inflate(R.layout.dialog_spend, null);
-
-        final EditText editText_date = view.findViewById(R.id.editText_dlg_spend_date);
-        EditText editText_details = view.findViewById(R.id.editText_dlg_spend_details);
-        EditText editText_amount = view.findViewById(R.id.editText_dlg_spend_amount);
-        Spinner spinner_category_main = view.findViewById(R.id.spinner_dlg_spend_category_main);
-        Spinner spinner_category_sub = view.findViewById(R.id.spinner_dlg_spend_category_sub);
-        Spinner spinner_approval = view.findViewById(R.id.spinner_dlg_spend_approval);
-
-        editText_date.setText(selectedDate);
-        editText_date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.editText_dlg_spend_date, new UserDialogFragment.UserListener() {
-                    @Override
-                    public void onWorkComplete(String date) {
-                        editText_date.setText(date);
-                        selectedDate = date;
-                    }
-                });
-                dialog.setSelectedDate(selectedDate);
-                dialog.show(getFragmentManager(), "dialog");
-            }
-        });
-
-        updateCategoryMainList(1);
-        if(categoryMains.size() > 0) {
-            selectedMainId = categoryMains.get(0).getId();
-        }
-
-        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists1);
-        spinner_category_main.setAdapter(adapter1);
-
-        spinner_category_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedMainId = categoryMains.get(i).getId();
-                updateCategorySubList();
-                adapter2.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        updateCategorySubList();
-        if (categorySubs.size() > 0) {
-            selectedSubId = categorySubs.get(0).getId();
-        }
-
-        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists2);
-        spinner_category_sub.setAdapter(adapter2);
-
-        spinner_category_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedSubId = categorySubs.get(i).getId();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        builder.setView(view).setTitle("지출 입력");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                listener.onWorkComplete(null);
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-    }
-    private void dialogIncome() {
-        view = inflater.inflate(R.layout.dialog_income, null);
-
-        builder.setView(view).setTitle("수입 입력");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                listener.onWorkComplete(null);
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-
     }
 
     private void dialogGroupAdd() {
@@ -779,15 +891,15 @@ public class UserDialogFragment extends DialogFragment {
 
         updateCardList();
 
-        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists1);
-        spinner.setAdapter(adapter1);
+        adapter3 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists3);
+        spinner.setAdapter(adapter3);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (cards.size() > 0) {
                     Card card = cards.get(i);
-                    selectedId = card.getId();
+                    selectedCardId = card.getId();
                     editText_name.setText(card.getName());
                     editText_com.setText(card.getCompany());
                     editText_num.setText(card.getNumber());
@@ -985,14 +1097,29 @@ public class UserDialogFragment extends DialogFragment {
             lists2.add(categorySubs.get(i).getName());
         }
     }
+    private void updateAccountList() {
+        String str;
+        Account account;
+
+        lists3.clear();
+        accounts = ir.getAccounts();
+
+        if(accounts.isEmpty()) return;
+
+        for (int i = 0; i < accounts.size(); i++) {
+            account = accounts.get(i);
+            str = account.getNumber() + " " + account.getInstitute() + " " + account.getDiscription();
+            lists3.add(str);
+        }
+    }
     private void updateCardList() {
-        lists1.clear();
+        lists4.clear();
         cards = ir.getCards();
 
         if(cards.isEmpty()) return;
 
         for (int i = 0; i < cards.size(); i++) {
-            lists1.add(cards.get(i).getName());
+            lists4.add(cards.get(i).getName());
         }
     }
 }
