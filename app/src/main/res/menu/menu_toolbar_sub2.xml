@@ -37,22 +37,4 @@
         android:title="@string/card_del"/>
         </menu>
     </item>
-    <item
-        android:id="@+id/item_approval"
-        android:title="@string/manage_approval">
-        <menu>
-            <item
-                android:id="@+id/menu_sub2_approval_add"
-                android:icon="@mipmap/ic_launcher"
-                android:title="@string/approval_add"/>
-            <item
-                android:id="@+id/menu_sub2_approval_edit"
-                android:icon="@mipmap/ic_launcher"
-                android:title="@string/approval_edit"/>
-            <item
-                android:id="@+id/menu_sub2_approval_del"
-                android:icon="@mipmap/ic_launcher"
-                android:title="@string/approval_del"/>
-        </menu>
-    </item>
 </menu>

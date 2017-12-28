@@ -10,6 +10,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -20,8 +26,10 @@ public class Fragment5 extends Fragment {
 
     private View mView;
     private MainActivity mActivity;
+    private IRResolver ir;
     private String selectedDate;
     private List5Adapter list5Adapter;
+    private ArrayList<Spend> spends = new ArrayList<>();
 
     public Fragment5() {
     }
@@ -31,6 +39,7 @@ public class Fragment5 extends Fragment {
         super.onCreate(savedInstanceState);
 
         mActivity = (MainActivity) getActivity();
+        ir = mActivity.ir;
     }
 
     @Nullable
@@ -45,6 +54,10 @@ public class Fragment5 extends Fragment {
 
     private void initLayout() {
         final EditText editText_date = mView.findViewById(R.id.editText_frag5_date);
+
+        selectedDate = mActivity.getToday();
+
+        editText_date.setText(selectedDate);
         editText_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,12 +68,15 @@ public class Fragment5 extends Fragment {
                         selectedDate = date;
                     }
                 });
-
+                dialog.setSelectedDate(selectedDate);
                 dialog.show(getFragmentManager(), "dialog");
             }
         });
 
         ListView listView = mView.findViewById(R.id.listview_frag5);
+
+        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
+        list5Adapter = new List5Adapter(mView.getContext(),spends);
         listView.setAdapter(list5Adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -76,7 +92,8 @@ public class Fragment5 extends Fragment {
                 UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag5, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
-
+                        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
+                        list5Adapter.notifyDataSetChanged();
                     }
                 });
                 dialog.setSelectedDate(selectedDate);

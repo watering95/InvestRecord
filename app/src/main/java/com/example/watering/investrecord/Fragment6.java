@@ -45,6 +45,10 @@ public class Fragment6 extends Fragment {
 
     private void initLayout() {
         final EditText editText_date = mView.findViewById(R.id.editText_frag6_date);
+
+        selectedDate = mActivity.getToday();
+
+        editText_date.setText(selectedDate);
         editText_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,7 +59,7 @@ public class Fragment6 extends Fragment {
                         selectedDate = date;
                     }
                 });
-
+                dialog.setSelectedDate(selectedDate);
                 dialog.show(getFragmentManager(), "dialog");
             }
         });

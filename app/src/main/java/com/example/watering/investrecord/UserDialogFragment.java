@@ -115,15 +115,6 @@ public class UserDialogFragment extends DialogFragment {
             case R.id.menu_sub2_card_del:
                 dialogCardDel();
                 break;
-            case R.id.menu_sub2_approval_add:
-                dialogApprovalAdd();
-                break;
-            case R.id.menu_sub2_approval_edit:
-                dialogApprovalEdit();
-                break;
-            case R.id.menu_sub2_approval_del:
-                dialogApprovalDel();
-                break;
         }
         return builder.create();
     }
@@ -299,7 +290,7 @@ public class UserDialogFragment extends DialogFragment {
                 int amount = Integer.parseInt(editText_amount.getText().toString());
                 List<Spend> spends = ir.getSpends(selectedDate);
                 Calendar today = Calendar.getInstance();
-                int id_open = today.YEAR*1000000+today.MONTH*10000+today.DAY_OF_MONTH*100+spends.size();
+                int id_open = today.get(Calendar.YEAR)*1000000+today.get(Calendar.MONTH)*10000+today.get(Calendar.DAY_OF_MONTH)*100+spends.size();
 
                 ir.insertSpend(id_open,details,selectedDate,amount,selectedSubId);
                 if(checkBox.isChecked()) {
@@ -959,59 +950,6 @@ public class UserDialogFragment extends DialogFragment {
         });
 
         builder.setView(view).setTitle("카드 삭제");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                ir.deleteCard("_id", new String[] {String.valueOf(selectedId)});
-                listener.onWorkComplete("");
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-    }
-
-    private void dialogApprovalAdd() {
-        view = inflater.inflate(R.layout.dialog_approval_add, null);
-
-        builder.setView(view).setTitle("지출항목 추가");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                listener.onWorkComplete(null);
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-    }
-    private void dialogApprovalEdit() {
-        view = inflater.inflate(R.layout.dialog_approval_edit, null);
-
-        builder.setView(view).setTitle("지출항목 편집");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                listener.onWorkComplete(null);
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-    }
-    private void dialogApprovalDel() {
-        view = inflater.inflate(R.layout.dialog_approval_del, null);
-
-        builder.setView(view).setTitle("지출항목 삭제");
         builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
