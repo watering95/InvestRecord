@@ -241,6 +241,7 @@ public class UserDialogFragment extends DialogFragment {
                 editText_date_schedule.setEnabled(b);
             }
         });
+
         updateAccountList();
         if(accounts.size() > 0) {
             selectedAccountId = accounts.get(0).getId();
@@ -327,10 +328,93 @@ public class UserDialogFragment extends DialogFragment {
     private void dialogIncome() {
         view = inflater.inflate(R.layout.dialog_income, null);
 
+        final EditText editText_date = view.findViewById(R.id.editText_dlg_income_date);
+        final EditText editText_details = view.findViewById(R.id.editText_dlg_income_details);
+        final EditText editText_amount = view.findViewById(R.id.editText_dlg_income_amount);
+        Spinner spinner_category_main = view.findViewById(R.id.spinner_dlg_income_category_main);
+        Spinner spinner_category_sub = view.findViewById(R.id.spinner_dlg_income_category_sub);
+        Spinner spinner_account = view.findViewById(R.id.spinner_dlg_income_account);
+
+        editText_date.setText(selectedDate);
+        editText_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.editText_dlg_spend_date, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
+                        editText_date.setText(date);
+                        selectedDate = date;
+                    }
+                });
+                dialog.setSelectedDate(selectedDate);
+                dialog.show(getFragmentManager(), "dialog");
+            }
+        });
+
+        updateCategoryMainList(2);
+        if(categoryMains.size() > 0) {
+            selectedMainId = categoryMains.get(0).getId();
+        }
+        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists1);
+        spinner_category_main.setAdapter(adapter1);
+        spinner_category_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedMainId = categoryMains.get(i).getId();
+                updateCategorySubList();
+                adapter2.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        updateCategorySubList();
+        if (categorySubs.size() > 0) {
+            selectedSubId = categorySubs.get(0).getId();
+        }
+        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists2);
+        spinner_category_sub.setAdapter(adapter2);
+        spinner_category_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedSubId = categorySubs.get(i).getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        updateAccountList();
+        if(accounts.size() > 0) {
+            selectedAccountId = accounts.get(0).getId();
+        }
+        adapter3 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists3);
+        spinner_account.setAdapter(adapter3);
+        spinner_account.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedAccountId = accounts.get(i).getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         builder.setView(view).setTitle("수입 입력");
         builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                String details = editText_details.getText().toString();
+                int amount = Integer.parseInt(editText_amount.getText().toString());
+
+                ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
                 listener.onWorkComplete(null);
             }
         });

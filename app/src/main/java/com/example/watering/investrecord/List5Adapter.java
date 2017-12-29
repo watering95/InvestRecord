@@ -44,6 +44,7 @@ class List5Adapter extends BaseAdapter {
         if(convertView == null) {
             convertView = inflater.inflate(R.layout.layout_list5,parent,false);
         }
+
         DecimalFormat df = new DecimalFormat("#,###");
         TextView textView_1 = convertView.findViewById(R.id.textView_layout_list5_1);
         TextView textView_2 = convertView.findViewById(R.id.textView_layout_list5_2);

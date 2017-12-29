@@ -43,6 +43,7 @@ public class IRResolver {
     private final List<SpendCard> spends_card = new ArrayList<>();
     private final List<SpendCash> spends_cash = new ArrayList<>();
     private final List<SpendSchedule> spends_schedule = new ArrayList<>();
+    private final List<Income> incomes = new ArrayList<>();
 
     private static final String URI_GROUP = "content://watering.investrecord.provider/group";
     private static final String URI_ACCOUNT = "content://watering.investrecord.provider/account";
@@ -120,6 +121,13 @@ public class IRResolver {
         spends.clear();
         getData(CODE_SPEND, URI_SPEND, "date_use=?",selectionArgs,null);
         return spends;
+    }
+    public List<Income> getIncomes(String date) {
+        String[] selectionArgs = new String[] {String.valueOf(date)};
+
+        incomes.clear();
+        getData(CODE_INCOME, URI_INCOME, "date=?",selectionArgs,null);
+        return incomes;
     }
 
     public Account getAccount(String id_account) {
@@ -384,6 +392,17 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_SPEND_SCHEDULE),cv);
     }
+    public void insertIncome(String details,String date,int id_account,int id_category_sub,int amount) {
+        ContentValues cv = new ContentValues();
+
+        cv.put("id_sub",id_category_sub);
+        cv.put("date",date);
+        cv.put("id_account",id_account);
+        cv.put("details",details);
+        cv.put("amount",amount);
+
+        cr.insert(Uri.parse(URI_INCOME),cv);
+    }
 
     public void deleteAll() {
         deleteGroup(null,null);
@@ -617,6 +636,18 @@ public class IRResolver {
                     spend_schedule.setCard(cursor.getInt(4));
 
                     spends_schedule.add(spend_schedule);
+                    break;
+                case CODE_INCOME:
+                    Income income = new Income();
+
+                    income.setId(cursor.getInt(0));
+                    income.setDate(cursor.getString(1));
+                    income.setCategory(cursor.getInt(2));
+                    income.setAmount(cursor.getInt(3));
+                    income.setDetails(cursor.getString(4));
+                    income.setAccount(cursor.getInt(5));
+
+                    incomes.add(income);
                     break;
             }
         }

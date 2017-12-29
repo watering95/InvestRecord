@@ -5,7 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -16,10 +18,10 @@ import java.util.ArrayList;
 class List6Adapter extends BaseAdapter {
 
     private final Context mContext;
-    private final ArrayList<Info_List2> mData;
+    private final ArrayList<Income> mData;
     private final LayoutInflater inflater;
 
-    public List6Adapter(Context context, ArrayList<Info_List2> data) {
+    public List6Adapter(Context context, ArrayList<Income> data) {
         mContext = context;
         mData = data;
         inflater = LayoutInflater.from(mContext);
@@ -43,6 +45,14 @@ class List6Adapter extends BaseAdapter {
         if(convertView == null) {
             convertView = inflater.inflate(R.layout.layout_list6,parent,false);
         }
+
+        DecimalFormat df = new DecimalFormat("#,###");
+        TextView textView_1 = convertView.findViewById(R.id.textView_layout_list6_1);
+        TextView textView_2 = convertView.findViewById(R.id.textView_layout_list6_2);
+        TextView textView_3 = convertView.findViewById(R.id.textView_layout_list6_3);
+
+        textView_1.setText(mData.get(position).getDetails());
+        textView_3.setText(df.format(mData.get(position).getAmount()));
 
         return convertView;
     }

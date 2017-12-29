@@ -64,8 +64,10 @@ public class Fragment5 extends Fragment {
                 UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.editText_frag5_date, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
-                        editText_date.setText(date);
                         selectedDate = date;
+                        editText_date.setText(selectedDate);
+                        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
+                        list5Adapter.notifyDataSetChanged();
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
