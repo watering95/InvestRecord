@@ -83,7 +83,16 @@ public class Fragment5 extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                String id_spend = spends.get(position).getIdOpen();
+                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag5, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
+                        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
+                        list5Adapter.notifyDataSetChanged();
+                    }
+                });
+                dialog.initId(id_spend);
+                dialog.show(getFragmentManager(), "dialog");
             }
         });
 

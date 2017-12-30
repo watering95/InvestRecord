@@ -9,7 +9,7 @@ import java.io.Serializable;
 @SuppressWarnings("ALL")
 public class Spend implements Serializable {
     private int id_spend;
-    private int id_open;
+    private String id_open;
     private String details;
     private int id_category_sub;
     private String date_use;
@@ -18,7 +18,7 @@ public class Spend implements Serializable {
     public void setId(int id) {
         this.id_spend = id;
     }
-    public void setIdOpen(int id) {
+    public void setIdOpen(String id) {
         this.id_open = id;
     }
     public void setDetails(String details) {
@@ -37,7 +37,7 @@ public class Spend implements Serializable {
     public int getId() {
         return this.id_spend;
     }
-    public int getIdOpen() {
+    public String getIdOpen() {
         return this.id_open;
     }
     public String getDetails() {

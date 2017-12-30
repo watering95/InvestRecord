@@ -251,6 +251,102 @@ public class IRResolver {
 
         return categorySub;
     }
+    public Income getIncome(String id) {
+        Cursor c;
+        Income income = new Income();
+
+        String where = "_id=?";
+        String[] selectionArgs = {id};
+
+        c = cr.query(Uri.parse(URI_INCOME), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        income.setId(c.getInt(c.getColumnIndex("_id")));
+        income.setCategory(c.getInt(c.getColumnIndex("id_sub")));
+        income.setAmount(c.getInt(c.getColumnIndex("amount")));
+        income.setDetails(c.getString(c.getColumnIndex("details")));
+        income.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        income.setDate(c.getString(c.getColumnIndex("date")));
+
+        c.close();
+
+        return income;
+    }
+    public Spend getSpend(String id) {
+        Cursor c;
+        Spend spend = new Spend();
+
+        String where = "id_open=?";
+        String[] selectionArgs = {id};
+
+        c = cr.query(Uri.parse(URI_SPEND), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        spend.setId(c.getInt(c.getColumnIndex("_id")));
+        spend.setCategory(c.getInt(c.getColumnIndex("id_sub")));
+        spend.setAmount(c.getInt(c.getColumnIndex("amount")));
+        spend.setDetails(c.getString(c.getColumnIndex("details")));
+        spend.setDate(c.getString(c.getColumnIndex("date_use")));
+        spend.setIdOpen(c.getString(c.getColumnIndex("id_open")));
+
+        c.close();
+
+        return spend;
+    }
+    public SpendCash getSpendCash(String id) {
+        Cursor c;
+        SpendCash spendCash = new SpendCash();
+
+        String where = "id_spend=?";
+        String[] selectionArgs = {id};
+
+        c = cr.query(Uri.parse(URI_SPEND_CASH), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        spendCash.setId(c.getInt(c.getColumnIndex("_id")));
+        spendCash.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        spendCash.setSpend(c.getInt(c.getColumnIndex("id_spend")));
+
+        c.close();
+
+        return spendCash;
+
+    }
+    public SpendCard getSpendCard(String id) {
+        Cursor c;
+        SpendCard spendCard = new SpendCard();
+
+        String where = "id_spend=?";
+        String[] selectionArgs = {id};
+
+        c = cr.query(Uri.parse(URI_SPEND_CARD), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        spendCard.setId(c.getInt(c.getColumnIndex("_id")));
+        spendCard.setCard(c.getInt(c.getColumnIndex("id_card")));
+        spendCard.setSpend(c.getInt(c.getColumnIndex("id_spend")));
+
+        c.close();
+
+        return spendCard;
+
+    }
 
     public int getSum(String[] column, String selectedDate) {
         Cursor c;
@@ -332,21 +428,21 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_INFO_DAIRY),cv);
     }
-    public void insertCategoryMain(String name,String kind) {
+    public void insertCategoryMain(String name, String kind) {
         ContentValues cv = new ContentValues();
 
         cv.put("name",name);
         cv.put("kind",kind);
         cr.insert(Uri.parse(URI_CATEGORY_MAIN),cv);
     }
-    public void insertCategorySub(String name,int main) {
+    public void insertCategorySub(String name, int main) {
         ContentValues cv = new ContentValues();
 
         cv.put("name",name);
         cv.put("id_main",main);
         cr.insert(Uri.parse(URI_CATEGORY_SUB),cv);
     }
-    public void insertCard(String name,String num,String com,int date) {
+    public void insertCard(String name, String num, String com, int date) {
         ContentValues cv = new ContentValues();
 
         cv.put("name",name);
@@ -355,7 +451,7 @@ public class IRResolver {
         cv.put("date_draw",date);
         cr.insert(Uri.parse(URI_CARD),cv);
     }
-    public void insertSpend(int id_open, String details, String date, int amount, int id_category) {
+    public void insertSpend(String id_open, String details, String date, int amount, int id_category) {
         ContentValues cv = new ContentValues();
 
         cv.put("id_open",id_open);
@@ -366,7 +462,7 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_SPEND),cv);
     }
-    public void insertSpendCard(int id_spend, int id_card) {
+    public void insertSpendCard(String id_spend, int id_card) {
         ContentValues cv = new ContentValues();
 
         cv.put("id_spend",id_spend);
@@ -374,7 +470,7 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_SPEND_CARD),cv);
     }
-    public void insertSpendCash(int id_spend, int id_account) {
+    public void insertSpendCash(String id_spend, int id_account) {
         ContentValues cv = new ContentValues();
 
         cv.put("id_spend",id_spend);
@@ -382,7 +478,7 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_SPEND_CASH),cv);
     }
-    public void insertSpendSchedule(int id_spend,String date_draw,int id_account,int id_card) {
+    public void insertSpendSchedule(String id_spend, String date_draw, int id_account, int id_card) {
         ContentValues cv = new ContentValues();
 
         cv.put("id_spend",id_spend);
@@ -392,7 +488,7 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_SPEND_SCHEDULE),cv);
     }
-    public void insertIncome(String details,String date,int id_account,int id_category_sub,int amount) {
+    public void insertIncome(String details, String date, int id_account, int id_category_sub, int amount) {
         ContentValues cv = new ContentValues();
 
         cv.put("id_sub",id_category_sub);
@@ -428,6 +524,21 @@ public class IRResolver {
     public void deleteCard(String where, String[] args) {
         cr.delete(Uri.parse(URI_CARD),where,args);
     }
+    public void deleteSpend(String where, String[] args) {
+        cr.delete(Uri.parse(URI_SPEND),where,args);
+    }
+    public void deleteSpendCard(String where, String[] args) {
+        cr.delete(Uri.parse(URI_SPEND_CARD),where,args);
+    }
+    public void deleteSpendCash(String where, String[] args) {
+        cr.delete(Uri.parse(URI_SPEND_CASH),where,args);
+    }
+    public void deleteSpendSchedule(String where, String[] args) {
+        cr.delete(Uri.parse(URI_SPEND_SCHEDULE),where,args);
+    }
+    public void deleteIncome(String where, String[] args) {
+        cr.delete(Uri.parse(URI_INCOME),where,args);
+    }
     private void deleteInfoDairy() {
         cr.delete(Uri.parse(URI_INFO_DAIRY), null, null);
     }
@@ -441,7 +552,7 @@ public class IRResolver {
 
         cr.update(Uri.parse(URI_GROUP),cv,where,selectionArgs);
     }
-    public void updateAccount(int id, String institute,String account,String discript) {
+    public void updateAccount(int id, String institute, String account, String discript) {
         ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
@@ -507,6 +618,63 @@ public class IRResolver {
         cv.put("date_draw",date);
 
         cr.update(Uri.parse(URI_CARD),cv,where,selectionArgs);
+    }
+    public void updateSpend(int id_spend, int id_open, String details, String date, int amount, int id_category) {
+        ContentValues cv = new ContentValues();
+        String where = "id_open";
+        String[] selectionArgs = new String[] {String.valueOf(id_open)};
+
+        cv.put("details",details);
+        cv.put("date",date);
+        cv.put("amount",amount);
+        cv.put("id_sub",id_category);
+
+        cr.update(Uri.parse(URI_SPEND),cv,where,selectionArgs);
+    }
+    public void updateSpendCard(int id, int id_spend, int id_card) {
+        ContentValues cv = new ContentValues();
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        cv.put("id_spend",id_spend);
+        cv.put("id_card",id_card);
+
+        cr.update(Uri.parse(URI_SPEND_CARD),cv,where,selectionArgs);
+    }
+    public void updateSpendCash(int id, int id_spend, int id_account) {
+        ContentValues cv = new ContentValues();
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        cv.put("id_spend",id_spend);
+        cv.put("id_account",id_account);
+
+        cr.update(Uri.parse(URI_SPEND_CASH),cv,where,selectionArgs);
+    }
+    public void updateSpendSchedule(int id, int id_spend, String date_draw, int id_account, int id_card) {
+        ContentValues cv = new ContentValues();
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        cv.put("id_spend",id_spend);
+        cv.put("date_draw",date_draw);
+        cv.put("id_account",id_account);
+        cv.put("id_card",id_card);
+
+        cr.update(Uri.parse(URI_SPEND_SCHEDULE),cv,where,selectionArgs);
+    }
+    public void updateIncome(int id, String details, String date, int id_account, int id_category_sub, int amount) {
+        ContentValues cv = new ContentValues();
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        cv.put("details",details);
+        cv.put("date",date);
+        cv.put("amount",amount);
+        cv.put("id_sub",id_category_sub);
+        cv.put("id_account",id_account);
+
+        cr.update(Uri.parse(URI_INCOME),cv,where,selectionArgs);
     }
 
     public void setCurrentGroup(int group) {
@@ -600,7 +768,7 @@ public class IRResolver {
                     Spend spend = new Spend();
 
                     spend.setId(cursor.getInt(0));
-                    spend.setIdOpen(cursor.getInt(1));
+                    spend.setIdOpen(cursor.getString(1));
                     spend.setDetails(cursor.getString(2));
                     spend.setCategory(cursor.getInt(3));
                     spend.setDate(cursor.getString(4));
