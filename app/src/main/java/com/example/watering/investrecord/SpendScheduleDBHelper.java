@@ -13,6 +13,6 @@ class SpendScheduleDBHelper extends DBHelper {
         super(context);
 
         TABLE_NAME = "tbl_spend_schedule";
-        COLUMNS = new String [] {"id_spend INTEGER UNIQUE","date_draw TEXT","id_account INTEGER","id_card INTEGER"};
+        COLUMNS = new String [] {"spend_code TEXT UNIQUE","date_draw TEXT","id_account INTEGER","id_card INTEGER"};
     }
 }

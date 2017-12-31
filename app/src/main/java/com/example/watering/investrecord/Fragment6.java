@@ -109,7 +109,7 @@ public class Fragment6 extends Fragment {
 
     private void updateInfoLists() {
         lists.clear();
-        ArrayList<Income> incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
+        incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
         for(int i = 0; i < incomes.size(); i++) {
             Info_List6 list = new Info_List6();
 

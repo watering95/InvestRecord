@@ -8,18 +8,18 @@ import java.io.Serializable;
 
 @SuppressWarnings("ALL")
 public class Spend implements Serializable {
-    private int id_spend;
-    private String id_open;
+    private int id;
+    private String spend_code;
     private String details;
     private int id_category_sub;
     private String date_use;
     private int amount;
 
     public void setId(int id) {
-        this.id_spend = id;
+        this.id = id;
     }
-    public void setIdOpen(String id) {
-        this.id_open = id;
+    public void setCode(String code) {
+        this.spend_code = code;
     }
     public void setDetails(String details) {
         this.details = details;
@@ -35,10 +35,10 @@ public class Spend implements Serializable {
     }
 
     public int getId() {
-        return this.id_spend;
+        return this.id;
     }
-    public String getIdOpen() {
-        return this.id_open;
+    public String getCode() {
+        return this.spend_code;
     }
     public String getDetails() {
         return this.details;

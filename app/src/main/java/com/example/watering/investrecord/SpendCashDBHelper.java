@@ -13,6 +13,6 @@ class SpendCashDBHelper extends DBHelper {
         super(context);
 
         TABLE_NAME = "tbl_spend_cash";
-        COLUMNS = new String [] {"id_spend INTEGER UNIQUE","id_account INTEGER"};
+        COLUMNS = new String [] {"spend_code TEXT UNIQUE","id_account INTEGER"};
     }
 }

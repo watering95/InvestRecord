@@ -56,7 +56,8 @@ public class UserDialogFragment extends DialogFragment {
     private String selectedDate;
     private int type_dialog, type_spend, i_u, schedule = 0;
     private int selectedMainId, selectedSubId, selectedCardId, selectedAccountId;
-    private String selectedId = "";
+    private int id_income, id_spend, id_spend_schedule, id_spend_cash, id_spend_card;
+    private String selectedId = "",selectedCode = "";
     private UserListener listener;
 
     public interface UserListener {
@@ -159,6 +160,8 @@ public class UserDialogFragment extends DialogFragment {
         else {
             spend = ir.getSpend(selectedId);
 
+            id_spend = spend.getId();
+            selectedCode = spend.getCode();
             editText_date.setText(spend.getDate());
             editText_amount.setText(String.valueOf(spend.getAmount()));
             editText_details.setText(spend.getDetails());
@@ -243,7 +246,7 @@ public class UserDialogFragment extends DialogFragment {
             type_spend = 1;
         }
         else {
-            if(selectedId.charAt(0) == '1') {
+            if(selectedCode.charAt(0) == '1') {
                 position = 0;
                 type_spend = 1;
             }
@@ -281,7 +284,7 @@ public class UserDialogFragment extends DialogFragment {
             schedule = 0;
         }
         else {
-            if(selectedId.charAt(1) == '0') {
+            if(selectedCode.charAt(1) == '0') {
                 checkBox.setChecked(false);
                 schedule = 0;
             }
@@ -308,8 +311,10 @@ public class UserDialogFragment extends DialogFragment {
                 position = 0;
             }
             else {
-                selectedAccountId = ir.getSpendCash(selectedId).getAccount();
+                selectedAccountId = ir.getSpendCash(selectedCode).getAccount();
                 position = findAccount(selectedAccountId);
+                if(schedule == 1) id_spend_schedule = ir.getSpendSchedule(selectedCode).getId();
+                else if(schedule == 0) id_spend_cash = ir.getSpendCash(selectedCode).getId();
             }
 
         }
@@ -321,8 +326,10 @@ public class UserDialogFragment extends DialogFragment {
                 selectedCardId = cards.get(0).getId();
                 position = 0;
             } else {
-                selectedCardId = ir.getSpendCard(selectedId).getCard();
+                selectedCardId = ir.getSpendCard(selectedCode).getCard();
                 position = findCard(selectedCardId);
+                if(schedule == 1) id_spend_schedule = ir.getSpendSchedule(selectedCode).getId();
+                else if(schedule == 0) id_spend_card = ir.getSpendCard(selectedCode).getId();
             }
         }
         adapter4 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists4);
@@ -363,27 +370,32 @@ public class UserDialogFragment extends DialogFragment {
                 int amount = Integer.parseInt(editText_amount.getText().toString());
                 List<Spend> spends = ir.getSpends(selectedDate);
                 Calendar today = Calendar.getInstance();
-                String id_open = String.format(Locale.getDefault(),"%d%d%04d%02d%02d%02d",type_spend,schedule,today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DAY_OF_MONTH),spends.size());
+                String newCode = String.format(Locale.getDefault(),"%d%d%04d%02d%02d%02d",type_spend,schedule,today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DAY_OF_MONTH),spends.size());
 
-                ir.insertSpend(id_open,details,selectedDate,amount,selectedSubId);
+                if(selectedId.isEmpty()) ir.insertSpend(newCode, details, selectedDate, amount, selectedSubId);
+                else ir.updateSpend(id_spend, newCode, details, selectedDate, amount, selectedSubId);
                 if(checkBox.isChecked()) {
                     String date = editText_date_schedule.getText().toString();
                     switch (type_spend) {
                         case 1:
-                            ir.insertSpendSchedule(id_open, date, selectedAccountId, -1);
+                            if(selectedId.isEmpty()) ir.insertSpendSchedule(newCode, date, selectedAccountId, -1);
+                            else ir.updateSpendSchedule(id_spend_schedule, newCode, date, selectedAccountId,-1);
                             break;
                         case 2:
-                            ir.insertSpendSchedule(id_open, date, -1, selectedCardId);
+                            if(selectedId.isEmpty()) ir.insertSpendSchedule(newCode, date, -1, selectedCardId);
+                            else ir.updateSpendSchedule(id_spend_schedule, newCode, date,-1,selectedCardId);
                             break;
                     }
                 }
                 else {
                     switch(type_spend) {
                         case 1:
-                            ir.insertSpendCash(id_open, selectedAccountId);
+                            if(selectedId.isEmpty()) ir.insertSpendCash(newCode, selectedAccountId);
+                            else ir.updateSpendCash(id_spend_cash, newCode, selectedAccountId);
                             break;
                         case 2:
-                            ir.insertSpendCard(id_open, selectedCardId);
+                            if(selectedId.isEmpty()) ir.insertSpendCard(newCode, selectedCardId);
+                            else ir.updateSpendCard(id_spend_card, newCode, selectedCardId);
                             break;
                     }
                 }
@@ -413,6 +425,7 @@ public class UserDialogFragment extends DialogFragment {
         else {
             income = ir.getIncome(selectedId);
 
+            id_income = income.getId();
             editText_date.setText(income.getDate());
             editText_amount.setText(String.valueOf(income.getAmount()));
             editText_details.setText(income.getDetails());
@@ -495,6 +508,7 @@ public class UserDialogFragment extends DialogFragment {
         }
         adapter3 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists3);
         spinner_account.setAdapter(adapter3);
+        spinner_account.setSelection(position);
         spinner_account.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -514,7 +528,8 @@ public class UserDialogFragment extends DialogFragment {
                 String details = editText_details.getText().toString();
                 int amount = Integer.parseInt(editText_amount.getText().toString());
 
-                ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
+                if(selectedId.isEmpty()) ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
+                else ir.updateIncome(id_income,details,selectedDate,selectedAccountId,selectedSubId,amount);
                 listener.onWorkComplete(null);
             }
         });

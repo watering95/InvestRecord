@@ -9,14 +9,14 @@ import java.io.Serializable;
 @SuppressWarnings("ALL")
 public class SpendCash implements Serializable {
     private int id_spend_cash;
-    private int id_spend;
+    private String spend_code;
     private int id_account;
 
     public void setId(int id) {
         this.id_spend_cash = id;
     }
-    public void setSpend(int id) {
-        this.id_spend = id;
+    public void setCode(String code) {
+        this.spend_code = code;
     }
     public void setAccount(int id) {
         this.id_account = id;
@@ -25,8 +25,8 @@ public class SpendCash implements Serializable {
     public int getId() {
         return this.id_spend_cash;
     }
-    public int getSpend() {
-        return this.id_spend;
+    public String getCode() {
+        return this.spend_code;
     }
     public int getAccount() {
         return this.id_account;

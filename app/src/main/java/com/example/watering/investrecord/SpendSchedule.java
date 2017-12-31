@@ -9,7 +9,7 @@ import java.io.Serializable;
 @SuppressWarnings("ALL")
 public class SpendSchedule implements Serializable {
     private int id_spend_schedule;
-    private int id_spend;
+    private String spend_code;
     private String date_draw;
     private int id_account;
     private int id_card;
@@ -17,8 +17,8 @@ public class SpendSchedule implements Serializable {
     public void setId(int id) {
         this.id_spend_schedule = id;
     }
-    public void setSpend(int id) {
-        this.id_spend = id;
+    public void setCode(String code) {
+        this.spend_code = code;
     }
     public void setDate(String date) {
         this.date_draw = date;
@@ -33,8 +33,8 @@ public class SpendSchedule implements Serializable {
     public int getId() {
         return this.id_spend_schedule;
     }
-    public int getSpend() {
-        return this.id_spend;
+    public String getCode() {
+        return this.spend_code;
     }
     public String getDate() {
         return this.date_draw;

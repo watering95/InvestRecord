@@ -10,12 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -83,14 +79,14 @@ public class Fragment5 extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String id_spend = spends.get(position).getIdOpen();
+                int id_spend = spends.get(position).getId();
                 UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag5, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
                         updateListView();
                     }
                 });
-                dialog.initId(id_spend);
+                dialog.initId(String.valueOf(id_spend));
                 dialog.show(getFragmentManager(), "dialog");
             }
         });
@@ -113,7 +109,7 @@ public class Fragment5 extends Fragment {
 
     private void updateInfoLists() {
         lists.clear();
-        ArrayList<Spend> spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
+        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
         for(int i = 0; i < spends.size(); i++) {
             Info_List5 list = new Info_List5();
 
