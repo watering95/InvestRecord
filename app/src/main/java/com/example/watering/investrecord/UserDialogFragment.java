@@ -56,7 +56,7 @@ public class UserDialogFragment extends DialogFragment {
     private String selectedDate;
     private int type_dialog, type_spend, i_u, schedule = 0;
     private int selectedMainId, selectedSubId, selectedCardId, selectedAccountId;
-    private String selectedId = null;
+    private String selectedId = "";
     private UserListener listener;
 
     public interface UserListener {
@@ -153,11 +153,12 @@ public class UserDialogFragment extends DialogFragment {
         final CheckBox checkBox = view.findViewById(R.id.checkbox_dlg_spend_schedule);
         final EditText editText_date_schedule = view.findViewById(R.id.editText_dlg_spend_date_schedule);
         int position = 0;
-
-        Spend spend = ir.getSpend(String.valueOf(selectedId));
+        Spend spend = new Spend();
 
         if(selectedId.isEmpty()) editText_date.setText(selectedDate);
         else {
+            spend = ir.getSpend(selectedId);
+
             editText_date.setText(spend.getDate());
             editText_amount.setText(String.valueOf(spend.getAmount()));
             editText_details.setText(spend.getDetails());
@@ -406,11 +407,12 @@ public class UserDialogFragment extends DialogFragment {
         Spinner spinner_category_sub = view.findViewById(R.id.spinner_dlg_income_category_sub);
         Spinner spinner_account = view.findViewById(R.id.spinner_dlg_income_account);
         int position = 0;
-
-        Income income = ir.getIncome(selectedId);
+        Income income = new Income();
 
         if(selectedId.isEmpty()) editText_date.setText(selectedDate);
         else {
+            income = ir.getIncome(selectedId);
+
             editText_date.setText(income.getDate());
             editText_amount.setText(String.valueOf(income.getAmount()));
             editText_details.setText(income.getDetails());
