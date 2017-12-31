@@ -26,6 +26,7 @@ public class Fragment6 extends Fragment {
     private String selectedDate;
     private List6Adapter list6Adapter;
     private ArrayList<Income> incomes = new ArrayList<>();
+    private ArrayList<Info_List6> lists = new ArrayList<>();
 
     public Fragment6() {
     }
@@ -62,8 +63,7 @@ public class Fragment6 extends Fragment {
                     public void onWorkComplete(String date) {
                         selectedDate = date;
                         editText_date.setText(selectedDate);
-                        incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
-                        list6Adapter.notifyDataSetChanged();
+                        updateListView();
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
@@ -73,8 +73,8 @@ public class Fragment6 extends Fragment {
 
         ListView listView = mView.findViewById(R.id.listview_frag6);
 
-        incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
-        list6Adapter = new List6Adapter(mView.getContext(),incomes);
+        updateInfoLists();
+        list6Adapter = new List6Adapter(mView.getContext(),lists);
         listView.setAdapter(list6Adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -83,8 +83,7 @@ public class Fragment6 extends Fragment {
                 UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag6, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
-                        incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
-                        list6Adapter.notifyDataSetChanged();
+                        updateListView();
                     }
                 });
                 dialog.initId(String.valueOf(id_income));
@@ -99,13 +98,27 @@ public class Fragment6 extends Fragment {
                 UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag6, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
-                        incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
-                        list6Adapter.notifyDataSetChanged();
+                        updateListView();
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
                 dialog.show(getFragmentManager(), "dialog");
             }
         });
+    }
+
+    private void updateInfoLists() {
+        lists.clear();
+        ArrayList<Income> incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
+        for(int i = 0; i < incomes.size(); i++) {
+            Info_List6 list = new Info_List6();
+
+            list.setIncome(incomes.get(i));
+            lists.add(list);
+        }
+    }
+    private void updateListView() {
+        updateInfoLists();
+        list6Adapter.notifyDataSetChanged();
     }
 }

@@ -30,6 +30,7 @@ public class Fragment5 extends Fragment {
     private String selectedDate;
     private List5Adapter list5Adapter;
     private ArrayList<Spend> spends = new ArrayList<>();
+    private ArrayList<Info_List5> lists = new ArrayList<>();
 
     public Fragment5() {
     }
@@ -66,8 +67,7 @@ public class Fragment5 extends Fragment {
                     public void onWorkComplete(String date) {
                         selectedDate = date;
                         editText_date.setText(selectedDate);
-                        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
-                        list5Adapter.notifyDataSetChanged();
+                        updateListView();
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
@@ -77,8 +77,8 @@ public class Fragment5 extends Fragment {
 
         ListView listView = mView.findViewById(R.id.listview_frag5);
 
-        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
-        list5Adapter = new List5Adapter(mView.getContext(),spends);
+        updateInfoLists();
+        list5Adapter = new List5Adapter(mView.getContext(),lists);
         listView.setAdapter(list5Adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -87,8 +87,7 @@ public class Fragment5 extends Fragment {
                 UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag5, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
-                        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
-                        list5Adapter.notifyDataSetChanged();
+                        updateListView();
                     }
                 });
                 dialog.initId(id_spend);
@@ -103,13 +102,27 @@ public class Fragment5 extends Fragment {
                 UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag5, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
-                        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
-                        list5Adapter.notifyDataSetChanged();
+                        updateListView();
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
                 dialog.show(getFragmentManager(), "dialog");
             }
         });
+    }
+
+    private void updateInfoLists() {
+        lists.clear();
+        ArrayList<Spend> spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
+        for(int i = 0; i < spends.size(); i++) {
+            Info_List5 list = new Info_List5();
+
+            list.setSpend(spends.get(i));
+            lists.add(list);
+        }
+    }
+    private void updateListView() {
+        updateInfoLists();
+        list5Adapter.notifyDataSetChanged();
     }
 }

@@ -18,10 +18,10 @@ import java.util.ArrayList;
 class List5Adapter extends BaseAdapter {
 
     private final Context mContext;
-    private final ArrayList<Spend> mData;
+    private final ArrayList<Info_List5> mData;
     private final LayoutInflater inflater;
 
-    public List5Adapter(Context context, ArrayList<Spend> data) {
+    public List5Adapter(Context context, ArrayList<Info_List5> data) {
         mContext = context;
         mData = data;
         inflater = LayoutInflater.from(mContext);
@@ -50,8 +50,8 @@ class List5Adapter extends BaseAdapter {
         TextView textView_2 = convertView.findViewById(R.id.textView_layout_list5_2);
         TextView textView_3 = convertView.findViewById(R.id.textView_layout_list5_3);
 
-        textView_1.setText(mData.get(position).getDetails());
-        textView_3.setText(df.format(mData.get(position).getAmount()));
+        textView_1.setText(mData.get(position).getSpend().getDetails());
+        textView_3.setText(df.format(mData.get(position).getSpend().getAmount()));
 
         return convertView;
     }
