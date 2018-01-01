@@ -64,7 +64,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="5"
-            android:id="@+id/editText_dlg_category_add_name"/>
+            android:id="@+id/editText_dlg_category_add_name"
+            android:inputType="text" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

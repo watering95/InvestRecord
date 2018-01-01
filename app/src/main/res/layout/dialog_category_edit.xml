@@ -24,7 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:id="@+id/editText_dlg_category_edit_main"/>
+            android:id="@+id/editText_dlg_category_edit_main"
+            android:inputType="text" />
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
@@ -47,7 +48,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:id="@+id/editText_dlg_category_edit_sub"/>
+            android:id="@+id/editText_dlg_category_edit_sub"
+            android:inputType="text" />
     </LinearLayout>
     <Button
         android:layout_width="wrap_content"

@@ -16,7 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/editText_dlg_spend_date"
-            android:ems="10"/>
+            android:ems="10"
+            android:inputType="date" />
     </LinearLayout>
     <LinearLayout
     android:layout_width="match_parent"
@@ -30,7 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/editText_dlg_spend_details"
-            android:ems="10"/>
+            android:ems="10"
+            android:inputType="text" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,7 +46,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/editText_dlg_spend_amount"
-            android:ems="10"/>
+            android:ems="10"
+            android:inputType="number" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -93,7 +96,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/date"
-            android:layout_marginLeft="10sp"/>
+            android:layout_marginLeft="10sp"
+            android:layout_marginStart="10sp" />
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

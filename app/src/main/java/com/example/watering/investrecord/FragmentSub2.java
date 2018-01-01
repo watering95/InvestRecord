@@ -14,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.List;
-
 /**
  * Created by watering on 17. 10. 21.
  */
@@ -70,6 +68,10 @@ public class FragmentSub2 extends Fragment {
             case R.id.menu_sub2_category_basic:
                 setBasicCategory();
                 break;
+            case R.id.item_category:
+                break;
+            case R.id.item_card:
+                break;
             default:
                 UserDialogFragment dialog = UserDialogFragment.newInstance(item.getItemId(), new UserDialogFragment.UserListener() {
                     @Override
@@ -79,7 +81,7 @@ public class FragmentSub2 extends Fragment {
                 dialog.show(getFragmentManager(), "dialog");
                 break;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     private void initLayout() {

@@ -90,7 +90,7 @@ public class FragmentSub1 extends Fragment {
         });
         dialog.initData(ir.getGroups());
         dialog.show(getFragmentManager(), "dialog");
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     private void initLayout() {
