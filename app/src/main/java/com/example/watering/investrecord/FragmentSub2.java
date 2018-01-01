@@ -63,12 +63,19 @@ public class FragmentSub2 extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(item.getItemId(), new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-            }
-        });
-        dialog.show(getFragmentManager(), "dialog");
+        switch(item.getItemId()) {
+            case R.id.menu_sub2_category_basic:
+                setBasicCategory();
+                break;
+            default:
+                UserDialogFragment dialog = UserDialogFragment.newInstance(item.getItemId(), new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String name) {
+                    }
+                });
+                dialog.show(getFragmentManager(), "dialog");
+                break;
+        }
         return true;
     }
 
@@ -109,6 +116,9 @@ public class FragmentSub2 extends Fragment {
         fragment7 = (Fragment7) mFragSub2PagerAdapter.getItem(2);
     }
     private void initDataBase() {
+
+    }
+    private void setBasicCategory() {
 
     }
 }

@@ -81,14 +81,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
 
         switch (item.getItemId()) {
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
-                break;
+                return true;
         }
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
     private void initLayout() {

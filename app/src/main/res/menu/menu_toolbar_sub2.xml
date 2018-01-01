@@ -6,17 +6,17 @@
         android:title="@string/manage_category">
         <menu>
             <item
-        android:id="@+id/menu_sub2_category_add"
-        android:icon="@mipmap/ic_launcher"
-        android:title="@string/category_add"/>
+                android:id="@+id/menu_sub2_category_add"
+                android:title="@string/category_add"/>
             <item
-        android:id="@+id/menu_sub2_category_edit"
-        android:icon="@mipmap/ic_launcher"
-        android:title="@string/category_edit"/>
+                android:id="@+id/menu_sub2_category_edit"
+                android:title="@string/category_edit"/>
             <item
-        android:id="@+id/menu_sub2_category_del"
-        android:icon="@mipmap/ic_launcher"
-        android:title="@string/category_del"/>
+                android:id="@+id/menu_sub2_category_del"
+                android:title="@string/category_del"/>
+            <item
+                android:id="@+id/menu_sub2_category_basic"
+                android:title="기본 카테고리 추가"/>
         </menu>
     </item>
     <item
@@ -24,17 +24,14 @@
         android:title="@string/manage_card">
         <menu>
             <item
-        android:id="@+id/menu_sub2_card_add"
-        android:icon="@mipmap/ic_launcher"
-        android:title="@string/card_add"/>
+                android:id="@+id/menu_sub2_card_add"
+                android:title="@string/card_add"/>
             <item
-        android:id="@+id/menu_sub2_card_edit"
-        android:icon="@mipmap/ic_launcher"
-        android:title="@string/card_edit"/>
+                android:id="@+id/menu_sub2_card_edit"
+                android:title="@string/card_edit"/>
             <item
-        android:id="@+id/menu_sub2_card_del"
-        android:icon="@mipmap/ic_launcher"
-        android:title="@string/card_del"/>
+                android:id="@+id/menu_sub2_card_del"
+                android:title="@string/card_del"/>
         </menu>
     </item>
 </menu>

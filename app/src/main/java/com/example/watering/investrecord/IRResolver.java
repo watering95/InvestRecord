@@ -81,12 +81,12 @@ public class IRResolver {
         getData(CODE_INFO_DAIRY, URI_INFO_DAIRY,"id_account=?",selectionArgs,"date DESC");
         return dairies;
     }
-    public List<CategoryMain> getCategoryMains(int c) {
+    public List<CategoryMain> getCategoryMains(int kind) {
         categoryMains.clear();
         String selection = null;
         String[] selectionArgs = null;
 
-        switch(c) {
+        switch(kind) {
             case 0:
                 selection = null;
                 selectionArgs = null;

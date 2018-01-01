@@ -182,7 +182,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        updateCategoryMainList(type_spend);
+        updateCategoryMainList(1);
         if(categoryMains.size() > 0) {
             if(selectedId.isEmpty()) {
                 selectedMainId = categoryMains.get(0).getId();
@@ -446,7 +446,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        updateCategoryMainList(type_spend);
+        updateCategoryMainList(2);
         if(categoryMains.size() > 0) {
             if (selectedId.isEmpty()) {
                 selectedMainId = categoryMains.get(0).getId();
@@ -1213,10 +1213,10 @@ public class UserDialogFragment extends DialogFragment {
         mActivity.fragmentSub1.CallUpdate2();
     }
 
-    private void updateCategoryMainList(int c) {
+    private void updateCategoryMainList(int kind) {
         lists1.clear();
 
-        categoryMains = ir.getCategoryMains(c);
+        categoryMains = ir.getCategoryMains(kind);
 
         if(categoryMains.isEmpty()) return;
 
