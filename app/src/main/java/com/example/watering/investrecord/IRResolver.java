@@ -397,6 +397,25 @@ public class IRResolver {
         if(dairies.isEmpty()) return null;
         else return dairies.get(0);
     }
+    public int getCategoryMainId(String name) {
+        Cursor c;
+
+        String where = "name=?";
+        String[] selectionArgs = {name};
+
+        c = cr.query(Uri.parse(URI_CATEGORY_MAIN), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return -1;
+
+        c.moveToNext();
+
+        int id = c.getInt(c.getColumnIndex("_id"));
+
+        c.close();
+
+        return id;
+    }
 
     public int getCurrentGroup() {
         return currentGroup;
