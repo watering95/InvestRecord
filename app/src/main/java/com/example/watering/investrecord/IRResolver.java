@@ -2,7 +2,9 @@ package com.example.watering.investrecord;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class IRResolver {
     private static final int CODE_SPEND_CARD = 9;
     private static final int CODE_SPEND_CASH = 10;
     private static final int CODE_SPEND_SCHEDULE = 11;
+    private static final int CODE_JOIN = 12;
 
     private final List<Group> groups = new ArrayList<>();
     private final List<Account> accounts = new ArrayList<>();
@@ -53,10 +56,11 @@ public class IRResolver {
     private static final String URI_CATEGORY_MAIN = "content://watering.investrecord.provider/category_main";
     private static final String URI_CATEGORY_SUB = "content://watering.investrecord.provider/category_sub";
     private static final String URI_INCOME = "content://watering.investrecord.provider/income";
-    private static final String URI_SPEND = "content://watering.investrecord.provider/out";
-    private static final String URI_SPEND_CARD = "content://watering.investrecord.provider/out_card";
-    private static final String URI_SPEND_CASH = "content://watering.investrecord.provider/out_cash";
-    private static final String URI_SPEND_SCHEDULE = "content://watering.investrecord.provider/out_schedule";
+    private static final String URI_SPEND = "content://watering.investrecord.provider/spend";
+    private static final String URI_SPEND_CARD = "content://watering.investrecord.provider/spend_card";
+    private static final String URI_SPEND_CASH = "content://watering.investrecord.provider/spend_cash";
+    private static final String URI_SPEND_SCHEDULE = "content://watering.investrecord.provider/spend_schedule";
+    private static final String URI_JOIN = "content://watering.investrecord.provider/join";
 
     public void getContentResolver(ContentResolver cr) {
         this.cr = cr;
@@ -176,6 +180,8 @@ public class IRResolver {
         io.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
         io.setAccount(c.getInt(c.getColumnIndex("id_account")));
         io.setDate(c.getString(c.getColumnIndex("date")));
+        io.setIncome(c.getInt(c.getColumnIndex("income")));
+        io.setSpend(c.getInt(c.getColumnIndex("spend")));
 
         c.close();
 
@@ -416,6 +422,23 @@ public class IRResolver {
 
         return id;
     }
+    public int getSpendsCashSum(String date, int id_account) {
+        Cursor c;
+
+        String where = "A.date_use=? and B.id_account=?";
+        String[] selectionArgs = new String[]{date,String.valueOf(id_account)};
+        String[] select = {"total(A.amount) FROM tbl_spend AS A LEFT JOIN tbl_spend_cash AS B ON A.spend_code = B.spend_code"};
+
+        c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
+
+        assert c != null;
+        c.moveToNext();
+
+        int sum = c.getInt(0);
+        c.close();
+
+        return sum;
+    }
 
     public int getCurrentGroup() {
         return currentGroup;
@@ -443,7 +466,7 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_ACCOUNT),cv);
     }
-    public void insertInfoIO(String date, int input, int output, int evaluation) {
+    public void insertInfoIO(String date, int input, int output, int income, int spend, int evaluation) {
 
         if(currentGroup == -1 || currentAccount == -1) return;
 
@@ -453,6 +476,8 @@ public class IRResolver {
         cv.put("date", date);
         cv.put("input",input);
         cv.put("output",output);
+        cv.put("income",income);
+        cv.put("spend",spend);
         cv.put("evaluation",evaluation);
 
         cr.insert(Uri.parse(URI_INFO_IO),cv);
@@ -519,6 +544,15 @@ public class IRResolver {
         cv.put("id_account",id_account);
 
         cr.insert(Uri.parse(URI_SPEND_CASH),cv);
+
+        int id = getSpendCash(code).getId();
+        String date = getSpend(String.valueOf(id)).getDate();
+
+        int sum = getSpendsCashSum(date,id_account);
+
+        Info_IO io = getInfoIO(id_account,date);
+        if(io != null) updateInfoIO(io.getId(),date,io.getInput(),io.getOutput(),io.getIncome(),sum,io.getEvaluation());
+        else insertInfoIO(date,0,0,0,sum,0);
     }
     public void insertSpendSchedule(String code, String date_draw, int id_account, int id_card) {
         ContentValues cv = new ContentValues();
@@ -605,7 +639,7 @@ public class IRResolver {
 
         cr.update(Uri.parse(URI_ACCOUNT),cv,where,selectionArgs);
     }
-    public void updateInfoIO(int id, String date, int input, int output, int evaluation) {
+    public void updateInfoIO(int id, String date, int input, int output, int income, int spend, int evaluation) {
         ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
@@ -614,6 +648,8 @@ public class IRResolver {
         cv.put("date", date);
         cv.put("input",input);
         cv.put("output",output);
+        cv.put("income",income);
+        cv.put("spend",spend);
         cv.put("evaluation",evaluation);
 
         cr.update(Uri.parse(URI_INFO_IO),cv,where,selectionArgs);

@@ -2,8 +2,10 @@ package com.example.watering.investrecord;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,10 +25,11 @@ public class IRProvider extends ContentProvider {
     private static final String PATH_CATEGORY_MAIN = "category_main";
     private static final String PATH_CATEGORY_SUB = "category_sub";
     private static final String PATH_INCOME = "income";
-    private static final String PATH_OUT = "out";
-    private static final String PATH_OUT_CARD = "out_card";
-    private static final String PATH_OUT_CASH = "out_cash";
-    private static final String PATH_OUT_SCHEDULE = "out_schedule";
+    private static final String PATH_SPEND = "spend";
+    private static final String PATH_SPEND_CARD = "spend_card";
+    private static final String PATH_SPEND_CASH = "spend_cash";
+    private static final String PATH_SPEND_SCHEDULE = "spend_schedule";
+    private static final String PATH_JOIN = "join";
 
     private static final int CODE_GROUP = 0;
     private static final int CODE_ACCOUNT = 1;
@@ -36,10 +39,11 @@ public class IRProvider extends ContentProvider {
     private static final int CODE_CATEGORY_MAIN = 5;
     private static final int CODE_CATEGORY_SUB = 6;
     private static final int CODE_INCOME = 7;
-    private static final int CODE_OUT = 8;
-    private static final int CODE_OUT_CARD = 9;
-    private static final int CODE_OUT_CASH = 10;
-    private static final int CODE_OUT_SCHEDULE = 11;
+    private static final int CODE_SPEND = 8;
+    private static final int CODE_SPEND_CARD = 9;
+    private static final int CODE_SPEND_CASH = 10;
+    private static final int CODE_SPEND_SCHEDULE = 11;
+    private static final int CODE_JOIN = 12;
 
     private GroupDBHelper DB_group;
     private AccountDBHelper DB_account;
@@ -49,10 +53,10 @@ public class IRProvider extends ContentProvider {
     private CategoryMainDBHelper DB_category_main;
     private CategorySubDBHelper DB_category_sub;
     private IncomeDBHelper DB_income;
-    private SpendDBHelper DB_out;
-    private SpendCardDBHelper DB_out_card;
-    private SpendCashDBHelper DB_out_cash;
-    private SpendScheduleDBHelper DB_out_schedule;
+    private SpendDBHelper DB_spend;
+    private SpendCardDBHelper DB_spend_card;
+    private SpendCashDBHelper DB_spend_cash;
+    private SpendScheduleDBHelper DB_spend_schedule;
 
     private static final UriMatcher Matcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -64,10 +68,11 @@ public class IRProvider extends ContentProvider {
         Matcher.addURI(AUTHORITY,PATH_CATEGORY_MAIN,CODE_CATEGORY_MAIN);
         Matcher.addURI(AUTHORITY,PATH_CATEGORY_SUB,CODE_CATEGORY_SUB);
         Matcher.addURI(AUTHORITY,PATH_INCOME,CODE_INCOME);
-        Matcher.addURI(AUTHORITY,PATH_OUT,CODE_OUT);
-        Matcher.addURI(AUTHORITY,PATH_OUT_CARD,CODE_OUT_CARD);
-        Matcher.addURI(AUTHORITY,PATH_OUT_CASH,CODE_OUT_CASH);
-        Matcher.addURI(AUTHORITY,PATH_OUT_SCHEDULE,CODE_OUT_SCHEDULE);
+        Matcher.addURI(AUTHORITY,PATH_SPEND,CODE_SPEND);
+        Matcher.addURI(AUTHORITY,PATH_SPEND_CARD,CODE_SPEND_CARD);
+        Matcher.addURI(AUTHORITY,PATH_SPEND_CASH,CODE_SPEND_CASH);
+        Matcher.addURI(AUTHORITY,PATH_SPEND_SCHEDULE,CODE_SPEND_SCHEDULE);
+        Matcher.addURI(AUTHORITY,PATH_JOIN,CODE_JOIN);
     }
 
     public boolean onCreate() {
@@ -79,10 +84,10 @@ public class IRProvider extends ContentProvider {
         DB_category_main = new CategoryMainDBHelper(getContext());
         DB_category_sub = new CategorySubDBHelper(getContext());
         DB_income = new IncomeDBHelper(getContext());
-        DB_out = new SpendDBHelper(getContext());
-        DB_out_card = new SpendCardDBHelper(getContext());
-        DB_out_cash = new SpendCashDBHelper(getContext());
-        DB_out_schedule = new SpendScheduleDBHelper(getContext());
+        DB_spend = new SpendDBHelper(getContext());
+        DB_spend_card = new SpendCardDBHelper(getContext());
+        DB_spend_cash = new SpendCashDBHelper(getContext());
+        DB_spend_schedule = new SpendScheduleDBHelper(getContext());
 
         return true;
     }
@@ -108,14 +113,19 @@ public class IRProvider extends ContentProvider {
                 return DB_category_sub.query(projection, selection, selectionArgs, sortOrder);
             case CODE_INCOME:
                 return DB_income.query(projection, selection, selectionArgs, sortOrder);
-            case CODE_OUT:
-                return DB_out.query(projection, selection, selectionArgs, sortOrder);
-            case CODE_OUT_CARD:
-                return DB_out_card.query(projection, selection, selectionArgs, sortOrder);
-            case CODE_OUT_CASH:
-                return DB_out_cash.query(projection, selection, selectionArgs, sortOrder);
-            case CODE_OUT_SCHEDULE:
-                return DB_out_schedule.query(projection, selection, selectionArgs, sortOrder);
+            case CODE_SPEND:
+                return DB_spend.query(projection, selection, selectionArgs, sortOrder);
+            case CODE_SPEND_CARD:
+                return DB_spend_card.query(projection, selection, selectionArgs, sortOrder);
+            case CODE_SPEND_CASH:
+                return DB_spend_cash.query(projection, selection, selectionArgs, sortOrder);
+            case CODE_SPEND_SCHEDULE:
+                return DB_spend_schedule.query(projection, selection, selectionArgs, sortOrder);
+            case CODE_JOIN:
+                SQLiteDatabase db = getContext().openOrCreateDatabase("InvestRecord.db",Context.MODE_PRIVATE,null);
+
+                String sql = "SELECT " + projection[0].toString() + " WHERE " + selection;
+                return db.rawQuery(sql, selectionArgs);
             default:
                 return null;
         }
@@ -140,14 +150,16 @@ public class IRProvider extends ContentProvider {
                 return "vnd.android.cursor.dir/vnd.investrecord.category_sub";
             case CODE_INCOME:
                 return "vnd.android.cursor.dir/vnd.investrecord.income";
-            case CODE_OUT:
-                return "vnd.android.cursor.dir/vnd.investrecord.out";
-            case CODE_OUT_CARD:
-                return "vnd.android.cursor.dir/vnd.investrecord.out_card";
-            case CODE_OUT_CASH:
-                return "vnd.android.cursor.dir/vnd.investrecord.out_cash";
-            case CODE_OUT_SCHEDULE:
-                return "vnd.android.cursor.dir/vnd.investrecord.out_schedule";
+            case CODE_SPEND:
+                return "vnd.android.cursor.dir/vnd.investrecord.spend";
+            case CODE_SPEND_CARD:
+                return "vnd.android.cursor.dir/vnd.investrecord.spend_card";
+            case CODE_SPEND_CASH:
+                return "vnd.android.cursor.dir/vnd.investrecord.spend_cash";
+            case CODE_SPEND_SCHEDULE:
+                return "vnd.android.cursor.dir/vnd.investrecord.spend_schedule";
+            case CODE_JOIN:
+                return "vnd.android.cursor.dir/vnd.investrecord.join";
             default:
                 return null;
         }
@@ -180,17 +192,17 @@ public class IRProvider extends ContentProvider {
             case CODE_INCOME:
                 DB_income.insert(values);
                 break;
-            case CODE_OUT:
-                DB_out.insert(values);
+            case CODE_SPEND:
+                DB_spend.insert(values);
                 break;
-            case CODE_OUT_CARD:
-                DB_out_card.insert(values);
+            case CODE_SPEND_CARD:
+                DB_spend_card.insert(values);
                 break;
-            case CODE_OUT_CASH:
-                DB_out_cash.insert(values);
+            case CODE_SPEND_CASH:
+                DB_spend_cash.insert(values);
                 break;
-            case CODE_OUT_SCHEDULE:
-                DB_out_schedule.insert(values);
+            case CODE_SPEND_SCHEDULE:
+                DB_spend_schedule.insert(values);
                 break;
             default:
                 return null;
@@ -226,17 +238,17 @@ public class IRProvider extends ContentProvider {
             case CODE_INCOME:
                 DB_income.delete(selection, selectionArgs);
                 break;
-            case CODE_OUT:
-                DB_out.delete(selection, selectionArgs);
+            case CODE_SPEND:
+                DB_spend.delete(selection, selectionArgs);
                 break;
-            case CODE_OUT_CARD:
-                DB_out_card.delete(selection, selectionArgs);
+            case CODE_SPEND_CARD:
+                DB_spend_card.delete(selection, selectionArgs);
                 break;
-            case CODE_OUT_CASH:
-                DB_out_cash.delete(selection, selectionArgs);
+            case CODE_SPEND_CASH:
+                DB_spend_cash.delete(selection, selectionArgs);
                 break;
-            case CODE_OUT_SCHEDULE:
-                DB_out_schedule.delete(selection, selectionArgs);
+            case CODE_SPEND_SCHEDULE:
+                DB_spend_schedule.delete(selection, selectionArgs);
                 break;
             default:
         }
@@ -271,17 +283,17 @@ public class IRProvider extends ContentProvider {
             case CODE_INCOME:
                 DB_income.update(values, selection, selectionArgs);
                 break;
-            case CODE_OUT:
-                DB_out.update(values, selection, selectionArgs);
+            case CODE_SPEND:
+                DB_spend.update(values, selection, selectionArgs);
                 break;
-            case CODE_OUT_CARD:
-                DB_out_card.update(values, selection, selectionArgs);
+            case CODE_SPEND_CARD:
+                DB_spend_card.update(values, selection, selectionArgs);
                 break;
-            case CODE_OUT_CASH:
-                DB_out_cash.update(values, selection, selectionArgs);
+            case CODE_SPEND_CASH:
+                DB_spend_cash.update(values, selection, selectionArgs);
                 break;
-            case CODE_OUT_SCHEDULE:
-                DB_out_schedule.update(values, selection, selectionArgs);
+            case CODE_SPEND_SCHEDULE:
+                DB_spend_schedule.update(values, selection, selectionArgs);
                 break;
             default:
         }

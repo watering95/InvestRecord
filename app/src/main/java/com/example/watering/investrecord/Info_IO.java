@@ -12,6 +12,8 @@ public class Info_IO implements Serializable {
     private int id_account;
     private int input;
     private int output;
+    private int income;
+    private int spend;
     private int evaluation;
     private int id;
 
@@ -33,6 +35,12 @@ public class Info_IO implements Serializable {
     public void setEvaluation(int evaluation) {
         this.evaluation = evaluation;
     }
+    public void setIncome(int income) {
+        this.income = income;
+    }
+    public void setSpend(int spend) {
+        this.spend = spend;
+    }
 
     public int getId() {
         return this.id;
@@ -51,5 +59,11 @@ public class Info_IO implements Serializable {
     }
     public int getEvaluation() {
         return this.evaluation;
+    }
+    public int getIncome() {
+        return this.income;
+    }
+    public int getSpend() {
+        return this.spend;
     }
 }

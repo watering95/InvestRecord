@@ -15,7 +15,7 @@ import android.provider.BaseColumns;
 @SuppressWarnings("ALL")
 class DBHelper extends SQLiteOpenHelper {
 
-    private static final int db_version = 1;
+    private static final int db_version = 2;
     private static final String DB_FILE_NAME = "InvestRecord.db";
     String TABLE_NAME;
     String [] COLUMNS;
@@ -52,6 +52,7 @@ class DBHelper extends SQLiteOpenHelper {
         sql.append(");");
         db.execSQL(sql.toString());
     }
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
         db.execSQL(sql);
@@ -86,5 +87,9 @@ class DBHelper extends SQLiteOpenHelper {
     }
     Cursor query(String[] columns, String selection, String[] selectionArgs, String orderBy) throws SQLiteException {
         return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
+    }
+
+    public void setTableName(String table) {
+        this.TABLE_NAME = table;
     }
 }

@@ -589,8 +589,12 @@ public class UserDialogFragment extends DialogFragment {
         final EditText txtInput = view.findViewById(R.id.editText_dlg_inout_input);
         final EditText txtOutput = view.findViewById(R.id.editText_dlg_inout_output);
         final EditText txtEvaluation = view.findViewById(R.id.editText_dlg_inout_evaluation);
+        final EditText txtIncome = view.findViewById(R.id.editText_dlg_inout_income);
+        final EditText txtSpend = view.findViewById(R.id.editText_dlg_inout_spend);
         TextView txtDate = view.findViewById(R.id.textView_dlg_inout_date);
 
+        txtIncome.setEnabled(false);
+        txtSpend.setEnabled(false);
         if(ir.getCurrentAccount() < 0) {
             Toast.makeText(mActivity.getApplicationContext(),R.string.toast_no_account,Toast.LENGTH_SHORT).show();
             return;
@@ -604,38 +608,48 @@ public class UserDialogFragment extends DialogFragment {
 
         if(io == null) {
             i_u = 0;
-            txtInput.setText("");
-            txtOutput.setText("");
-            txtEvaluation.setText("");
+            txtInput.setText("0");
+            txtOutput.setText("0");
+            txtEvaluation.setText("0");
+            txtIncome.setText("0");
+            txtSpend.setText("0");
         }
         else {
             i_u = 1;
             txtInput.setText(df.format(io.getInput()));
             txtOutput.setText(df.format(io.getOutput()));
             txtEvaluation.setText(df.format(io.getEvaluation()));
+            txtIncome.setText(df.format(io.getIncome()));
+            txtSpend.setText(df.format(io.getSpend()));
         }
 
         builder.setView(view).setTitle("입출금 입력");
         builder.setPositiveButton("등록", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int input=0, output=0, evaluation=0;
-                String in, out, eval;
+                int input=0, output=0, evaluation=0, income=0, spend=0;
+                String in, out, eval, inc, spe;
 
                 DecimalFormat df = new DecimalFormat("#,###");
 
                 in = txtInput.getText().toString();
                 out = txtOutput.getText().toString();
                 eval = txtEvaluation.getText().toString();
+                inc = txtIncome.getText().toString();
+                spe = txtSpend.getText().toString();
 
                 if(in.isEmpty()) in = "0";
                 if(out.isEmpty()) out = "0";
                 if(eval.isEmpty()) eval = "0";
+                if(inc.isEmpty()) inc = "0";
+                if(spe.isEmpty()) spe = "0";
 
                 try {
                     input = df.parse(in).intValue();
                     output = df.parse(out).intValue();
                     evaluation = df.parse(eval).intValue();
+                    income = df.parse(inc).intValue();
+                    spend = df.parse(spe).intValue();
                 } catch (ParseException e) {
 
                 }
@@ -644,10 +658,10 @@ public class UserDialogFragment extends DialogFragment {
 
                 switch (i_u) {
                     case 0:
-                        ir.insertInfoIO(selectedDate,input,output,evaluation);
+                        ir.insertInfoIO(selectedDate,input,output,income,spend,evaluation);
                         break;
                     case 1:
-                        ir.updateInfoIO(io.getId(),io.getDate(),input,output,evaluation);
+                        ir.updateInfoIO(io.getId(),io.getDate(),input,output,income,spend,evaluation);
                         break;
                 }
                 modifyInfoDiary(i_u);
