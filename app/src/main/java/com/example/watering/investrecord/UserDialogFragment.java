@@ -242,8 +242,8 @@ public class UserDialogFragment extends DialogFragment {
 
         List<String> lists_approval = new ArrayList<>();
         lists_approval.clear();
-        lists_approval.add("현금");
-        lists_approval.add("카드");
+        lists_approval.add(getString(R.string.cash));
+        lists_approval.add(getString(R.string.card));
 
         if(selectedId.isEmpty()) {
             position = 0;
@@ -366,8 +366,8 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("지출 입력");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.input_spend));
+        builder.setPositiveButton(getString(R.string.finish),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String details = editText_details.getText().toString();
@@ -406,7 +406,7 @@ public class UserDialogFragment extends DialogFragment {
                 listener.onWorkComplete(null);
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -525,8 +525,8 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("수입 입력");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.input_income));
+        builder.setPositiveButton(getString(R.string.finish),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String details = editText_details.getText().toString();
@@ -537,7 +537,7 @@ public class UserDialogFragment extends DialogFragment {
                 listener.onWorkComplete(null);
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -552,10 +552,10 @@ public class UserDialogFragment extends DialogFragment {
         ListView listView = view.findViewById(R.id.listView_dlg_listView);
 
         lists_select.clear();
-        lists_select.add("데이터 삭제");
-        lists_select.add("DB파일 삭제");
-        lists_select.add("DB파일 백업");
-        lists_select.add("DB파일 복원");
+        lists_select.add(getString(R.string.delete_all));
+        lists_select.add(getString(R.string.DB_delete));
+        lists_select.add(getString(R.string.DB_backup));
+        lists_select.add(getString(R.string.DB_restore));
 
         adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lists_select);
 
@@ -583,8 +583,8 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("설정");
-        builder.setPositiveButton("완료", new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.setting));
+        builder.setPositiveButton(getString(R.string.finish), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 listener.onWorkComplete("");
@@ -597,8 +597,8 @@ public class UserDialogFragment extends DialogFragment {
         ListView listView = view.findViewById(R.id.listView_dlg_listView);
 
         lists_select.clear();
-        lists_select.add("입출금 입력");
-        lists_select.add("계좌 이체");
+        lists_select.add(getString(R.string.input_inout));
+        lists_select.add(getString(R.string.transfer));
 
         adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lists_select);
 
@@ -631,8 +631,8 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("선택");
-        builder.setPositiveButton("완료", new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.select));
+        builder.setPositiveButton(getString(R.string.finish), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 listener.onWorkComplete("");
@@ -679,8 +679,8 @@ public class UserDialogFragment extends DialogFragment {
             txtSpend.setText(df.format(io.getSpendCard()+io.getSpendCash()+io.getSpendSchedule()));
         }
 
-        builder.setView(view).setTitle("입출금 입력");
-        builder.setPositiveButton("등록", new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.input_inout));
+        builder.setPositiveButton(getString(R.string.regist), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 int input=0, output=0, evaluation=0, income=0, spend=0;
@@ -725,14 +725,14 @@ public class UserDialogFragment extends DialogFragment {
                 mActivity.fragmentSub1.CallUpdate2();
             }
         });
-        builder.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ir.deleteInfoIO("date",new String[] {selectedDate});
                 mActivity.fragmentSub1.CallUpdate2();
             }
         });
-        builder.setNeutralButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNeutralButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -759,14 +759,14 @@ public class UserDialogFragment extends DialogFragment {
 
             }
         });
-        builder.setView(view).setTitle("날짜 선택");
-        builder.setPositiveButton("선택",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.select_date));
+        builder.setPositiveButton(getString(R.string.select),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 listener.onWorkComplete(date[0]);
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -776,14 +776,14 @@ public class UserDialogFragment extends DialogFragment {
     private void dialogTransfer() {
         view = inflater.inflate(R.layout.dialog_transfer, null);
 
-        builder.setView(view).setTitle("계좌 이체");
-        builder.setPositiveButton("실행",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.transfer));
+        builder.setPositiveButton(getString(R.string.excute),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 listener.onWorkComplete("");
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -796,8 +796,8 @@ public class UserDialogFragment extends DialogFragment {
 
         final EditText edit = view.findViewById(R.id.editText_dlg_group_add);
 
-        builder.setView(view).setTitle("그룹 추가");
-        builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.group_regist));
+        builder.setPositiveButton(getString(R.string.excute), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String name = edit.getText().toString();
@@ -805,7 +805,7 @@ public class UserDialogFragment extends DialogFragment {
                 listener.onWorkComplete(null);
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -832,15 +832,15 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("그룹 수정");
-        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.group_edit));
+        builder.setPositiveButton(getString(R.string.excute), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String name = edit.getText().toString();
                 if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -866,14 +866,14 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("그룹 삭제");
-        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.group_delete));
+        builder.setPositiveButton(getString(R.string.excute), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ir.deleteGroup("name",new String[] {select[0]});
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -943,18 +943,18 @@ public class UserDialogFragment extends DialogFragment {
                     } else {
                         ir.insertCategorySub(name, selectedMainId);
                     }
-                    Toast.makeText(getContext(),"카테고리 추가",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),getString(R.string.category_add),Toast.LENGTH_SHORT).show();
                     editText.setText("");
                }
             }
         });
-        builder.setView(view).setTitle("카테고리 추가");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.category_add));
+        builder.setPositiveButton(getString(R.string.finish),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -1032,14 +1032,14 @@ public class UserDialogFragment extends DialogFragment {
                 adapter2.notifyDataSetChanged();
             }
         });
-        builder.setView(view).setTitle("카테고리 편집");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.category_edit));
+        builder.setPositiveButton(getString(R.string.finish),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -1115,14 +1115,14 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("카테고리 삭제");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.category_del));
+        builder.setPositiveButton(getString(R.string.finish),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 listener.onWorkComplete("");
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -1164,8 +1164,8 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("카드 추가");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.card_add));
+        builder.setPositiveButton(getString(R.string.finish),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String name = editText_name.getText().toString();
@@ -1177,7 +1177,7 @@ public class UserDialogFragment extends DialogFragment {
                 listener.onWorkComplete(null);
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -1245,8 +1245,8 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("카드 편집");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.card_edit));
+        builder.setPositiveButton(getString(R.string.finish),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String name = editText_name.getText().toString();
@@ -1258,7 +1258,7 @@ public class UserDialogFragment extends DialogFragment {
                 listener.onWorkComplete(null);
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -1281,15 +1281,15 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        builder.setView(view).setTitle("카드 삭제");
-        builder.setPositiveButton("완료",new DialogInterface.OnClickListener() {
+        builder.setView(view).setTitle(getString(R.string.card_del));
+        builder.setPositiveButton(getString(R.string.finish),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ir.deleteCard("_id", new String[] {String.valueOf(selectedCardId)});
                 listener.onWorkComplete("");
             }
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
