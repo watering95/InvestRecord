@@ -13,6 +13,7 @@ public class Card implements Serializable {
     private String company;
     private String name;
     private int date_draw;
+    private int id_account;
 
     public void setId(int id) {
         this.id_card = id;
@@ -29,6 +30,9 @@ public class Card implements Serializable {
     public void setDrawDate(int date) {
         this.date_draw = date;
     }
+    public void setAccount(int id) {
+        this.id_account = id;
+    }
 
     public int getId() {
         return this.id_card;
@@ -44,5 +48,8 @@ public class Card implements Serializable {
     }
     public int getDrawDate() {
         return this.date_draw;
+    }
+    public int getAccount() {
+        return this.id_account;
     }
 }

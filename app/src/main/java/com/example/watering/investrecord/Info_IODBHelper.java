@@ -14,6 +14,6 @@ class Info_IODBHelper extends DBHelper {
 
         TABLE_NAME = "tbl_Info_IO";
         COLUMNS = new String [] { "date TEXT", "input INTEGER","output INTEGER","evaluation INTEGER"
-                ,"spend INTEGER", "income INTEGER", "id_account INTEGER"};
+                ,"spend_cash INTEGER", "spend_card INTEGER", "spend_schedule INTEGER", "income INTEGER", "id_account INTEGER"};
     }
 }

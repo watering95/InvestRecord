@@ -74,5 +74,19 @@
             android:inputType="date"
             android:id="@+id/editText_dlg_card_edit_date"/>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/card_account"/>
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner_dlg_card_edit_account"
+            android:ems="10"/>
+    </LinearLayout>
 
 </LinearLayout>

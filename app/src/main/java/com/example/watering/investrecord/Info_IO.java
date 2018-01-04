@@ -13,7 +13,9 @@ public class Info_IO implements Serializable {
     private int input;
     private int output;
     private int income;
-    private int spend;
+    private int spend_cash;
+    private int spend_card;
+    private int spend_schedule;
     private int evaluation;
     private int id;
 
@@ -38,8 +40,14 @@ public class Info_IO implements Serializable {
     public void setIncome(int income) {
         this.income = income;
     }
-    public void setSpend(int spend) {
-        this.spend = spend;
+    public void setSpendCash(int spend) {
+        this.spend_cash = spend;
+    }
+    public void setSpendCard(int spend) {
+        this.spend_card = spend;
+    }
+    public void setSpendSchedule(int spend) {
+        this.spend_schedule = spend;
     }
 
     public int getId() {
@@ -63,7 +71,13 @@ public class Info_IO implements Serializable {
     public int getIncome() {
         return this.income;
     }
-    public int getSpend() {
-        return this.spend;
+    public int getSpendCash() {
+        return this.spend_cash;
+    }
+    public int getSpendCard() {
+        return this.spend_card;
+    }
+    public int getSpendSchedule() {
+        return this.spend_schedule;
     }
 }

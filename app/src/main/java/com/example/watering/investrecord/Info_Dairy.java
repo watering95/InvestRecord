@@ -11,6 +11,7 @@ public class Info_Dairy implements Serializable {
     private String date;
     private int id_account;
     private int principal;
+    private int before;
     private double rate;
     private int id;
 
@@ -26,6 +27,9 @@ public class Info_Dairy implements Serializable {
     public void setPrincipal(int principal) {
         this.principal = principal;
     }
+    public void setBefore(int before) {
+        this.before = before;
+    }
     public void setRate(double rate) {
         this.rate = rate;
     }
@@ -38,6 +42,9 @@ public class Info_Dairy implements Serializable {
     }
     public int getPrincipal() {
         return this.principal;
+    }
+    public int getBefore() {
+        return this.before;
     }
     public double getRate() {
         return this.rate;

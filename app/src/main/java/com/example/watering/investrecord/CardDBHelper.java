@@ -13,6 +13,6 @@ class CardDBHelper extends DBHelper {
         super(context);
 
         TABLE_NAME = "tbl_card";
-        COLUMNS = new String [] {"number TEXT UNIQUE","company TEXT","name TEXT","date_draw TEXT"};
+        COLUMNS = new String [] {"number TEXT UNIQUE","company TEXT","name TEXT","date_draw TEXT","id_account INTEGER"};
     }
 }
