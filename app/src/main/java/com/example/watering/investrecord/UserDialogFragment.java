@@ -20,13 +20,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,6 +44,7 @@ public class UserDialogFragment extends DialogFragment {
     private List<String> lists_category_sub = new ArrayList<>();
     private List<String> lists_account = new ArrayList<>();
     private List<String> lists_card = new ArrayList<>();
+    private List<String> lists_select = new ArrayList<>();
     private List<Group> groups = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
     private List<CategoryMain> categoryMains = new ArrayList<>();
@@ -75,7 +73,13 @@ public class UserDialogFragment extends DialogFragment {
 
         switch (type_dialog) {
             case 0:
+                dialogSelect();
+                break;
+            case 1:
                 dialogInout();
+                break;
+            case 2:
+                dialogTransfer();
                 break;
             case R.id.menu_sub1_addGroup:
                 dialogGroupAdd();
@@ -543,40 +547,92 @@ public class UserDialogFragment extends DialogFragment {
     }
 
     private void dialogSetting() {
-        view = inflater.inflate(R.layout.dialog_setting, null);
+        view = inflater.inflate(R.layout.dialog_listview, null);
 
-        Button btn_delete = view.findViewById(R.id.button_dlg_setting_delete_all);
-        Button btn_delete_file = view.findViewById(R.id.button_dlg_setting_delete_db);
-        Button btn_backup_file = view.findViewById(R.id.button_dlg_setting_backup_db);
-        Button btn_restore_file = view.findViewById(R.id.button_dlg_setting_restore_db);
+        ListView listView = view.findViewById(R.id.listView_dlg_listView);
 
-        btn_delete.setOnClickListener(new View.OnClickListener() {
+        lists_select.clear();
+        lists_select.add("데이터 삭제");
+        lists_select.add("DB파일 삭제");
+        lists_select.add("DB파일 백업");
+        lists_select.add("DB파일 복원");
+
+        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lists_select);
+
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView.setAdapter(adapter1);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                listener.onWorkComplete("delall");
-            }
-        });
-        btn_delete_file.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onWorkComplete("del");
-            }
-        });
-        btn_backup_file.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onWorkComplete("backup");
-            }
-        });
-        btn_restore_file.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onWorkComplete("restore");
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String str = null;
+                switch(position) {
+                    case 0:
+                        str = "delall";
+                        break;
+                    case 1:
+                        str = "del";
+                        break;
+                    case 2:
+                        str = "backup";
+                        break;
+                    case 3:
+                        str = "restore";
+                        break;
+                }
+                listener.onWorkComplete(str);
             }
         });
 
         builder.setView(view).setTitle("설정");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("완료", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                listener.onWorkComplete("");
+            }
+        });
+    }
+    private void dialogSelect() {
+        view = inflater.inflate(R.layout.dialog_listview, null);
+
+        ListView listView = view.findViewById(R.id.listView_dlg_listView);
+
+        lists_select.clear();
+        lists_select.add("입출금 입력");
+        lists_select.add("계좌 이체");
+
+        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lists_select);
+
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView.setAdapter(adapter1);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch(position) {
+                    case 0:
+                        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
+                            @Override
+                            public void onWorkComplete(String date) {
+                            }
+                        });
+                        dialog.setSelectedDate(selectedDate);
+                        dialog.show(getFragmentManager(), "dialog");
+                        break;
+                    case 1:
+                        dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
+                            @Override
+                            public void onWorkComplete(String date) {
+                            }
+                        });
+                        dialog.setSelectedDate(selectedDate);
+                        dialog.show(getFragmentManager(), "dialog");
+                        break;
+                }
+                listener.onWorkComplete(null);
+            }
+        });
+
+        builder.setView(view).setTitle("선택");
+        builder.setPositiveButton("완료", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 listener.onWorkComplete("");
@@ -717,6 +773,23 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    private void dialogTransfer() {
+        view = inflater.inflate(R.layout.dialog_transfer, null);
+
+        builder.setView(view).setTitle("계좌 이체");
+        builder.setPositiveButton("실행",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete("");
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
 
     private void dialogGroupAdd() {
         view = inflater.inflate(R.layout.dialog_group_add, null);
@@ -775,10 +848,10 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     private void dialogGroupDel() {
-        view = inflater.inflate(R.layout.dialog_group_del, null);
+        view = inflater.inflate(R.layout.dialog_listview, null);
 
         final String[] select = new String[1];
-        ListView list = view.findViewById(R.id.listView_dlg_group_del);
+        ListView list = view.findViewById(R.id.listView_dlg_listView);
 
         adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists_category_main);
 
@@ -1193,27 +1266,18 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     private void dialogCardDel() {
-        view = inflater.inflate(R.layout.dialog_card_del, null);
+        view = inflater.inflate(R.layout.dialog_listview, null);
 
-        Spinner spinner = view.findViewById(R.id.spinner_dlg_card_del_name);
+        ListView list = view.findViewById(R.id.listView_dlg_listView);
 
         updateCardList();
 
         adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_card);
-        spinner.setAdapter(adapter1);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        list.setAdapter(adapter1);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (cards.size() > 0) {
-                    Card card = cards.get(i);
-                    selectedCardId = card.getId();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedCardId = cards.get(position).getId();
             }
         });
 

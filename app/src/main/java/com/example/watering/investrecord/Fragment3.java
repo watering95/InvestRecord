@@ -57,7 +57,14 @@ public class Fragment3 extends Fragment {
                     return;
                 }
                 selectedDate = String.format(Locale.getDefault(),"%04d-%02d-%02d",year,monthOfYear+1,dayOfMonth);
-                mActivity.inoutDialog(selectedDate);
+
+                UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
+                    }
+                });
+                dialog.setSelectedDate(selectedDate);
+                dialog.show(getFragmentManager(), "dialog");
             }
         });
     }

@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void inoutDialog(String selectedDate) {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
 
