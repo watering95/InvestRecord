@@ -1,6 +1,8 @@
 package com.example.watering.investrecord;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,12 +19,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings({"ALL"})
+@SuppressWarnings("DefaultFileTemplate")
 public class Fragment2 extends Fragment {
 
     private View mView;
@@ -40,6 +43,7 @@ public class Fragment2 extends Fragment {
         super.onCreate(savedInstanceState);
 
         mActivity = (MainActivity) getActivity();
+        assert mActivity != null;
         ir = mActivity.ir;
 
         final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
@@ -61,7 +65,7 @@ public class Fragment2 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment2, container, false);
 
         initLayout();
@@ -123,12 +127,12 @@ public class Fragment2 extends Fragment {
             if(size != 0) {
                 for (int i = size - 1; i > 0; i--) {
                     eval = String.valueOf(lists.get(i).getEvaluation());
-                    rate = String.format("%.2f",lists.get(i).getDairy().getRate());
+                    rate = String.format(Locale.getDefault(),"%.2f",lists.get(i).getDairy().getRate());
                     date = "new Date('" + lists.get(i).getDairy().getDate() + "')";
                     data.append("[").append(date).append(", ").append(eval).append(", ").append(rate).append("],\n");
                 }
                 eval = String.valueOf(lists.get(0).getEvaluation());
-                rate = String.format("%.2f",lists.get(0).getDairy().getRate());
+                rate = String.format(Locale.getDefault(),"%.2f",lists.get(0).getDairy().getRate());
                 date = "new Date('" + lists.get(0).getDairy().getDate() + "')";
                 data.append("[").append(date).append(", ").append(eval).append(", ").append(rate).append("]\n");
             }
@@ -140,8 +144,8 @@ public class Fragment2 extends Fragment {
 
             if(lists.isEmpty()) accountnumber = "";
             else {
-                int id = lists.get(0).getDairy().getAccount();
-                Account account = ir.getAccount(String.valueOf(id));
+                int id_account = lists.get(0).getDairy().getAccount();
+                Account account = ir.getAccount(id_account);
                 accountnumber = account.getNumber();
             }
 
@@ -183,6 +187,7 @@ public class Fragment2 extends Fragment {
             e.printStackTrace();
         }
     }
+    @SuppressLint("SetJavaScriptEnabled")
     private void openWebView() {
         mWeb = mView.findViewById(R.id.webView_frag2);
         mWeb.setWebViewClient(new WebViewClient());

@@ -6,7 +6,7 @@ import android.content.Context;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 class Info_DairyDBHelper extends DBHelper {
 
     public Info_DairyDBHelper(Context context) {

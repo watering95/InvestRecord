@@ -4,10 +4,10 @@ package com.example.watering.investrecord;
  * Created by watering on 17. 10. 23.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 class Info_List1 {
-    private Account account;
-    private Info_List2 list2;
+    private Account account = null;
+    private Info_List2 list2 = null;
 
     public void setInfoList2(Info_List2 list2) {
         this.list2 = list2;

@@ -1,6 +1,7 @@
 package com.example.watering.investrecord;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,7 +17,7 @@ import java.util.Locale;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class Fragment3 extends Fragment {
 
     private View mView;
@@ -35,7 +36,7 @@ public class Fragment3 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment3, container, false);
 
         initLayout();
@@ -44,7 +45,7 @@ public class Fragment3 extends Fragment {
     }
 
     private void initLayout() {
-        DatePicker date = mView.findViewById(R.id.datePicker_frag3);
+        final DatePicker date = mView.findViewById(R.id.datePicker_frag3);
         selectedDate = String.format(Locale.getDefault(),"%04d-%02d-%02d", date.getYear(), date.getMonth(), date.getDayOfMonth());
         date.init(date.getYear(), date.getMonth(), date.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
             @Override
@@ -64,6 +65,7 @@ public class Fragment3 extends Fragment {
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
                 dialog.show(getFragmentManager(), "dialog");
             }
         });

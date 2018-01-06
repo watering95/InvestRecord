@@ -14,17 +14,15 @@ import java.util.ArrayList;
  * Created by watering on 17. 11. 17.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 class List6Adapter extends BaseAdapter {
 
-    private final Context mContext;
     private final ArrayList<Info_List6> mData;
     private final LayoutInflater inflater;
 
     public List6Adapter(Context context, ArrayList<Info_List6> data) {
-        mContext = context;
         mData = data;
-        inflater = LayoutInflater.from(mContext);
+        inflater = LayoutInflater.from(context);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.watering.investrecord;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,16 +14,14 @@ import android.widget.EditText;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings({"ALL"})
+@SuppressWarnings("DefaultFileTemplate")
 public class Fragment4 extends Fragment {
 
     private View mView;
-    private MainActivity mActivity;
     private IRResolver ir;
     private EditText mTxtAccount;
     private EditText mTxtInstitute;
-    private EditText mTxtDiscription;
-    private int i_u = 0;
+    private EditText mTxtDescription;
 
     public Fragment4() {
     }
@@ -31,7 +30,8 @@ public class Fragment4 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mActivity = (MainActivity) getActivity();
+        MainActivity mActivity = (MainActivity) getActivity();
+        assert mActivity != null;
         ir = mActivity.ir;
 
         final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
@@ -47,7 +47,7 @@ public class Fragment4 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment4, container, false);
 
         initLayout();
@@ -59,7 +59,7 @@ public class Fragment4 extends Fragment {
 
         mTxtAccount = mView.findViewById(R.id.editText_frag4_account);
         mTxtInstitute = mView.findViewById(R.id.editText_frag4_institute);
-        mTxtDiscription = mView.findViewById(R.id.editText_frag4_description);
+        mTxtDescription = mView.findViewById(R.id.editText_frag4_description);
 
         update();
 
@@ -74,50 +74,48 @@ public class Fragment4 extends Fragment {
 
             String account = mTxtAccount.getText().toString();
             String institute = mTxtInstitute.getText().toString();
-            String discript = mTxtDiscription.getText().toString();
+            String descript = mTxtDescription.getText().toString();
 
             switch(v.getId()) {
                 case R.id.button_frag4_regist:
-                    if(!account.isEmpty()) ir.insertAccount(institute,account,discript);
+                    if(!account.isEmpty()) ir.insertAccount(institute,account,descript);
                     break;
                 case R.id.button_frag4_edit:
-                    if(!account.isEmpty()) ir.updateAccount(ir.getCurrentAccount(),institute,account,discript);
+                    if(!account.isEmpty()) ir.updateAccount(ir.getCurrentAccount(),institute,account,descript);
                     break;
                 case R.id.button_frag4_delete:
                     if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
                     break;
             }
 
+            assert fragmentSub1 != null;
             fragmentSub1.updateAccountSpinner();
         }
     };
 
     private void update() {
-        int id = ir.getCurrentAccount();
-        Account account = new Account();
+        int id_account = ir.getCurrentAccount();
+        Account account;
 
-        if(id > 0) {
-            account = ir.getAccount(String.valueOf(id));
+        if(id_account > 0) {
+            account = ir.getAccount(id_account);
         }
         else {
-            i_u = 0;
             mTxtAccount.setText("");
-            mTxtDiscription.setText("");
+            mTxtDescription.setText("");
             mTxtInstitute.setText("");
 
             return;
         }
 
         if(account == null) {
-            i_u = 0;
             mTxtAccount.setText("");
-            mTxtDiscription.setText("");
+            mTxtDescription.setText("");
             mTxtInstitute.setText("");
         }
         else {
-            i_u = 1;
             mTxtAccount.setText(account.getNumber());
-            mTxtDiscription.setText(account.getDiscription());
+            mTxtDescription.setText(account.getDescription());
             mTxtInstitute.setText(account.getInstitute());
             ir.setCurrentAccount(account.getId());
         }

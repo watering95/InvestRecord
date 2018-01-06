@@ -6,11 +6,11 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class CategoryMain implements Serializable {
-    private int id_category_main;
-    private String name;
-    private String kind;
+    private int id_category_main = -1;
+    private String name = null;
+    private String kind = null;
 
     public void setId(int id) {
         this.id_category_main = id;

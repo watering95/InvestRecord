@@ -6,14 +6,13 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-@SuppressWarnings({"ALL"})
+@SuppressWarnings("DefaultFileTemplate")
 public class Info_Dairy implements Serializable {
-    private String date;
-    private int id_account;
-    private int principal;
-    private int before;
-    private double rate;
-    private int id;
+    private String date = null;
+    private int id_account = -1;
+    private int principal = 0;
+    private double rate = 0;
+    private int id = -1;
 
     public void setId(int id) {
         this.id = id;
@@ -27,9 +26,6 @@ public class Info_Dairy implements Serializable {
     public void setPrincipal(int principal) {
         this.principal = principal;
     }
-    public void setBefore(int before) {
-        this.before = before;
-    }
     public void setRate(double rate) {
         this.rate = rate;
     }
@@ -42,9 +38,6 @@ public class Info_Dairy implements Serializable {
     }
     public int getPrincipal() {
         return this.principal;
-    }
-    public int getBefore() {
-        return this.before;
     }
     public double getRate() {
         return this.rate;

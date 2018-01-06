@@ -6,14 +6,14 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class Spend implements Serializable {
-    private int id;
-    private String spend_code;
-    private String details;
-    private int id_category_sub;
-    private String date_use;
-    private int amount;
+    private int id = -1;
+    private String spend_code = null;
+    private String details = null;
+    private int id_category_sub = -1;
+    private String date_use = null;
+    private int amount = 0;
 
     public void setId(int id) {
         this.id = id;

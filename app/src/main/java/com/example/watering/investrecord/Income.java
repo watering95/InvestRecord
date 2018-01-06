@@ -6,14 +6,14 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class Income implements Serializable {
-    private int id_income;
-    private String date;
-    private int id_category_sub;
-    private int amount;
-    private String details;
-    private int id_account;
+    private int id_income = -1;
+    private String date = null;
+    private int id_category_sub = -1;
+    private int amount = -1;
+    private String details = null;
+    private int id_account = -1;
 
     public void setId(int id) {
         this.id_income = id;

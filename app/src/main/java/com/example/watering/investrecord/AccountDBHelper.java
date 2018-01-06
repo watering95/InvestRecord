@@ -6,14 +6,14 @@ import android.content.Context;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings({"ALL"})
+@SuppressWarnings("DefaultFileTemplate")
 class AccountDBHelper extends DBHelper {
 
     public AccountDBHelper(Context context) {
         super(context);
 
         TABLE_NAME = "tbl_Account";
-        COLUMNS = new String [] {"inst TEXT","num TEXT UNIQUE","disc TEXT",
+        COLUMNS = new String [] {"institute TEXT","number TEXT UNIQUE","desciption TEXT",
                 "id_group INTEGER"};
     }
 }

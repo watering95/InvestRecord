@@ -7,10 +7,10 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 class Group implements Serializable {
-    private int id;
-    private String name;
+    private int id = -1;
+    private String name = null;
 
     public void setId(int id) {
         this.id = id;

@@ -1,6 +1,7 @@
 package com.example.watering.investrecord;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class Fragment5 extends Fragment {
 
     private View mView;
@@ -26,7 +27,7 @@ public class Fragment5 extends Fragment {
     private String selectedDate;
     private List5Adapter list5Adapter;
     private ArrayList<Spend> spends = new ArrayList<>();
-    private ArrayList<Info_List5> lists = new ArrayList<>();
+    private final ArrayList<Info_List5> lists = new ArrayList<>();
 
     public Fragment5() {
     }
@@ -36,12 +37,13 @@ public class Fragment5 extends Fragment {
         super.onCreate(savedInstanceState);
 
         mActivity = (MainActivity) getActivity();
+        assert mActivity != null;
         ir = mActivity.ir;
     }
 
     @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment5, container, false);
 
         initLayout();
@@ -67,6 +69,7 @@ public class Fragment5 extends Fragment {
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
                 dialog.show(getFragmentManager(), "dialog");
             }
         });
@@ -79,14 +82,15 @@ public class Fragment5 extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int id_spend = spends.get(position).getId();
+                String spend_code = spends.get(position).getCode();
                 UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag5, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
                         updateListView();
                     }
                 });
-                dialog.initId(String.valueOf(id_spend));
+                dialog.initCode(spend_code);
+                //noinspection ConstantConditions
                 dialog.show(getFragmentManager(), "dialog");
             }
         });
@@ -102,6 +106,7 @@ public class Fragment5 extends Fragment {
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
                 dialog.show(getFragmentManager(), "dialog");
             }
         });

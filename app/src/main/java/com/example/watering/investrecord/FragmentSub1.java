@@ -2,6 +2,7 @@ package com.example.watering.investrecord;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -23,13 +24,8 @@ import java.util.List;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings({"ALL"})
+@SuppressWarnings("DefaultFileTemplate")
 public class FragmentSub1 extends Fragment {
-
-    private Fragment1 fragment1 = new Fragment1();
-    private Fragment2 fragment2 = new Fragment2();
-    private Fragment3 fragment3 = new Fragment3();
-    private Fragment4 fragment4 = new Fragment4();
 
     private View mView;
     private IRResolver ir;
@@ -55,6 +51,7 @@ public class FragmentSub1 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        assert getActivity() != null;
         ir = ((MainActivity) getActivity()).ir;
 
         setHasOptionsMenu(true);
@@ -62,7 +59,7 @@ public class FragmentSub1 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_sub1, container, false);
 
         initLayout();
@@ -88,7 +85,7 @@ public class FragmentSub1 extends Fragment {
                 updateGroupSpinner();
             }
         });
-        dialog.initData(ir.getGroups());
+        //noinspection ConstantConditions
         dialog.show(getFragmentManager(), "dialog");
         return super.onOptionsItemSelected(item);
     }
@@ -125,11 +122,6 @@ public class FragmentSub1 extends Fragment {
 
             }
         });
-
-        fragment1 = (Fragment1) mFragSub1PagerAdapter.getItem(0);
-        fragment2 = (Fragment2) mFragSub1PagerAdapter.getItem(1);
-        fragment3 = (Fragment3) mFragSub1PagerAdapter.getItem(2);
-        fragment4 = (Fragment4) mFragSub1PagerAdapter.getItem(3);
     }
 
     public void setCallback1(Callback callback) {
@@ -159,11 +151,13 @@ public class FragmentSub1 extends Fragment {
     }
 
     public void initDataBase() {
+        //noinspection ConstantConditions
         ir.getContentResolver(getActivity().getContentResolver());
         updateGroupSpinner();
         updateAccountSpinner();
     }
     private void initGroupSpinner() {
+        //noinspection ConstantConditions
         groupAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, grouplists);
 
         Spinner mGroupSpinner = mView.findViewById(R.id.spinner_group);
@@ -185,6 +179,7 @@ public class FragmentSub1 extends Fragment {
         });
     }
     private void initAccountSpinner() {
+        //noinspection ConstantConditions
         accountAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, accountlists);
         Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
         mAccountSpinner.setAdapter(accountAdapter);
@@ -217,13 +212,13 @@ public class FragmentSub1 extends Fragment {
         Account account;
 
         accountlists.clear();
-        accounts = ir.getAccounts();
+        accounts = ir.getAccounts(ir.getCurrentGroup());
 
         if(accounts.isEmpty()) return;
 
         for (int i = 0; i < accounts.size(); i++) {
             account = accounts.get(i);
-            str = account.getNumber() + " " + account.getInstitute() + " " + account.getDiscription();
+            str = account.getNumber() + " " + account.getInstitute() + " " + account.getDescription();
             accountlists.add(str);
         }
     }

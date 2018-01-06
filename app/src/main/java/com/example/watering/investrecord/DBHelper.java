@@ -12,10 +12,10 @@ import android.provider.BaseColumns;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 class DBHelper extends SQLiteOpenHelper {
 
-    private static final int db_version = 3;
+    private static final int db_version = 5;
     private static final String DB_FILE_NAME = "InvestRecord.db";
     String TABLE_NAME;
     String [] COLUMNS;
@@ -87,9 +87,5 @@ class DBHelper extends SQLiteOpenHelper {
     }
     Cursor query(String[] columns, String selection, String[] selectionArgs, String orderBy) throws SQLiteException {
         return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
-    }
-
-    public void setTableName(String table) {
-        this.TABLE_NAME = table;
     }
 }

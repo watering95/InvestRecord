@@ -15,17 +15,15 @@ import java.util.Locale;
  * Created by watering on 17. 11. 17.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 class List1Adapter extends BaseAdapter {
 
-    private final Context mContext;
     private final ArrayList<Info_List1> mData;
     private final LayoutInflater inflater;
 
     public List1Adapter(Context context, ArrayList<Info_List1> data) {
-        mContext = context;
         mData = data;
-        inflater = LayoutInflater.from(mContext);
+        inflater = LayoutInflater.from(context);
     }
 
     @Override
@@ -61,7 +59,7 @@ class List1Adapter extends BaseAdapter {
         principal.setText(df.format(list2.getDairy().getPrincipal()));
         rate.setText(String.format(Locale.getDefault(),"%.2f",list2.getDairy().getRate()));
         evaluation.setText(df.format(list2.getEvaluation()));
-        accountInfo.setText(String.format(Locale.getDefault(),"%s %s",account.getInstitute(),account.getDiscription()));
+        accountInfo.setText(String.format(Locale.getDefault(),"%s %s",account.getInstitute(),account.getDescription()));
 
         return convertView;
     }

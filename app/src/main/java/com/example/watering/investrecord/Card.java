@@ -6,14 +6,14 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class Card implements Serializable {
-    private int id_card;
-    private String number;
-    private String company;
-    private String name;
-    private int date_draw;
-    private int id_account;
+    private int id_card = -1;
+    private String number = null;
+    private String company = null;
+    private String name = null;
+    private int date_draw = -1;
+    private int id_account = -1;
 
     public void setId(int id) {
         this.id_card = id;

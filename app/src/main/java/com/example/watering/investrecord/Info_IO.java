@@ -6,18 +6,17 @@ import java.io.Serializable;
  * Created by watering on 17. 10. 23.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class Info_IO implements Serializable {
-    private String date;
-    private int id_account;
-    private int input;
-    private int output;
-    private int income;
-    private int spend_cash;
-    private int spend_card;
-    private int spend_schedule;
-    private int evaluation;
-    private int id;
+    private String date = null;
+    private int id_account = -1;
+    private int input = 0;
+    private int output = 0;
+    private int income = 0;
+    private int spend_cash = 0;
+    private int spend_card = 0;
+    private int evaluation = 0;
+    private int id = -1;
 
     public void setId(int id) {
         this.id = id;
@@ -46,9 +45,6 @@ public class Info_IO implements Serializable {
     public void setSpendCard(int spend) {
         this.spend_card = spend;
     }
-    public void setSpendSchedule(int spend) {
-        this.spend_schedule = spend;
-    }
 
     public int getId() {
         return this.id;
@@ -76,8 +72,5 @@ public class Info_IO implements Serializable {
     }
     public int getSpendCard() {
         return this.spend_card;
-    }
-    public int getSpendSchedule() {
-        return this.spend_schedule;
     }
 }

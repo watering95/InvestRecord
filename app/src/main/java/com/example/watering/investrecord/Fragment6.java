@@ -1,6 +1,7 @@
 package com.example.watering.investrecord;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class Fragment6 extends Fragment {
 
     private View mView;
@@ -26,7 +27,7 @@ public class Fragment6 extends Fragment {
     private String selectedDate;
     private List6Adapter list6Adapter;
     private ArrayList<Income> incomes = new ArrayList<>();
-    private ArrayList<Info_List6> lists = new ArrayList<>();
+    private final ArrayList<Info_List6> lists = new ArrayList<>();
 
     public Fragment6() {
     }
@@ -36,12 +37,13 @@ public class Fragment6 extends Fragment {
         super.onCreate(savedInstanceState);
 
         mActivity = (MainActivity) getActivity();
+        assert mActivity != null;
         ir = mActivity.ir;
     }
 
     @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment6, container, false);
 
         initLayout();
@@ -67,6 +69,7 @@ public class Fragment6 extends Fragment {
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
                 dialog.show(getFragmentManager(), "dialog");
             }
         });
@@ -86,7 +89,8 @@ public class Fragment6 extends Fragment {
                         updateListView();
                     }
                 });
-                dialog.initId(String.valueOf(id_income));
+                dialog.initId(id_income);
+                //noinspection ConstantConditions
                 dialog.show(getFragmentManager(),"dialog");
             }
         });
@@ -102,6 +106,7 @@ public class Fragment6 extends Fragment {
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
                 dialog.show(getFragmentManager(), "dialog");
             }
         });

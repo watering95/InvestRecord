@@ -15,17 +15,15 @@ import java.util.Locale;
  * Created by watering on 17. 11. 17.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 class List2Adapter extends BaseAdapter {
 
-    private final Context mContext;
     private final ArrayList<Info_List2> mData;
     private final LayoutInflater inflater;
 
     public List2Adapter(Context context, ArrayList<Info_List2> data) {
-        mContext = context;
         mData = data;
-        inflater = LayoutInflater.from(mContext);
+        inflater = LayoutInflater.from(context);
     }
 
     @Override

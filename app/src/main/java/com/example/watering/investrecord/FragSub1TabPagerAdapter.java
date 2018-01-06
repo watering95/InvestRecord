@@ -8,13 +8,13 @@ import android.support.v4.app.FragmentPagerAdapter;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 class FragSub1TabPagerAdapter extends FragmentPagerAdapter {
 
-    public Fragment1 fragment1;
-    public Fragment2 fragment2;
-    public Fragment3 fragment3;
-    public Fragment4 fragment4;
+    private final Fragment1 fragment1;
+    private final Fragment2 fragment2;
+    private final Fragment3 fragment3;
+    private final Fragment4 fragment4;
 
     public FragSub1TabPagerAdapter(FragmentManager fm) {
         super(fm);

@@ -1,6 +1,7 @@
 package com.example.watering.investrecord;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,11 +12,8 @@ import android.view.ViewGroup;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class Fragment7 extends Fragment {
-
-    private View mView;
-    private MainActivity mActivity;
 
     public Fragment7() {
     }
@@ -24,13 +22,13 @@ public class Fragment7 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mActivity = (MainActivity) getActivity();
+        MainActivity mActivity = (MainActivity) getActivity();
     }
 
     @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment7, container, false);
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View mView = inflater.inflate(R.layout.fragment7, container, false);
 
         initLayout();
 

@@ -14,7 +14,7 @@ import android.support.annotation.Nullable;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class IRProvider extends ContentProvider {
     private static final String AUTHORITY = "watering.investrecord.provider";
     private static final String PATH_GROUP = "group";
@@ -56,7 +56,6 @@ public class IRProvider extends ContentProvider {
     private SpendDBHelper DB_spend;
     private SpendCardDBHelper DB_spend_card;
     private SpendCashDBHelper DB_spend_cash;
-    private SpendScheduleDBHelper DB_spend_schedule;
 
     private static final UriMatcher Matcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
@@ -87,7 +86,6 @@ public class IRProvider extends ContentProvider {
         DB_spend = new SpendDBHelper(getContext());
         DB_spend_card = new SpendCardDBHelper(getContext());
         DB_spend_cash = new SpendCashDBHelper(getContext());
-        DB_spend_schedule = new SpendScheduleDBHelper(getContext());
 
         return true;
     }
@@ -119,12 +117,11 @@ public class IRProvider extends ContentProvider {
                 return DB_spend_card.query(projection, selection, selectionArgs, sortOrder);
             case CODE_SPEND_CASH:
                 return DB_spend_cash.query(projection, selection, selectionArgs, sortOrder);
-            case CODE_SPEND_SCHEDULE:
-                return DB_spend_schedule.query(projection, selection, selectionArgs, sortOrder);
             case CODE_JOIN:
-                SQLiteDatabase db = getContext().openOrCreateDatabase("InvestRecord.db",Context.MODE_PRIVATE,null);
+                @SuppressWarnings("ConstantConditions") SQLiteDatabase db = getContext().openOrCreateDatabase("InvestRecord.db",Context.MODE_PRIVATE,null);
 
-                String sql = "SELECT " + projection[0].toString() + " WHERE " + selection;
+                assert projection != null;
+                String sql = "SELECT " + projection[0] + " WHERE " + selection;
                 return db.rawQuery(sql, selectionArgs);
             default:
                 return null;
@@ -201,9 +198,6 @@ public class IRProvider extends ContentProvider {
             case CODE_SPEND_CASH:
                 DB_spend_cash.insert(values);
                 break;
-            case CODE_SPEND_SCHEDULE:
-                DB_spend_schedule.insert(values);
-                break;
             default:
                 return null;
         }
@@ -247,9 +241,6 @@ public class IRProvider extends ContentProvider {
             case CODE_SPEND_CASH:
                 DB_spend_cash.delete(selection, selectionArgs);
                 break;
-            case CODE_SPEND_SCHEDULE:
-                DB_spend_schedule.delete(selection, selectionArgs);
-                break;
             default:
         }
         return count;
@@ -291,9 +282,6 @@ public class IRProvider extends ContentProvider {
                 break;
             case CODE_SPEND_CASH:
                 DB_spend_cash.update(values, selection, selectionArgs);
-                break;
-            case CODE_SPEND_SCHEDULE:
-                DB_spend_schedule.update(values, selection, selectionArgs);
                 break;
             default:
         }

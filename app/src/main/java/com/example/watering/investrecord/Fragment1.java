@@ -1,5 +1,6 @@
 package com.example.watering.investrecord;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -20,7 +21,7 @@ import java.util.Locale;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings({"ALL"})
+@SuppressWarnings("DefaultFileTemplate")
 public class Fragment1 extends Fragment {
 
     private View mView;
@@ -42,6 +43,7 @@ public class Fragment1 extends Fragment {
         super.onCreate(savedInstanceState);
 
         final MainActivity mActivity = (MainActivity) getActivity();
+        assert mActivity != null;
         ir = mActivity.ir;
 
         final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
@@ -66,7 +68,7 @@ public class Fragment1 extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment1, container, false);
 
         updateInfoLists();
@@ -105,16 +107,15 @@ public class Fragment1 extends Fragment {
         total_rate = 0;
 
         lists.clear();
-        List<Account> accounts = ir.getAccounts();
+        List<Account> accounts = ir.getAccounts(ir.getCurrentGroup());
 
         for(int i = 0; i < accounts.size(); i++) {
             Info_List1 list1 = new Info_List1();
             Info_List2 list2 = new Info_List2();
 
-            int id = accounts.get(i).getId();
-            String account = String.valueOf(id);
+            int id_account = accounts.get(i).getId();
 
-            dairy = ir.getLastInfoDairy(account);
+            dairy = ir.getLastInfoDairy(id_account);
             if(dairy == null) {
                 dairy = new Info_Dairy();
 
@@ -123,11 +124,11 @@ public class Fragment1 extends Fragment {
                 Date date = new Date(now);
 
                 dairy.setDate(dateFormat.format(date));
-                dairy.setAccount(id);
+                dairy.setAccount(id_account);
                 dairy.setPrincipal(0);
                 dairy.setRate(0);
             }
-            io = ir.getInfoIO(id,dairy.getDate());
+            io = ir.getInfoIO(id_account,dairy.getDate());
             if(io == null) {
                 io = new Info_IO();
                 io.setEvaluation(0);

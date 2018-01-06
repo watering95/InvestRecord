@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         mToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -185,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
         File dbFile = new File(file);
         try {
+            //noinspection ResultOfMethodCallIgnored
             dbFile.delete();
             fragmentSub1.updateGroupSpinner();
             fragmentSub1.updateAccountSpinner();
@@ -267,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
                         if(task.isSuccessful()) {
                             return mDriveResourceClient.openFile(file, DriveFile.MODE_READ_ONLY);
                         } else {
+                            //noinspection ConstantConditions
                             return Tasks.forException(task.getException());
                         }
                     }
@@ -380,7 +383,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "Sign in request code");
                 if(resultCode == RESULT_OK) {
                     Log.i(TAG, "Singed in successfully.");
+                    //noinspection ConstantConditions
                     mDriveClient = Drive.getDriveClient(this, GoogleSignIn.getLastSignedInAccount(this));
+                    //noinspection ConstantConditions
                     mDriveResourceClient = Drive.getDriveResourceClient(this, GoogleSignIn.getLastSignedInAccount(this));
                     if(requestCode == REQUEST_CODE_SIGN_IN_UP) saveFileToDrive();
                     else downloadFileFromDrive();

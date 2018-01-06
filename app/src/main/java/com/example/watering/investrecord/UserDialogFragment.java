@@ -1,7 +1,9 @@
 package com.example.watering.investrecord;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -10,8 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -31,7 +31,7 @@ import java.util.Locale;
  * Created by watering on 17. 11. 2.
  */
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("DefaultFileTemplate")
 public class UserDialogFragment extends DialogFragment {
     private MainActivity mActivity;
     private IRResolver ir;
@@ -39,33 +39,48 @@ public class UserDialogFragment extends DialogFragment {
     private AlertDialog.Builder builder;
     private View view;
 
-    private ArrayAdapter<String> adapter1, adapter2, adapter3, adapter4;
-    private List<String> lists_category_main = new ArrayList<>();
-    private List<String> lists_category_sub = new ArrayList<>();
-    private List<String> lists_account = new ArrayList<>();
-    private List<String> lists_card = new ArrayList<>();
-    private List<String> lists_select = new ArrayList<>();
+    private ArrayAdapter<String> adapter1;
+    private ArrayAdapter<String> adapter_category_main, adapter_category_sub;
+    private ArrayAdapter<String> adapter_account, adapter_card;
+    private ArrayAdapter<String> adapter_account_from, adapter_account_to;
+
+    private final List<String> lists_group = new ArrayList<>();
+    private final List<String> lists_category_main = new ArrayList<>();
+    private final List<String> lists_category_sub = new ArrayList<>();
+    private final List<String> lists_account = new ArrayList<>();
+    private final List<String> lists_card = new ArrayList<>();
+    private final List<String> lists_select = new ArrayList<>();
+
     private List<Group> groups = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
+    private List<Account> accounts_from = new ArrayList<>();
+    private List<Account> accounts_to = new ArrayList<>();
     private List<CategoryMain> categoryMains = new ArrayList<>();
     private List<CategorySub> categorySubs = new ArrayList<>();
     private List<Card> cards = new ArrayList<>();
 
     private String selectedDate;
-    private int type_dialog, type_spend, i_u, schedule = 0;
-    private int selectedMainId, selectedSubId, selectedCardId, selectedAccountId;
-    private int id_income, id_spend, id_spend_schedule, id_spend_cash, id_spend_card;
-    private String selectedId = "",selectedCode = "";
+    private String selectedSpendCode = "";
+    private int type_dialog, type_spend;
+    private boolean exist;
+    private final int schedule = 0;
+    private int selectedMainId, selectedSubId, selectedCardId, selectedAccountId = -1;
+    private int selectedAccountIdFrom, selectedAccountIdTo;
+    private int selectedGroupIdFrom, selectedGroupIdTo;
+    private int id_income, id_spend, id_spend_cash, id_spend_card;
+    private int selectedId = -1;
     private UserListener listener;
 
     public interface UserListener {
         void onWorkComplete(String str);
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         mActivity = (MainActivity) getActivity();
+        assert mActivity != null;
         ir = mActivity.ir;
 
         builder = new AlertDialog.Builder(getActivity());
@@ -132,19 +147,17 @@ public class UserDialogFragment extends DialogFragment {
         return fragment;
     }
 
-    public void initData(List<Group> lists) {
-        this.groups = lists;
-        for(int i=0; i<groups.size(); i++) {
-            this.lists_category_main.add(groups.get(i).getName());
-        }
-    }
-    public void initId(String id) {
+    public void initId(int id) {
         this.selectedId = id;
+    }
+    public void initCode(String code) {
+        this.selectedSpendCode = code;
     }
     public void setSelectedDate(String selectedDate) {
         this.selectedDate = selectedDate;
     }
 
+    @SuppressLint("InflateParams")
     private void dialogSpend() {
         view = inflater.inflate(R.layout.dialog_spend, null);
 
@@ -155,17 +168,14 @@ public class UserDialogFragment extends DialogFragment {
         Spinner spinner_category_sub = view.findViewById(R.id.spinner_dlg_spend_category_sub);
         Spinner spinner_approval_1 = view.findViewById(R.id.spinner_dlg_spend_approval_1);
         final Spinner spinner_approval_2 = view.findViewById(R.id.spinner_dlg_spend_approval_2);
-        final CheckBox checkBox = view.findViewById(R.id.checkbox_dlg_spend_schedule);
-        final EditText editText_date_schedule = view.findViewById(R.id.editText_dlg_spend_date_schedule);
         int position = 0;
         Spend spend = new Spend();
 
-        if(selectedId.isEmpty()) editText_date.setText(selectedDate);
+        if(selectedSpendCode.isEmpty()) editText_date.setText(selectedDate);
         else {
-            spend = ir.getSpend(selectedId);
+            spend = ir.getSpend(selectedSpendCode);
 
             id_spend = spend.getId();
-            selectedCode = spend.getCode();
             editText_date.setText(spend.getDate());
             editText_amount.setText(String.valueOf(spend.getAmount()));
             editText_details.setText(spend.getDetails());
@@ -182,30 +192,33 @@ public class UserDialogFragment extends DialogFragment {
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
                 dialog.show(getFragmentManager(), "dialog");
             }
         });
 
         updateCategoryMainList(1);
         if(categoryMains.size() > 0) {
-            if(selectedId.isEmpty()) {
+            if(selectedSpendCode.isEmpty()) {
                 selectedMainId = categoryMains.get(0).getId();
                 position = 0;
             }
             else {
-                selectedMainId = ir.getCategorySub(String.valueOf(spend.getCategory())).getCategoryMain();
+                selectedMainId = ir.getCategorySub(spend.getCategory()).getCategoryMain();
                 position = findCategoryMain(selectedMainId);
             }
         }
-        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_category_main);
-        spinner_category_main.setAdapter(adapter1);
+
+        //noinspection ConstantConditions
+        adapter_category_main = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_category_main);
+        spinner_category_main.setAdapter(adapter_category_main);
         spinner_category_main.setSelection(position);
         spinner_category_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedMainId = categoryMains.get(i).getId();
                 updateCategorySubList();
-                adapter2.notifyDataSetChanged();
+                adapter_category_sub.notifyDataSetChanged();
             }
 
             @Override
@@ -216,7 +229,7 @@ public class UserDialogFragment extends DialogFragment {
 
         updateCategorySubList();
         if (categorySubs.size() > 0) {
-            if(selectedId.isEmpty()) {
+            if(selectedSpendCode.isEmpty()) {
                 selectedSubId = categorySubs.get(0).getId();
                 position = 0;
             }
@@ -225,8 +238,9 @@ public class UserDialogFragment extends DialogFragment {
                 position = findCategorySub(selectedSubId);
             }
         }
-        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_category_sub);
-        spinner_category_sub.setAdapter(adapter2);
+        //noinspection ConstantConditions
+        adapter_category_sub = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_category_sub);
+        spinner_category_sub.setAdapter(adapter_category_sub);
         spinner_category_sub.setSelection(position);
         spinner_category_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -245,12 +259,12 @@ public class UserDialogFragment extends DialogFragment {
         lists_approval.add(getString(R.string.cash));
         lists_approval.add(getString(R.string.card));
 
-        if(selectedId.isEmpty()) {
+        if(selectedSpendCode.isEmpty()) {
             position = 0;
             type_spend = 1;
         }
         else {
-            if(selectedCode.charAt(0) == '1') {
+            if(selectedSpendCode.charAt(0) == '1') {
                 position = 0;
                 type_spend = 1;
             }
@@ -260,7 +274,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         }
 
-        ArrayAdapter<String> adapter_approval = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item,lists_approval);
+        @SuppressWarnings("ConstantConditions") ArrayAdapter<String> adapter_approval = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item,lists_approval);
         spinner_approval_1.setAdapter(adapter_approval);
         spinner_approval_1.setSelection(position);
         spinner_approval_1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -269,10 +283,10 @@ public class UserDialogFragment extends DialogFragment {
                 type_spend = i+1;
                 switch(type_spend) {
                     case 1:
-                        spinner_approval_2.setAdapter(adapter3);
+                        spinner_approval_2.setAdapter(adapter_account);
                         break;
                     case 2:
-                        spinner_approval_2.setAdapter(adapter4);
+                        spinner_approval_2.setAdapter(adapter_card);
                         break;
                 }
             }
@@ -283,67 +297,42 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        if(selectedId.isEmpty()) {
-            checkBox.setChecked(false);
-            schedule = 0;
-        }
-        else {
-            if(selectedCode.charAt(1) == '0') {
-                checkBox.setChecked(false);
-                schedule = 0;
-            }
-            else {
-                checkBox.setChecked(true);
-                schedule = 1;
-            }
-        }
-
-        editText_date_schedule.setEnabled(false);
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                editText_date_schedule.setEnabled(b);
-                if(b) schedule = 1;
-                else schedule = 0;
-            }
-        });
-
-        updateAccountList();
+        updateAccountList(ir.getCurrentGroup());
         if(type_spend == 1) {
-            if(selectedId.isEmpty()) {
+            if(selectedSpendCode.isEmpty()) {
                 selectedAccountId = accounts.get(0).getId();
                 position = 0;
             }
             else {
-                selectedAccountId = ir.getSpendCash(selectedCode).getAccount();
+                selectedAccountId = ir.getSpendCash(selectedSpendCode).getAccount();
                 position = findAccount(selectedAccountId);
-                if(schedule == 1) id_spend_schedule = ir.getSpendSchedule(selectedCode).getId();
-                else if(schedule == 0) id_spend_cash = ir.getSpendCash(selectedCode).getId();
+                id_spend_cash = ir.getSpendCash(selectedSpendCode).getId();
             }
 
         }
-        adapter3 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_account);
+        //noinspection ConstantConditions
+        adapter_account = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_account);
 
         updateCardList();
         if(type_spend == 2) {
-            if (selectedId.isEmpty()) {
+            if (selectedSpendCode.isEmpty()) {
                 selectedCardId = cards.get(0).getId();
                 position = 0;
             } else {
-                selectedCardId = ir.getSpendCard(selectedCode).getCard();
+                selectedCardId = ir.getSpendCard(selectedSpendCode).getCard();
                 position = findCard(selectedCardId);
-                if(schedule == 1) id_spend_schedule = ir.getSpendSchedule(selectedCode).getId();
-                else if(schedule == 0) id_spend_card = ir.getSpendCard(selectedCode).getId();
+                id_spend_card = ir.getSpendCard(selectedSpendCode).getId();
             }
         }
-        adapter4 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_card);
+        //noinspection ConstantConditions
+        adapter_card = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_card);
 
         switch(type_spend) {
             case 1:
-                spinner_approval_2.setAdapter(adapter3);
+                spinner_approval_2.setAdapter(adapter_account);
                 break;
             case 2:
-                spinner_approval_2.setAdapter(adapter4);
+                spinner_approval_2.setAdapter(adapter_card);
                 break;
         }
         spinner_approval_2.setSelection(position);
@@ -374,36 +363,22 @@ public class UserDialogFragment extends DialogFragment {
                 int amount = Integer.parseInt(editText_amount.getText().toString());
                 List<Spend> spends = ir.getSpends(selectedDate);
                 Calendar today = Calendar.getInstance();
-                String newCode = String.format(Locale.getDefault(),"%d%d%04d%02d%02d%02d",type_spend,schedule,today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DAY_OF_MONTH),spends.size());
+                String newCode = String.format(Locale.getDefault(), "%d%d%04d%02d%02d%02d", type_spend, schedule, today.get(Calendar.YEAR), today.get(Calendar.MONTH) + 1, today.get(Calendar.DAY_OF_MONTH), spends.size());
 
-                if(selectedId.isEmpty()) ir.insertSpend(newCode, details, selectedDate, amount, selectedSubId);
-                else ir.updateSpend(id_spend, newCode, details, selectedDate, amount, selectedSubId);
-                if(checkBox.isChecked()) {
-                    String date = editText_date_schedule.getText().toString();
-                    switch (type_spend) {
-                        case 1:
-                            if(selectedId.isEmpty()) ir.insertSpendSchedule(newCode, date, selectedAccountId, -1);
-                            else ir.updateSpendSchedule(id_spend_schedule, newCode, date, selectedAccountId,-1);
-                            break;
-                        case 2:
-                            if(selectedId.isEmpty()) ir.insertSpendSchedule(newCode, date, -1, selectedCardId);
-                            else ir.updateSpendSchedule(id_spend_schedule, newCode, date,-1,selectedCardId);
-                            break;
-                    }
+                if (selectedSpendCode.isEmpty())
+                    ir.insertSpend(newCode, details, selectedDate, amount, selectedSubId);
+                else
+                    ir.updateSpend(id_spend, newCode, details, selectedDate, amount, selectedSubId);
+                switch (type_spend) {
+                    case 1:
+                        if (selectedSpendCode.isEmpty()) ir.insertSpendCash(newCode, selectedAccountId);
+                        else ir.updateSpendCash(id_spend_cash, newCode, selectedAccountId);
+                        break;
+                    case 2:
+                        if (selectedSpendCode.isEmpty()) ir.insertSpendCard(newCode, selectedCardId);
+                        else ir.updateSpendCard(id_spend_card, newCode, selectedCardId);
+                        break;
                 }
-                else {
-                    switch(type_spend) {
-                        case 1:
-                            if(selectedId.isEmpty()) ir.insertSpendCash(newCode, selectedAccountId);
-                            else ir.updateSpendCash(id_spend_cash, newCode, selectedAccountId);
-                            break;
-                        case 2:
-                            if(selectedId.isEmpty()) ir.insertSpendCard(newCode, selectedCardId);
-                            else ir.updateSpendCard(id_spend_card, newCode, selectedCardId);
-                            break;
-                    }
-                }
-                listener.onWorkComplete(null);
             }
         });
         builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -413,6 +388,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogIncome() {
         view = inflater.inflate(R.layout.dialog_income, null);
 
@@ -425,7 +401,7 @@ public class UserDialogFragment extends DialogFragment {
         int position = 0;
         Income income = new Income();
 
-        if(selectedId.isEmpty()) editText_date.setText(selectedDate);
+        if(selectedId < 0) editText_date.setText(selectedDate);
         else {
             income = ir.getIncome(selectedId);
 
@@ -446,28 +422,31 @@ public class UserDialogFragment extends DialogFragment {
                     }
                 });
                 dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
                 dialog.show(getFragmentManager(), "dialog");
             }
         });
 
         updateCategoryMainList(2);
         if(categoryMains.size() > 0) {
-            if (selectedId.isEmpty()) {
+            if (selectedId < 0) {
                 selectedMainId = categoryMains.get(0).getId();
                 position = 0;
             } else {
-                selectedMainId = ir.getCategorySub(String.valueOf(income.getCategory())).getCategoryMain();
+                selectedMainId = ir.getCategorySub(income.getCategory()).getCategoryMain();
                 position = findCategoryMain(selectedMainId);
             }
         }
-        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_category_main);
-        spinner_category_main.setAdapter(adapter1);
+        //noinspection ConstantConditions
+        adapter_category_main = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_category_main);
+        spinner_category_main.setAdapter(adapter_category_main);
+        spinner_category_main.setSelection(position);
         spinner_category_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedMainId = categoryMains.get(i).getId();
                 updateCategorySubList();
-                adapter2.notifyDataSetChanged();
+                adapter_category_sub.notifyDataSetChanged();
             }
 
             @Override
@@ -478,7 +457,7 @@ public class UserDialogFragment extends DialogFragment {
 
         updateCategorySubList();
         if (categorySubs.size() > 0) {
-            if(selectedId.isEmpty()) {
+            if(selectedId < 0) {
                 selectedSubId = categorySubs.get(0).getId();
                 position = 0;
             }
@@ -487,8 +466,10 @@ public class UserDialogFragment extends DialogFragment {
                 position = findCategorySub(selectedSubId);
             }
         }
-        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_category_sub);
-        spinner_category_sub.setAdapter(adapter2);
+        //noinspection ConstantConditions
+        adapter_category_sub = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_category_sub);
+        spinner_category_sub.setAdapter(adapter_category_sub);
+        spinner_category_sub.setSelection(position);
         spinner_category_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -501,8 +482,8 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        updateAccountList();
-        if(selectedId.isEmpty()) {
+        updateAccountList(ir.getCurrentGroup());
+        if(selectedId < 0) {
             selectedAccountId = accounts.get(0).getId();
             position = 0;
         }
@@ -510,8 +491,9 @@ public class UserDialogFragment extends DialogFragment {
             selectedAccountId = ir.getIncome(selectedId).getAccount();
             position = findAccount(selectedAccountId);
         }
-        adapter3 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_account);
-        spinner_account.setAdapter(adapter3);
+        //noinspection ConstantConditions
+        adapter_account = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_account);
+        spinner_account.setAdapter(adapter_account);
         spinner_account.setSelection(position);
         spinner_account.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -532,7 +514,7 @@ public class UserDialogFragment extends DialogFragment {
                 String details = editText_details.getText().toString();
                 int amount = Integer.parseInt(editText_amount.getText().toString());
 
-                if(selectedId.isEmpty()) ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
+                if(selectedId < 0) ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
                 else ir.updateIncome(id_income,details,selectedDate,selectedAccountId,selectedSubId,amount);
                 listener.onWorkComplete(null);
             }
@@ -546,6 +528,7 @@ public class UserDialogFragment extends DialogFragment {
 
     }
 
+    @SuppressLint("InflateParams")
     private void dialogSetting() {
         view = inflater.inflate(R.layout.dialog_listview, null);
 
@@ -557,7 +540,8 @@ public class UserDialogFragment extends DialogFragment {
         lists_select.add(getString(R.string.DB_backup));
         lists_select.add(getString(R.string.DB_restore));
 
-        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lists_select);
+        //noinspection ConstantConditions
+        adapter1 = new ArrayAdapter<>(null, android.R.layout.simple_list_item_1, lists_select);
 
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setAdapter(adapter1);
@@ -591,6 +575,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogSelect() {
         view = inflater.inflate(R.layout.dialog_listview, null);
 
@@ -600,7 +585,8 @@ public class UserDialogFragment extends DialogFragment {
         lists_select.add(getString(R.string.input_inout));
         lists_select.add(getString(R.string.transfer));
 
-        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, lists_select);
+        //noinspection ConstantConditions
+        adapter1 = new ArrayAdapter<>(null, android.R.layout.simple_list_item_1, lists_select);
 
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setAdapter(adapter1);
@@ -615,6 +601,7 @@ public class UserDialogFragment extends DialogFragment {
                             }
                         });
                         dialog.setSelectedDate(selectedDate);
+                        //noinspection ConstantConditions
                         dialog.show(getFragmentManager(), "dialog");
                         break;
                     case 1:
@@ -624,6 +611,7 @@ public class UserDialogFragment extends DialogFragment {
                             }
                         });
                         dialog.setSelectedDate(selectedDate);
+                        //noinspection ConstantConditions
                         dialog.show(getFragmentManager(), "dialog");
                         break;
                 }
@@ -639,6 +627,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogInout() {
         view = inflater.inflate(R.layout.dialog_inout, null);
 
@@ -663,7 +652,7 @@ public class UserDialogFragment extends DialogFragment {
         txtDate.setText(selectedDate);
 
         if(io == null) {
-            i_u = 0;
+            exist = false;
             txtInput.setText("0");
             txtOutput.setText("0");
             txtEvaluation.setText("0");
@@ -671,57 +660,46 @@ public class UserDialogFragment extends DialogFragment {
             txtSpend.setText("0");
         }
         else {
-            i_u = 1;
+            exist = true;
             txtInput.setText(df.format(io.getInput()));
             txtOutput.setText(df.format(io.getOutput()));
             txtEvaluation.setText(df.format(io.getEvaluation()));
             txtIncome.setText(df.format(io.getIncome()));
-            txtSpend.setText(df.format(io.getSpendCard()+io.getSpendCash()+io.getSpendSchedule()));
+            txtSpend.setText(df.format(io.getSpendCard()+io.getSpendCash()));
         }
 
         builder.setView(view).setTitle(getString(R.string.input_inout));
         builder.setPositiveButton(getString(R.string.regist), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int input=0, output=0, evaluation=0, income=0, spend=0;
-                String in, out, eval, inc, spe;
+                String str_in, str_out, str_eval;
 
                 DecimalFormat df = new DecimalFormat("#,###");
 
-                in = txtInput.getText().toString();
-                out = txtOutput.getText().toString();
-                eval = txtEvaluation.getText().toString();
-                inc = txtIncome.getText().toString();
-                spe = txtSpend.getText().toString();
+                str_in = txtInput.getText().toString();
+                str_out = txtOutput.getText().toString();
+                str_eval = txtEvaluation.getText().toString();
 
-                if(in.isEmpty()) in = "0";
-                if(out.isEmpty()) out = "0";
-                if(eval.isEmpty()) eval = "0";
-                if(inc.isEmpty()) inc = "0";
-                if(spe.isEmpty()) spe = "0";
+                if(str_in.isEmpty()) str_in = "0";
+                if(str_out.isEmpty()) str_out = "0";
+                if(str_eval.isEmpty()) str_eval = "0";
+
+                Info_IO io = new Info_IO();
+
+                if(exist) io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
 
                 try {
-                    input = df.parse(in).intValue();
-                    output = df.parse(out).intValue();
-                    evaluation = df.parse(eval).intValue();
-                    income = df.parse(inc).intValue();
+                    io.setDate(selectedDate);
+                    io.setInput(df.parse(str_in).intValue());
+                    io.setOutput(df.parse(str_out).intValue());
+                    io.setEvaluation(df.parse(str_eval).intValue());
                 } catch (ParseException e) {
 
                 }
 
-                Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
-                int spend_cash = io.getSpendCash();
-                int spend_card = io.getSpendCard();
-                int spend_schedule = io.getSpendSchedule();
+                if(!exist) ir.insertInfoIO(io);
+                else ir.updateInfoIO(io);
 
-                switch (i_u) {
-                    case 0:
-                        ir.insertInfoIO(selectedDate,input,output,income,spend_cash,spend_card,spend_schedule,evaluation);
-                        break;
-                    case 1:
-                        ir.updateInfoIO(io.getId(),io.getDate(),input,output,income,spend_cash,spend_card,spend_schedule,evaluation);
-                        break;
-                }
                 mActivity.fragmentSub1.CallUpdate2();
             }
         });
@@ -739,6 +717,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogDate() {
         view = inflater.inflate(R.layout.dialog_date, null);
 
@@ -773,13 +752,123 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogTransfer() {
         view = inflater.inflate(R.layout.dialog_transfer, null);
+
+        groups = ir.getGroups();
+        updateGroupList();
+
+        Spinner spinnerGroupFrom = view.findViewById(R.id.spinner_dlg_transfer_from_group);
+        Spinner spinnerGroupTo = view.findViewById(R.id.spinner_dlg_transfer_to_group);
+        Spinner spinnerAccountFrom = view.findViewById(R.id.spinner_dlg_transfer_from_account);
+        Spinner spinnerAccountTo = view.findViewById(R.id.spinner_dlg_transfer_to_account);
+        final EditText editText_amount = view.findViewById(R.id.editText_dlg_transfer_amount);
+
+        selectedGroupIdFrom = groups.get(0).getId();
+        selectedGroupIdTo = groups.get(0).getId();
+
+        @SuppressWarnings("ConstantConditions") ArrayAdapter<String> adapter_group = new ArrayAdapter<>(null, R.layout.support_simple_spinner_dropdown_item, lists_group);
+
+        // 출금계좌그룹 선택
+        spinnerGroupFrom.setAdapter(adapter_group);
+        spinnerGroupFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroupIdFrom = groups.get(position).getId();
+                updateAccountList(selectedGroupIdFrom);
+                accounts_from = accounts;
+                adapter_account_from.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // 입금계좌그룹 선택
+        spinnerGroupTo.setAdapter(adapter_group);
+        spinnerGroupTo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroupIdTo = groups.get(position).getId();
+                updateAccountList(selectedGroupIdTo);
+                accounts_to = accounts;
+                adapter_account_to.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // 출금계좌 선택
+        updateAccountList(selectedGroupIdFrom);
+        accounts_from = accounts;
+        //noinspection ConstantConditions
+        adapter_account_from = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item,lists_account);
+        selectedAccountIdFrom = accounts.get(0).getId();
+        spinnerAccountFrom.setAdapter(adapter_account_from);
+        spinnerAccountFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedAccountIdFrom = accounts_from.get(position).getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // 입금계좌 선택
+        updateAccountList(selectedGroupIdTo);
+        accounts_to = accounts;
+        //noinspection ConstantConditions
+        adapter_account_to = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item,lists_account);
+        selectedAccountIdTo = accounts.get(0).getId();
+        spinnerAccountTo.setAdapter(adapter_account_to);
+        spinnerAccountTo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedAccountIdTo = accounts_to.get(position).getId();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         builder.setView(view).setTitle(getString(R.string.transfer));
         builder.setPositiveButton(getString(R.string.excute),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                int amount = Integer.parseInt(editText_amount.getText().toString());
+
+                if(amount <= 0) {
+                    Toast.makeText(getContext(),R.string.toast_no_amount,Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // 출금계좌
+                Info_IO io = ir.getInfoIO(selectedAccountIdFrom,selectedDate);
+                io.setOutput(io.getOutput() + amount);
+
+                //noinspection ConstantConditions
+                if(io != null) ir.updateInfoIO(io);
+                else ir.insertInfoIO(selectedDate,0,amount,0,0,0,0);
+
+                // 입금계좌
+                io = ir.getInfoIO(selectedAccountIdTo,selectedDate);
+                io.setOutput(io.getInput() + amount);
+
+                //noinspection ConstantConditions
+                if(io != null) ir.updateInfoIO(io);
+                else ir.insertInfoIO(selectedDate,amount,0,0,0,0,0);
+
                 listener.onWorkComplete("");
             }
         });
@@ -791,6 +880,7 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
 
+    @SuppressLint("InflateParams")
     private void dialogGroupAdd() {
         view = inflater.inflate(R.layout.dialog_group_add, null);
 
@@ -812,13 +902,18 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogGroupEdit() {
         view = inflater.inflate(R.layout.dialog_group_edit, null);
 
         ListView list = view.findViewById(R.id.listView_dlg_editGroup);
         final EditText edit = view.findViewById(R.id.editText_dlg_group_edit);
 
-        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists_category_main);
+        groups = ir.getGroups();
+        updateGroupList();
+
+        //noinspection ConstantConditions
+        adapter1 = new ArrayAdapter<>(null, android.R.layout.simple_list_item_single_choice, lists_group);
 
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter1);
@@ -836,8 +931,12 @@ public class UserDialogFragment extends DialogFragment {
         builder.setPositiveButton(getString(R.string.excute), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Group group = ir.getGroup(ir.getCurrentGroup());
                 String name = edit.getText().toString();
-                if(!name.isEmpty()) ir.updateGroup(ir.getCurrentGroup(),name);
+                if(!name.isEmpty()) {
+                    group.setName(name);
+                    ir.updateGroup(group);
+                }
             }
         });
         builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -847,13 +946,18 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogGroupDel() {
         view = inflater.inflate(R.layout.dialog_listview, null);
 
         final String[] select = new String[1];
         ListView list = view.findViewById(R.id.listView_dlg_listView);
 
-        adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_single_choice, lists_category_main);
+        groups = ir.getGroups();
+        updateGroupList();
+
+        //noinspection ConstantConditions
+        adapter1 = new ArrayAdapter<>(null, android.R.layout.simple_list_item_single_choice, lists_group);
 
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setAdapter(adapter1);
@@ -881,6 +985,7 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
 
+    @SuppressLint("InflateParams")
     private void dialogCategoryAdd() {
         view = inflater.inflate(R.layout.dialog_category_add, null);
 
@@ -892,8 +997,9 @@ public class UserDialogFragment extends DialogFragment {
 
         updateCategoryMainList(0);
 
-        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_category_main);
-        spinner.setAdapter(adapter1);
+        //noinspection ConstantConditions
+        adapter_category_main = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_category_main);
+        spinner.setAdapter(adapter_category_main);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -939,7 +1045,7 @@ public class UserDialogFragment extends DialogFragment {
                         }
                         ir.insertCategoryMain(name, kind);
                         updateCategoryMainList(0);
-                        adapter1.notifyDataSetChanged();
+                        adapter_category_main.notifyDataSetChanged();
                     } else {
                         ir.insertCategorySub(name, selectedMainId);
                     }
@@ -961,6 +1067,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogCategoryEdit() {
         view = inflater.inflate(R.layout.dialog_category_edit, null);
 
@@ -973,28 +1080,30 @@ public class UserDialogFragment extends DialogFragment {
         updateCategoryMainList(0);
         if(categoryMains.size() > 0) {
             selectedMainId = categoryMains.get(0).getId();
-            editText_main.setText(ir.getCategoryMain(String.valueOf(selectedMainId)).getName());
+            editText_main.setText(ir.getCategoryMain(selectedMainId).getName());
         }
 
         updateCategorySubList();
         if (categorySubs.size() > 0) {
             selectedSubId = categorySubs.get(0).getId();
-            editText_sub.setText(ir.getCategorySub(String.valueOf(selectedSubId)).getName());
+            editText_sub.setText(ir.getCategorySub(selectedSubId).getName());
         }
 
-        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_category_main);
-        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_category_sub);
-        spinner_main.setAdapter(adapter1);
-        spinner_sub.setAdapter(adapter2);
+        //noinspection ConstantConditions
+        adapter_category_main = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_category_main);
+        //noinspection ConstantConditions
+        adapter_category_sub = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_category_sub);
+        spinner_main.setAdapter(adapter_category_main);
+        spinner_sub.setAdapter(adapter_category_sub);
 
         spinner_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if(categoryMains.size() > 0) {
                     selectedMainId = categoryMains.get(i).getId();
-                    editText_main.setText(ir.getCategoryMain(String.valueOf(selectedMainId)).getName());
+                    editText_main.setText(ir.getCategoryMain(selectedMainId).getName());
                     updateCategorySubList();
-                    adapter2.notifyDataSetChanged();
+                    adapter_category_sub.notifyDataSetChanged();
                 }
             }
 
@@ -1008,7 +1117,7 @@ public class UserDialogFragment extends DialogFragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (categorySubs.size() > 0) {
                     selectedSubId = categorySubs.get(i).getId();
-                    editText_sub.setText(ir.getCategorySub(String.valueOf(selectedSubId)).getName());
+                    editText_sub.setText(ir.getCategorySub(selectedSubId).getName());
                 }
             }
 
@@ -1028,8 +1137,8 @@ public class UserDialogFragment extends DialogFragment {
 
                 updateCategoryMainList(0);
                 updateCategorySubList();
-                adapter1.notifyDataSetChanged();
-                adapter2.notifyDataSetChanged();
+                adapter_category_main.notifyDataSetChanged();
+                adapter_category_sub.notifyDataSetChanged();
             }
         });
         builder.setView(view).setTitle(getString(R.string.category_edit));
@@ -1046,6 +1155,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogCategoryDel() {
         view = inflater.inflate(R.layout.dialog_category_del, null);
 
@@ -1064,17 +1174,19 @@ public class UserDialogFragment extends DialogFragment {
             selectedSubId = categorySubs.get(0).getId();
         }
 
-        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_category_main);
-        adapter2 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_category_sub);
-        spinner_main.setAdapter(adapter1);
-        spinner_sub.setAdapter(adapter2);
+        //noinspection ConstantConditions
+        adapter_category_main = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_category_main);
+        //noinspection ConstantConditions
+        adapter_category_sub = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_category_sub);
+        spinner_main.setAdapter(adapter_category_main);
+        spinner_sub.setAdapter(adapter_category_sub);
 
         spinner_main.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedMainId = categoryMains.get(i).getId();
                 updateCategorySubList();
-                adapter2.notifyDataSetChanged();
+                adapter_category_sub.notifyDataSetChanged();
             }
 
             @Override
@@ -1099,9 +1211,9 @@ public class UserDialogFragment extends DialogFragment {
             public void onClick(View view) {
                 ir.deleteCategoryMain("_id",new String[] {String.valueOf(selectedMainId)});
                 updateCategoryMainList(0);
+                adapter_category_main.notifyDataSetChanged();
                 updateCategorySubList();
-                adapter1.notifyDataSetChanged();
-                adapter2.notifyDataSetChanged();
+                adapter_category_sub.notifyDataSetChanged();
             }
         });
         button_sub.setOnClickListener(new View.OnClickListener() {
@@ -1109,9 +1221,9 @@ public class UserDialogFragment extends DialogFragment {
             public void onClick(View view) {
                 ir.deleteCategorySub("_id",new String[] {String.valueOf(selectedSubId)});
                 updateCategoryMainList(0);
+                adapter_category_main.notifyDataSetChanged();
                 updateCategorySubList();
-                adapter1.notifyDataSetChanged();
-                adapter2.notifyDataSetChanged();
+                adapter_category_sub.notifyDataSetChanged();
             }
         });
 
@@ -1130,6 +1242,7 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
 
+    @SuppressLint("InflateParams")
     private void dialogCardAdd() {
         view = inflater.inflate(R.layout.dialog_card_add, null);
 
@@ -1139,18 +1252,18 @@ public class UserDialogFragment extends DialogFragment {
         final EditText editText_date = view.findViewById(R.id.editText_dlg_card_add_date);
         Spinner spinner_account = view.findViewById(R.id.spinner_dlg_card_add_account);
 
-        int position = 0;
-        updateAccountList();
-        if(selectedId.isEmpty()) {
+        int position;
+        updateAccountList(ir.getCurrentGroup());
+        if(selectedAccountId < 0) {
             selectedAccountId = accounts.get(0).getId();
             position = 0;
         }
         else {
-            selectedAccountId = ir.getIncome(selectedId).getAccount();
             position = findAccount(selectedAccountId);
         }
-        adapter3 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_account);
-        spinner_account.setAdapter(adapter3);
+        //noinspection ConstantConditions
+        adapter_account = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_account);
+        spinner_account.setAdapter(adapter_account);
         spinner_account.setSelection(position);
         spinner_account.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -1184,6 +1297,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogCardEdit() {
         view = inflater.inflate(R.layout.dialog_card_edit, null);
 
@@ -1197,8 +1311,9 @@ public class UserDialogFragment extends DialogFragment {
 
         updateCardList();
 
-        adapter3 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_card);
-        spinner_card.setAdapter(adapter3);
+        //noinspection ConstantConditions
+        adapter_card = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_card);
+        spinner_card.setAdapter(adapter_card);
 
         spinner_card.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -1219,19 +1334,18 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-
-        int position = 0;
-        updateAccountList();
-        if(selectedId.isEmpty()) {
+        int position;
+        updateAccountList(ir.getCurrentGroup());
+        if(selectedAccountId < 0) {
             selectedAccountId = accounts.get(0).getId();
             position = 0;
         }
         else {
-            selectedAccountId = ir.getIncome(selectedId).getAccount();
             position = findAccount(selectedAccountId);
         }
-        adapter4 = new ArrayAdapter<String>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_account);
-        spinner_account.setAdapter(adapter4);
+        //noinspection ConstantConditions
+        adapter_account = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_account);
+        spinner_account.setAdapter(adapter_account);
         spinner_account.setSelection(position);
         spinner_account.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -1249,12 +1363,14 @@ public class UserDialogFragment extends DialogFragment {
         builder.setPositiveButton(getString(R.string.finish),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                String name = editText_name.getText().toString();
-                String num = editText_num.getText().toString();
-                String com = editText_com.getText().toString();
-                String date = editText_date.getText().toString();
+                Card card = ir.getCard(selectedCardId);
+                card.setName(editText_name.getText().toString());
+                card.setNumber(editText_num.getText().toString());
+                card.setCompany(editText_com.getText().toString());
+                card.setDrawDate(Integer.parseInt(editText_date.getText().toString()));
+                card.setAccount(selectedAccountId);
 
-                ir.updateCard(selectedCardId,name,num,com,Integer.parseInt(date),selectedAccountId);
+                ir.updateCard(card);
                 listener.onWorkComplete(null);
             }
         });
@@ -1265,6 +1381,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
     }
+    @SuppressLint("InflateParams")
     private void dialogCardDel() {
         view = inflater.inflate(R.layout.dialog_listview, null);
 
@@ -1272,8 +1389,9 @@ public class UserDialogFragment extends DialogFragment {
 
         updateCardList();
 
-        adapter1 = new ArrayAdapter<>(getActivity(),R.layout.support_simple_spinner_dropdown_item, lists_card);
-        list.setAdapter(adapter1);
+        //noinspection ConstantConditions
+        adapter_card = new ArrayAdapter<>(null,R.layout.support_simple_spinner_dropdown_item, lists_card);
+        list.setAdapter(adapter_card);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -1297,6 +1415,15 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
 
+    private void updateGroupList() {
+        lists_group.clear();
+
+        if(groups.isEmpty()) return;
+
+        for (int i = 0; i < groups.size(); i++) {
+            lists_group.add(groups.get(i).getName());
+        }
+    }
     private void updateCategoryMainList(int kind) {
         lists_category_main.clear();
 
@@ -1318,18 +1445,18 @@ public class UserDialogFragment extends DialogFragment {
             lists_category_sub.add(categorySubs.get(i).getName());
         }
     }
-    private void updateAccountList() {
+    private void updateAccountList(int id_group) {
         String str;
         Account account;
 
         lists_account.clear();
-        accounts = ir.getAccounts();
+        accounts = ir.getAccounts(id_group);
 
         if(accounts.isEmpty()) return;
 
         for (int i = 0; i < accounts.size(); i++) {
             account = accounts.get(i);
-            str = account.getNumber() + " " + account.getInstitute() + " " + account.getDiscription();
+            str = account.getNumber() + " " + account.getInstitute() + " " + account.getDescription();
             lists_account.add(str);
         }
     }

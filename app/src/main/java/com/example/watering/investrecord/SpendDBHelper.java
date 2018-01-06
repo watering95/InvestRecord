@@ -6,7 +6,7 @@ import android.content.Context;
  * Created by watering on 17. 10. 21.
  */
 
-@SuppressWarnings({"ALL"})
+@SuppressWarnings("DefaultFileTemplate")
 class SpendDBHelper extends DBHelper {
 
     public SpendDBHelper(Context context) {
