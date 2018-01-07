@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,6 +23,7 @@ public class IRResolver {
     private ContentResolver cr;
     private static int currentGroup=-1;
     private static int currentAccount=-1;
+    private static final String TAG = "InvestRecord";
 
     private static final int CODE_GROUP = 0;
     private static final int CODE_ACCOUNT = 1;
@@ -413,7 +415,12 @@ public class IRResolver {
         ContentValues cv = new ContentValues();
 
         cv.put("name",name);
-        cr.insert(Uri.parse(URI_GROUP),cv);
+
+        try {
+            cr.insert(Uri.parse(URI_GROUP), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB 추가 error");
+        }
     }
     public void insertAccount(String institute, String number, String description) {
 
@@ -426,7 +433,11 @@ public class IRResolver {
         cv.put("description",description);
         cv.put("id_group",currentGroup);
 
-        cr.insert(Uri.parse(URI_ACCOUNT),cv);
+        try {
+            cr.insert(Uri.parse(URI_ACCOUNT), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB 추가 error");
+        }
     }
     public void insertInfoIO(String date, int input, int output, int income, int spend_cash, int spend_card, int evaluation) {
 
@@ -443,8 +454,12 @@ public class IRResolver {
         cv.put("spend_card",spend_card);
         cv.put("evaluation",evaluation);
 
-        cr.insert(Uri.parse(URI_INFO_IO),cv);
-        modifyInfoDiary(0,date);
+        try {
+            cr.insert(Uri.parse(URI_INFO_IO), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB 추가 error");
+            modifyInfoDiary(0,date);
+        }
     }
     public void insertInfoIO(Info_IO io) {
 
@@ -461,23 +476,37 @@ public class IRResolver {
         cv.put("spend_card",io.getSpendCard());
         cv.put("evaluation",io.getEvaluation());
 
-        cr.insert(Uri.parse(URI_INFO_IO),cv);
-        modifyInfoDiary(0,io.getDate());
+        try {
+            cr.insert(Uri.parse(URI_INFO_IO), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB 추가 error");
+            modifyInfoDiary(0,io.getDate());
+        }
     }
 
     public void insertCategoryMain(String name, String kind) {
         ContentValues cv = new ContentValues();
 
-        cv.put("name",name);
-        cv.put("kind",kind);
-        cr.insert(Uri.parse(URI_CATEGORY_MAIN),cv);
+        cv.put("name", name);
+        cv.put("kind", kind);
+
+        try {
+            cr.insert(Uri.parse(URI_CATEGORY_MAIN), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB 추가 error");
+        }
     }
     public void insertCategorySub(String name, int main) {
         ContentValues cv = new ContentValues();
 
         cv.put("name",name);
         cv.put("id_main",main);
-        cr.insert(Uri.parse(URI_CATEGORY_SUB),cv);
+
+        try {
+            cr.insert(Uri.parse(URI_CATEGORY_SUB), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB insert error");
+        }
     }
     public void insertCard(String name, String num, String com, int date, int id_account) {
         ContentValues cv = new ContentValues();
@@ -487,7 +516,12 @@ public class IRResolver {
         cv.put("company",com);
         cv.put("date_draw",date);
         cv.put("id_account",id_account);
-        cr.insert(Uri.parse(URI_CARD),cv);
+
+        try {
+            cr.insert(Uri.parse(URI_CARD), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB insert error");
+        }
     }
     public void insertSpend(String code, String details, String date, int amount, int id_category) {
         ContentValues cv = new ContentValues();
@@ -498,7 +532,11 @@ public class IRResolver {
         cv.put("date_use",date);
         cv.put("amount",amount);
 
-        cr.insert(Uri.parse(URI_SPEND),cv);
+        try {
+            cr.insert(Uri.parse(URI_SPEND),cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB insert error");
+        }
     }
     public void insertSpendCard(String code, int id_card) {
         ContentValues cv = new ContentValues();
@@ -506,7 +544,11 @@ public class IRResolver {
         cv.put("spend_code",code);
         cv.put("id_card",id_card);
 
-        cr.insert(Uri.parse(URI_SPEND_CARD),cv);
+        try {
+            cr.insert(Uri.parse(URI_SPEND_CARD), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB insert error");
+        }
 
         String date = getSpend(code).getDate();
         Card card = getCard(id_card);
@@ -517,7 +559,13 @@ public class IRResolver {
             io.setSpendCard(sum);
             updateInfoIO(io);
         }
-        else insertInfoIO(date,0,0,0,0,sum,0);
+        else {
+            try {
+                insertInfoIO(date, 0, 0, 0, 0, sum, 0);
+            } catch (Exception e) {
+                Log.e(TAG,"DB insert error");
+            }
+        }
     }
     public void insertSpendCash(String code, int id_account) {
         ContentValues cv = new ContentValues();
@@ -546,7 +594,11 @@ public class IRResolver {
         cv.put("details",details);
         cv.put("amount",amount);
 
-        cr.insert(Uri.parse(URI_INCOME),cv);
+        try {
+            cr.insert(Uri.parse(URI_INCOME), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB insert error");
+        }
     }
 
     private void insertInfoDairy(String date, int principal, double rate) {
@@ -560,7 +612,11 @@ public class IRResolver {
         cv.put("principal",principal);
         cv.put("rate",rate);
 
-        cr.insert(Uri.parse(URI_INFO_DAIRY),cv);
+        try {
+            cr.insert(Uri.parse(URI_INFO_DAIRY), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB insert error");
+        }
     }
 
     public void deleteAll() {
@@ -619,7 +675,11 @@ public class IRResolver {
 
         cv.put("name",group.getName());
 
-        cr.update(Uri.parse(URI_GROUP),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_GROUP), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
     }
     public void updateAccount(int id, String institute, String account, String description) {
         ContentValues cv = new ContentValues();
@@ -630,7 +690,11 @@ public class IRResolver {
         cv.put("number",account);
         cv.put("description",description);
 
-        cr.update(Uri.parse(URI_ACCOUNT),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_ACCOUNT), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
     }
     public void updateInfoIO(Info_IO io) {
         ContentValues cv = new ContentValues();
@@ -646,17 +710,25 @@ public class IRResolver {
         cv.put("spend_card",io.getSpendCard());
         cv.put("evaluation",io.getEvaluation());
 
-        cr.update(Uri.parse(URI_INFO_IO),cv,where,selectionArgs);
-        modifyInfoDiary(1,io.getDate());
+        try {
+            cr.update(Uri.parse(URI_INFO_IO), cv, where, selectionArgs);
+            modifyInfoDiary(1, io.getDate());
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
     }
     public void updateCategoryMain(int id, String name) {
         ContentValues cv = new ContentValues();
         String where = "_id";
-        String[] selectionArgs = new String[] {String.valueOf(id)};
+        String[] selectionArgs = new String[]{String.valueOf(id)};
 
-        cv.put("name",name);
+        cv.put("name", name);
 
-        cr.update(Uri.parse(URI_CATEGORY_MAIN),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_CATEGORY_MAIN), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG, "DB update error");
+        }
     }
     public void updateCategorySub(int id, String name, int main_id) {
         ContentValues cv = new ContentValues();
@@ -666,7 +738,11 @@ public class IRResolver {
         cv.put("name",name);
         cv.put("main_id",main_id);
 
-        cr.update(Uri.parse(URI_GROUP),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_GROUP), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
     }
     public void updateCard(Card card) {
         ContentValues cv = new ContentValues();
@@ -679,7 +755,11 @@ public class IRResolver {
         cv.put("date_draw",card.getDrawDate());
         cv.put("id_account",card.getAccount());
 
-        cr.update(Uri.parse(URI_CARD),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_CARD), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
     }
     public void updateSpend(int id, String code, String details, String date, int amount, int id_category) {
         ContentValues cv = new ContentValues();
@@ -692,7 +772,11 @@ public class IRResolver {
         cv.put("id_sub",id_category);
         cv.put("spend_code",code);
 
-        cr.update(Uri.parse(URI_SPEND),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_SPEND), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
     }
     public void updateSpendCard(int id, String code, int id_card) {
         ContentValues cv = new ContentValues();
@@ -702,7 +786,11 @@ public class IRResolver {
         cv.put("spend_code",code);
         cv.put("id_card",id_card);
 
-        cr.update(Uri.parse(URI_SPEND_CARD),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_SPEND_CARD), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
 
         String date = getSpend(code).getDate();
         Card card = getCard(id_card);
@@ -712,8 +800,13 @@ public class IRResolver {
             io.setSpendCard(sum);
             updateInfoIO(io);
         }
-        else insertInfoIO(date,0,0,0,0,sum,0);
-
+        else {
+            try {
+                insertInfoIO(date, 0, 0, 0, 0, sum, 0);
+            } catch (Exception e) {
+                Log.e(TAG, "DB update error");
+            }
+        }
     }
     public void updateSpendCash(int id, String code, int id_account) {
         ContentValues cv = new ContentValues();
@@ -723,7 +816,11 @@ public class IRResolver {
         cv.put("spend_code",code);
         cv.put("id_account",id_account);
 
-        cr.update(Uri.parse(URI_SPEND_CASH),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_SPEND_CASH), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
     }
     public void updateIncome(int id, String details, String date, int id_account, int id_category_sub, int amount) {
         ContentValues cv = new ContentValues();
@@ -736,7 +833,11 @@ public class IRResolver {
         cv.put("id_sub",id_category_sub);
         cv.put("id_account",id_account);
 
-        cr.update(Uri.parse(URI_INCOME),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_INCOME),cv,where,selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
     }
 
     private void updateInfoDairy(int id, String date, int principal, double rate) {
@@ -749,7 +850,11 @@ public class IRResolver {
         cv.put("principal",principal);
         cv.put("rate",String.format(Locale.getDefault(),"%.2f",rate));
 
-        cr.update(Uri.parse(URI_INFO_DAIRY),cv,where,selectionArgs);
+        try {
+            cr.update(Uri.parse(URI_INFO_DAIRY), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
     }
 
     public void setCurrentGroup(int group) {
