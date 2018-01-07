@@ -456,9 +456,9 @@ public class IRResolver {
 
         try {
             cr.insert(Uri.parse(URI_INFO_IO), cv);
+            modifyInfoDiary(0,date);
         } catch (Exception e) {
             Log.e(TAG,"DB 추가 error");
-            modifyInfoDiary(0,date);
         }
     }
     public void insertInfoIO(Info_IO io) {
@@ -478,9 +478,9 @@ public class IRResolver {
 
         try {
             cr.insert(Uri.parse(URI_INFO_IO), cv);
+            modifyInfoDiary(0,io.getDate());
         } catch (Exception e) {
             Log.e(TAG,"DB 추가 error");
-            modifyInfoDiary(0,io.getDate());
         }
     }
 
@@ -609,7 +609,7 @@ public class IRResolver {
 
         cv.put("id_account", currentAccount);
         cv.put("date", date);
-        cv.put("principal",principal);
+        cv.put("principal", principal);
         cv.put("rate",rate);
 
         try {
@@ -911,8 +911,8 @@ public class IRResolver {
                     dairy.setId(cursor.getInt(0));
                     dairy.setDate(cursor.getString(1));
                     dairy.setPrincipal(cursor.getInt(2));
-                    dairy.setRate(cursor.getDouble(4));
-                    dairy.setAccount(cursor.getInt(5));
+                    dairy.setRate(cursor.getDouble(3));
+                    dairy.setAccount(cursor.getInt(4));
 
                     dairies.add(dairy);
                     break;
@@ -1061,7 +1061,8 @@ public class IRResolver {
         List<Info_Dairy> daires = getInfoDaires();
 
         try {
-            Date date;
+            @SuppressWarnings("UnusedAssignment")
+            Date date = df.parse(daires.get(index).getDate());
 
             do {
                 txtDate = daires.get(index).getDate();

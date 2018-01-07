@@ -13,7 +13,7 @@ class Info_DairyDBHelper extends DBHelper {
         super(context);
 
         TABLE_NAME = "tbl_Info_Dairy";
-        COLUMNS = new String [] {"date TEXT", "principal INTEGER", "before INTEGER","rate REAL",
+        COLUMNS = new String [] {"date TEXT", "principal INTEGER", "rate REAL",
                 "id_account INTEGER"};
     }
 }
