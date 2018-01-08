@@ -96,7 +96,7 @@ public class Fragment2 extends Fragment {
 
     private void updateInfoLists() {
         lists.clear();
-        ArrayList<Info_Dairy> daires = (ArrayList<Info_Dairy>) ir.getInfoDaires();
+        ArrayList<Info_Dairy> daires = (ArrayList<Info_Dairy>) ir.getInfoDaires(ir.getCurrentAccount());
         for(int i = 0; i < daires.size(); i++) {
             Info_IO io;
             Info_Dairy dairy;

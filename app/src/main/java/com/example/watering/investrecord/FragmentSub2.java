@@ -182,7 +182,7 @@ public class FragmentSub2 extends Fragment {
 
         ir.insertCategoryMain("가족행복비",spend);
         id_main = ir.getCategoryMainId("가족행복비");
-        ir.insertCategorySub("용돈",id_main);
+        ir.insertCategorySub("용돈지급",id_main);
         ir.insertCategorySub("여행비",id_main);
 
         ir.insertCategoryMain("사회활동비",spend);

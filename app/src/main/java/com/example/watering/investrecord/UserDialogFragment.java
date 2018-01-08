@@ -61,6 +61,8 @@ public class UserDialogFragment extends DialogFragment {
 
     private String selectedDate;
     private String selectedSpendCode = "";
+    private static final int KIND_ALL = 0, KIND_SPEND = 1, KIND_INCOME = 2;
+    private static final int TYPE_CASH = 1, TYPE_CARD = 2;
     private int type_dialog, type_spend;
     private boolean exist;
     private final int schedule = 0;
@@ -70,6 +72,8 @@ public class UserDialogFragment extends DialogFragment {
     private int id_income, id_spend, id_spend_cash, id_spend_card;
     private int selectedId = -1;
     private UserListener listener;
+
+    DecimalFormat df = new DecimalFormat("#,###");
 
     public interface UserListener {
         void onWorkComplete(String str);
@@ -177,7 +181,7 @@ public class UserDialogFragment extends DialogFragment {
 
             id_spend = spend.getId();
             editText_date.setText(spend.getDate());
-            editText_amount.setText(String.valueOf(spend.getAmount()));
+            editText_amount.setText(df.format(spend.getAmount()));
             editText_details.setText(spend.getDetails());
         }
 
@@ -197,7 +201,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        updateCategoryMainList(1);
+        updateCategoryMainList(KIND_SPEND);
         if(categoryMains.size() > 0) {
             if(selectedSpendCode.isEmpty()) {
                 if(categoryMains.size() > 0) selectedMainId = categoryMains.get(0).getId();
@@ -261,16 +265,16 @@ public class UserDialogFragment extends DialogFragment {
 
         if(selectedSpendCode.isEmpty()) {
             position = 0;
-            type_spend = 1;
+            type_spend = TYPE_CASH;
         }
         else {
             if(selectedSpendCode.charAt(0) == '1') {
                 position = 0;
-                type_spend = 1;
+                type_spend = TYPE_CASH;
             }
             else {
                 position = 1;
-                type_spend = 2;
+                type_spend = TYPE_CARD;
             }
         }
 
@@ -299,7 +303,7 @@ public class UserDialogFragment extends DialogFragment {
         });
 
         updateAccountList(ir.getCurrentGroup());
-        if(type_spend == 1) {
+        if(type_spend == TYPE_CASH) {
             if(selectedSpendCode.isEmpty()) {
                 if(accounts.size() > 0) selectedAccountId = accounts.get(0).getId();
                 position = 0;
@@ -315,7 +319,7 @@ public class UserDialogFragment extends DialogFragment {
         adapter_account = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item, lists_account);
 
         updateCardList();
-        if(type_spend == 2) {
+        if(type_spend == TYPE_CARD) {
             if (selectedSpendCode.isEmpty()) {
                 if(cards.size() > 0) selectedCardId = cards.get(0).getId();
                 position = 0;
@@ -329,11 +333,11 @@ public class UserDialogFragment extends DialogFragment {
         adapter_card = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item, lists_card);
 
         switch(type_spend) {
-            case 1:
+            case TYPE_CASH:
                 spinner_approval_2.setAdapter(adapter_account);
                 if(!adapter_account.isEmpty()) spinner_approval_2.setSelection(position);
                 break;
-            case 2:
+            case TYPE_CARD:
                 spinner_approval_2.setAdapter(adapter_card);
                 if(!adapter_card.isEmpty()) spinner_approval_2.setSelection(position);
                 break;
@@ -372,11 +376,11 @@ public class UserDialogFragment extends DialogFragment {
                 else
                     ir.updateSpend(id_spend, newCode, details, selectedDate, amount, selectedSubId);
                 switch (type_spend) {
-                    case 1:
+                    case TYPE_CASH:
                         if (selectedSpendCode.isEmpty()) ir.insertSpendCash(newCode, selectedAccountId);
                         else ir.updateSpendCash(id_spend_cash, newCode, selectedAccountId);
                         break;
-                    case 2:
+                    case TYPE_CARD:
                         if (selectedSpendCode.isEmpty()) ir.insertSpendCard(newCode, selectedCardId);
                         else ir.updateSpendCard(id_spend_card, newCode, selectedCardId);
                         break;
@@ -411,7 +415,7 @@ public class UserDialogFragment extends DialogFragment {
 
             id_income = income.getId();
             editText_date.setText(income.getDate());
-            editText_amount.setText(String.valueOf(income.getAmount()));
+            editText_amount.setText(df.format(income.getAmount()));
             editText_details.setText(income.getDetails());
         }
 
@@ -431,7 +435,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
-        updateCategoryMainList(2);
+        updateCategoryMainList(KIND_INCOME);
         if(categoryMains.size() > 0) {
             if (selectedId < 0) {
                 if(categoryMains.size() > 0) selectedMainId = categoryMains.get(0).getId();
@@ -711,7 +715,9 @@ public class UserDialogFragment extends DialogFragment {
         builder.setNegativeButton(getString(R.string.delete), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ir.deleteInfoIO("date",new String[] {selectedDate});
+                int id = ir.getInfoIO(ir.getCurrentAccount(),selectedDate).getId();
+
+                ir.deleteInfoIO("_id",new String[] {String.valueOf(id),selectedDate});
                 mActivity.fragmentSub1.CallUpdate2();
             }
         });
@@ -863,20 +869,25 @@ public class UserDialogFragment extends DialogFragment {
 
                 // 출금계좌
                 Info_IO io = ir.getInfoIO(selectedAccountIdFrom,selectedDate);
-                io.setOutput(io.getOutput() + amount);
 
                 //noinspection ConstantConditions
-                if(io != null) ir.updateInfoIO(io);
-                else ir.insertInfoIO(selectedDate,0,amount,0,0,0,0);
+                if(io != null) {
+                    io.setOutput(io.getOutput() + amount);
+                    ir.updateInfoIO(io);
+                }
+                else ir.insertInfoIO(selectedAccountIdFrom, selectedDate,0,amount,0,0,0,0);
 
                 // 입금계좌
                 io = ir.getInfoIO(selectedAccountIdTo,selectedDate);
-                io.setOutput(io.getInput() + amount);
 
                 //noinspection ConstantConditions
-                if(io != null) ir.updateInfoIO(io);
-                else ir.insertInfoIO(selectedDate,amount,0,0,0,0,0);
+                if(io != null) {
+                    io.setOutput(io.getInput() + amount);
+                    ir.updateInfoIO(io);
+                }
+                else ir.insertInfoIO(selectedAccountIdTo,selectedDate,amount,0,0,0,0,0);
 
+                mActivity.fragmentSub1.CallUpdate2();
                 listener.onWorkComplete("");
             }
         });
@@ -1003,7 +1014,7 @@ public class UserDialogFragment extends DialogFragment {
         final EditText editText = view.findViewById(R.id.editText_dlg_category_add_name);
         Button button = view.findViewById(R.id.button_dlg_category_add);
 
-        updateCategoryMainList(0);
+        updateCategoryMainList(KIND_SPEND);
 
         //noinspection ConstantConditions
         adapter_category_main = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item, lists_category_main);
@@ -1021,6 +1032,18 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
+        radioGroup1.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.radiobtn_dlg_category_spend) {
+                    updateCategoryMainList(KIND_SPEND);
+                }
+                else {
+                    updateCategoryMainList(KIND_INCOME);
+                }
+                adapter_category_main.notifyDataSetChanged();
+            }
+        });
         if(radioGroup2.getCheckedRadioButtonId() == R.id.radiobtn_dlg_category_main) {
             spinner.setEnabled(false);
         }
@@ -1040,7 +1063,7 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 String name =editText.getText().toString();
-                String kind = "";
+                String kind = null;
                 if(!name.isEmpty()) {
                     if (radioGroup2.getCheckedRadioButtonId() == R.id.radiobtn_dlg_category_main) {
                         switch (radioGroup1.getCheckedRadioButtonId()) {
@@ -1052,7 +1075,7 @@ public class UserDialogFragment extends DialogFragment {
                                 break;
                         }
                         ir.insertCategoryMain(name, kind);
-                        updateCategoryMainList(0);
+                        updateCategoryMainList(KIND_ALL);
                         adapter_category_main.notifyDataSetChanged();
                     } else {
                         ir.insertCategorySub(name, selectedMainId);
@@ -1085,7 +1108,7 @@ public class UserDialogFragment extends DialogFragment {
         final EditText editText_sub = view.findViewById(R.id.editText_dlg_category_edit_sub);
         Button button = view.findViewById(R.id.button_dlg_category_edit);
 
-        updateCategoryMainList(0);
+        updateCategoryMainList(KIND_ALL);
         if(categoryMains.size() > 0) {
             selectedMainId = categoryMains.get(0).getId();
             editText_main.setText(ir.getCategoryMain(selectedMainId).getName());
@@ -1112,6 +1135,8 @@ public class UserDialogFragment extends DialogFragment {
                     editText_main.setText(ir.getCategoryMain(selectedMainId).getName());
                     updateCategorySubList();
                     adapter_category_sub.notifyDataSetChanged();
+                    selectedSubId = categorySubs.get(0).getId();
+                    editText_sub.setText(ir.getCategorySub(selectedSubId).getName());
                 }
             }
 
@@ -1143,7 +1168,7 @@ public class UserDialogFragment extends DialogFragment {
                 ir.updateCategoryMain(selectedMainId,name_main);
                 ir.updateCategorySub(selectedSubId,name_sub,selectedMainId);
 
-                updateCategoryMainList(0);
+                updateCategoryMainList(KIND_ALL);
                 updateCategorySubList();
                 adapter_category_main.notifyDataSetChanged();
                 adapter_category_sub.notifyDataSetChanged();
@@ -1172,7 +1197,7 @@ public class UserDialogFragment extends DialogFragment {
         Button button_main = view.findViewById(R.id.button_dlg_category_del_main);
         Button button_sub = view.findViewById(R.id.button_dlg_category_del_sub);
 
-        updateCategoryMainList(0);
+        updateCategoryMainList(KIND_ALL);
         if(categoryMains.size() > 0) {
             selectedMainId = categoryMains.get(0).getId();
         }
@@ -1218,7 +1243,7 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 ir.deleteCategoryMain("_id",new String[] {String.valueOf(selectedMainId)});
-                updateCategoryMainList(0);
+                updateCategoryMainList(KIND_ALL);
                 adapter_category_main.notifyDataSetChanged();
                 updateCategorySubList();
                 adapter_category_sub.notifyDataSetChanged();
@@ -1228,7 +1253,7 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 ir.deleteCategorySub("_id",new String[] {String.valueOf(selectedSubId)});
-                updateCategoryMainList(0);
+                updateCategoryMainList(KIND_ALL);
                 adapter_category_main.notifyDataSetChanged();
                 updateCategorySubList();
                 adapter_category_sub.notifyDataSetChanged();
