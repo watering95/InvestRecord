@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 @SuppressWarnings("DefaultFileTemplate")
 public class Fragment7 extends Fragment {
 
+    private IRResolver ir;
+
     public Fragment7() {
     }
 
@@ -22,7 +24,20 @@ public class Fragment7 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MainActivity mActivity = (MainActivity) getActivity();
+        final MainActivity mActivity = (MainActivity) getActivity();
+        assert mActivity != null;
+        ir = mActivity.ir;
+
+        final FragmentSub2 fragmentSub2 = mActivity.fragmentSub2;
+
+        FragmentSub2.Callback callbackfromMain = new FragmentSub2.Callback() {
+            @Override
+            public void updateList() {
+
+            }
+        };
+
+        fragmentSub2.setCallback7(callbackfromMain);
     }
 
     @Nullable

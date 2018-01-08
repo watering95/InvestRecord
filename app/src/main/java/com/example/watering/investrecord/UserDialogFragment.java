@@ -381,6 +381,8 @@ public class UserDialogFragment extends DialogFragment {
                         else ir.updateSpendCard(id_spend_card, newCode, selectedCardId);
                         break;
                 }
+
+                mActivity.fragmentSub2.CallUpdate5();
             }
         });
         builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -518,6 +520,7 @@ public class UserDialogFragment extends DialogFragment {
 
                 if(selectedId < 0) ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
                 else ir.updateIncome(id_income,details,selectedDate,selectedAccountId,selectedSubId,amount);
+                mActivity.fragmentSub2.CallUpdate6();
                 listener.onWorkComplete(null);
             }
         });

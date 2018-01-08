@@ -27,6 +27,11 @@ public class FragmentSub2 extends Fragment {
     private View mView;
     private IRResolver ir;
 
+    interface Callback {
+        void updateList();
+    }
+
+    private FragmentSub2.Callback m_callback5,m_callback6,m_callback7;
 
     public FragmentSub2() {
     }
@@ -194,6 +199,7 @@ public class FragmentSub2 extends Fragment {
         ir.insertCategoryMain("정기수입",income);
         id_main = ir.getCategoryMainId("정기수입");
         ir.insertCategorySub("월급",id_main);
+        ir.insertCategorySub("용돈",id_main);
 
         ir.insertCategoryMain("상여금",income);
         id_main = ir.getCategoryMainId("상여금");
@@ -211,5 +217,31 @@ public class FragmentSub2 extends Fragment {
         ir.insertCategorySub("기타",id_main);
 
         Toast.makeText(getContext(),"카테고리 초기화",Toast.LENGTH_SHORT).show();
+    }
+
+    public void setCallback5(FragmentSub2.Callback callback) {
+        this.m_callback5 = callback;
+    }
+    public void setCallback6(FragmentSub2.Callback callback) {
+        this.m_callback6 = callback;
+    }
+    public void setCallback7(FragmentSub2.Callback callback) {
+        this.m_callback7 = callback;
+    }
+
+    public void CallUpdate5() {
+        if(m_callback5 != null) {
+            m_callback5.updateList();
+        }
+    }
+    public void CallUpdate6() {
+        if(m_callback6 != null) {
+            m_callback6.updateList();
+        }
+    }
+    public void CallUpdate7() {
+        if(m_callback7 != null) {
+            m_callback7.updateList();
+        }
     }
 }

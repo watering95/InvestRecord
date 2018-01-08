@@ -118,7 +118,8 @@ public class IRProvider extends ContentProvider {
             case CODE_SPEND_CASH:
                 return DB_spend_cash.query(projection, selection, selectionArgs, sortOrder);
             case CODE_JOIN:
-                @SuppressWarnings("ConstantConditions") SQLiteDatabase db = getContext().openOrCreateDatabase("InvestRecord.db",Context.MODE_PRIVATE,null);
+                @SuppressWarnings("ConstantConditions")
+                SQLiteDatabase db = getContext().openOrCreateDatabase("InvestRecord.db",Context.MODE_PRIVATE,null);
 
                 assert projection != null;
                 String sql = "SELECT " + projection[0] + " WHERE " + selection;

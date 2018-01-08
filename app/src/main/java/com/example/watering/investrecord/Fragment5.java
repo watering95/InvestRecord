@@ -39,6 +39,17 @@ public class Fragment5 extends Fragment {
         mActivity = (MainActivity) getActivity();
         assert mActivity != null;
         ir = mActivity.ir;
+
+        final FragmentSub2 fragmentSub2 = mActivity.fragmentSub2;
+
+        FragmentSub2.Callback callbackfromMain = new FragmentSub2.Callback() {
+            @Override
+            public void updateList() {
+                updateListView();
+            }
+        };
+
+        fragmentSub2.setCallback5(callbackfromMain);
     }
 
     @Nullable

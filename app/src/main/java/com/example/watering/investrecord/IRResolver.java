@@ -309,7 +309,7 @@ public class IRResolver {
         Cursor c;
         Spend spend = new Spend();
 
-        String where = "code=?";
+        String where = "spend_code=?";
         String[] selectionArgs = {code};
 
         c = cr.query(Uri.parse(URI_SPEND), null, where, selectionArgs, null);
@@ -599,6 +599,21 @@ public class IRResolver {
         } catch (Exception e) {
             Log.e(TAG,"DB insert error");
         }
+
+        int sum = getIncomeSum(date, id_account);
+        Info_IO io = getInfoIO(id_account,date);
+
+        if(io != null) {
+            io.setIncome(sum);
+            updateInfoIO(io);
+        }
+        else {
+            try {
+                insertInfoIO(date, 0, 0, sum, 0, 0, 0);
+            } catch (Exception e) {
+                Log.e(TAG,"DB insert error");
+            }
+        }
     }
 
     private void insertInfoDairy(String date, int principal, double rate) {
@@ -821,6 +836,21 @@ public class IRResolver {
         } catch (Exception e) {
             Log.e(TAG,"DB update error");
         }
+
+        String date = getSpend(code).getDate();
+        int sum = getSpendsCashSum(date, id_account);
+        Info_IO io = getInfoIO(id_account,date);
+        if(io != null) {
+            io.setSpendCash(sum);
+            updateInfoIO(io);
+        }
+        else {
+            try {
+                insertInfoIO(date, 0, 0, 0, sum, 0, 0);
+            } catch (Exception e) {
+                Log.e(TAG, "DB update error");
+            }
+        }
     }
     public void updateIncome(int id, String details, String date, int id_account, int id_category_sub, int amount) {
         ContentValues cv = new ContentValues();
@@ -837,6 +867,21 @@ public class IRResolver {
             cr.update(Uri.parse(URI_INCOME),cv,where,selectionArgs);
         } catch (Exception e) {
             Log.e(TAG,"DB update error");
+        }
+
+        int sum = getIncomeSum(date, id_account);
+        Info_IO io = getInfoIO(id_account, date);
+
+        if(io != null) {
+            io.setIncome(sum);
+            updateInfoIO(io);
+        }
+        else {
+            try {
+                insertInfoIO(date, 0, 0, sum, 0, 0, 0);
+            } catch (Exception e) {
+                Log.e(TAG,"DB insert error");
+            }
         }
     }
 
@@ -993,16 +1038,14 @@ public class IRResolver {
         cursor.close();
     }
 
-    private int getSum(String[] column, String selectedDate) {
+    private int getSum(String uri, String[] column, String selectedDate) {
         Cursor c;
 
-        String[] total = {"total(" + column[0] + ") AS SUM"};
+        String[] select = {"total(" + column[0] + ") AS SUM"};
         String where = "date<=? and id_account=?";
-        String[] selectionArgs = new String[]{"",""};
-        selectionArgs[0] = selectedDate;
-        selectionArgs[1] = String.valueOf(currentAccount);
+        String[] selectionArgs = new String[]{selectedDate,String.valueOf(currentAccount)};
 
-        c = cr.query(Uri.parse(URI_INFO_IO), total, where, selectionArgs, null);
+        c = cr.query(Uri.parse(uri), select, where, selectionArgs, null);
         assert c != null;
         c.moveToNext();
 
@@ -1036,6 +1079,23 @@ public class IRResolver {
         String[] select = {"total(A.amount) FROM tbl_spend AS A LEFT JOIN tbl_spend_card AS B ON A.spend_code = B.spend_code"};
 
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
+
+        assert c != null;
+        c.moveToNext();
+
+        int sum = c.getInt(0);
+        c.close();
+
+        return sum;
+    }
+    private int getIncomeSum(String date, int id_account) {
+        Cursor c;
+
+        String[] select = {"total(amount) AS SUM"};
+        String where = "date=? and id_account=?";
+        String[] selectionArgs = new String[]{date,String.valueOf(id_account)};
+
+        c = cr.query(Uri.parse(URI_INCOME), select, where, selectionArgs, null);
 
         assert c != null;
         c.moveToNext();
@@ -1080,11 +1140,11 @@ public class IRResolver {
         int sum_in, sum_out, sum_spend_card, sum_spend_cash, sum_income, principal;
         double rate = 0;
 
-        sum_in = getSum(new String[]{"input"},date);
-        sum_income = getSum(new String[]{"income"},date);
-        sum_out = getSum(new String[]{"output"},date);
-        sum_spend_card = getSum(new String[]{"spend_card"},date);
-        sum_spend_cash = getSum(new String[]{"spend_cash"},date);
+        sum_in = getSum(URI_INFO_IO,new String[]{"input"},date);
+        sum_income = getSum(URI_INFO_IO,new String[]{"income"},date);
+        sum_out = getSum(URI_INFO_IO,new String[]{"output"},date);
+        sum_spend_card = getSum(URI_INFO_IO,new String[]{"spend_card"},date);
+        sum_spend_cash = getSum(URI_INFO_IO,new String[]{"spend_cash"},date);
 
         principal = sum_in + sum_income - sum_out - sum_spend_cash - sum_spend_card;
 
