@@ -367,6 +367,7 @@ public class UserDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 String details = editText_details.getText().toString();
                 int amount = Integer.parseInt(editText_amount.getText().toString());
+                selectedDate = editText_date.getText().toString();
                 List<Spend> spends = ir.getSpends(selectedDate);
                 Calendar today = Calendar.getInstance();
                 String newCode = String.format(Locale.getDefault(), "%d%d%04d%02d%02d%02d", type_spend, schedule, today.get(Calendar.YEAR), today.get(Calendar.MONTH) + 1, today.get(Calendar.DAY_OF_MONTH), spends.size());
@@ -389,9 +390,24 @@ public class UserDialogFragment extends DialogFragment {
                 mActivity.fragmentSub2.CallUpdate5();
             }
         });
-        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                switch (type_spend) {
+                    case TYPE_CASH:
+                        ir.deleteSpendCash("spend_code",new String[] {selectedSpendCode});
+                        break;
+                    case TYPE_CARD:
+                        ir.deleteSpendCard("spend_code",new String[] {selectedSpendCode});
+                        break;
+                }
+
+                mActivity.fragmentSub2.CallUpdate5();
+            }
+        });
+        builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
             }
         });
@@ -521,6 +537,7 @@ public class UserDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 String details = editText_details.getText().toString();
                 int amount = Integer.parseInt(editText_amount.getText().toString());
+                selectedDate = editText_date.getText().toString();
 
                 if(selectedId < 0) ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
                 else ir.updateIncome(id_income,details,selectedDate,selectedAccountId,selectedSubId,amount);
@@ -528,13 +545,19 @@ public class UserDialogFragment extends DialogFragment {
                 listener.onWorkComplete(null);
             }
         });
-        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                ir.deleteIncome("_id",new String[] {String.valueOf(id_income)});
+                mActivity.fragmentSub2.CallUpdate6();
+            }
+        });
+        builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
             }
         });
-
     }
 
     @SuppressLint("InflateParams")
@@ -1041,6 +1064,7 @@ public class UserDialogFragment extends DialogFragment {
                 else {
                     updateCategoryMainList(KIND_INCOME);
                 }
+                selectedMainId = categoryMains.get(0).getId();
                 adapter_category_main.notifyDataSetChanged();
             }
         });

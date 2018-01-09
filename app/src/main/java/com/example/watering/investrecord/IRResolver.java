@@ -485,7 +485,6 @@ public class IRResolver {
             Log.e(TAG,"DB 추가 error");
         }
     }
-
     public void insertCategoryMain(String name, String kind) {
         ContentValues cv = new ContentValues();
 
@@ -668,19 +667,77 @@ public class IRResolver {
     public void deleteCard(String where, String[] args) {
         cr.delete(Uri.parse(URI_CARD),where,args);
     }
-
-    private void deleteSpend(String where, String[] args) {
+    public void deleteSpend(String where, String[] args) {
         cr.delete(Uri.parse(URI_SPEND),where,args);
     }
-    private void deleteSpendCard(String where, String[] args) {
+    public void deleteSpendCard(String where, String[] args) {
+        SpendCard spendCard = getSpendCard(args[0]);
+
+        String date = getSpend(spendCard.getCode()).getDate();
+        Card card = getCard(spendCard.getCard());
+
+        deleteSpend(where, args);
+
         cr.delete(Uri.parse(URI_SPEND_CARD),where,args);
+
+        int sum = getSpendsCardSum(date, card.getAccount());
+        Info_IO io = getInfoIO(card.getAccount(),date);
+
+        if(io != null) {
+            io.setSpendCard(sum);
+            updateInfoIO(io);
+        }
+        else {
+            try {
+                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, 0);
+            } catch (Exception e) {
+                Log.e(TAG,"DB insert error");
+            }
+        }
     }
-    private void deleteSpendCash(String where, String[] args) {
+    public void deleteSpendCash(String where, String[] args) {
+        SpendCash spendCash = getSpendCash(args[0]);
+
+        int id_account = spendCash.getAccount();
+        String date = getSpend(spendCash.getCode()).getDate();
+
+        deleteSpend(where, args);
+
         cr.delete(Uri.parse(URI_SPEND_CASH),where,args);
+
+        int sum = getSpendsCashSum(date,id_account);
+        Info_IO io = getInfoIO(id_account,date);
+
+        if(io != null) {
+            io.setSpendCash(sum);
+            updateInfoIO(io);
+        }
+        else insertInfoIO(getCurrentAccount(), date,0,0,0,sum,0,0);
     }
-    private void deleteIncome(String where, String[] args) {
+    public void deleteIncome(String where, String[] args) {
+        Income income = getIncome(Integer.valueOf(args[0]));
+
+        String date = income.getDate();
+        int id_account = income.getAccount();
+
         cr.delete(Uri.parse(URI_INCOME),where,args);
+
+        int sum = getIncomeSum(date, id_account);
+        Info_IO io = getInfoIO(id_account,date);
+
+        if(io != null) {
+            io.setIncome(sum);
+            updateInfoIO(io);
+        }
+        else {
+            try {
+                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, 0);
+            } catch (Exception e) {
+                Log.e(TAG,"DB insert error");
+            }
+        }
     }
+
     private void deleteInfoDairy() {
         cr.delete(Uri.parse(URI_INFO_DAIRY), null, null);
     }
@@ -784,7 +841,7 @@ public class IRResolver {
         String[] selectionArgs = new String[] {String.valueOf(id)};
 
         cv.put("details",details);
-        cv.put("date",date);
+        cv.put("date_use",date);
         cv.put("amount",amount);
         cv.put("id_sub",id_category);
         cv.put("spend_code",code);
