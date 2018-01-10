@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ public class Fragment1 extends Fragment {
     private int sum_principal;
     private int sum_evaluate;
     private double total_rate;
+    private static final String TAG = "InvestRecord";
 
     public Fragment1() {
     }
@@ -108,6 +110,10 @@ public class Fragment1 extends Fragment {
 
         lists.clear();
         List<Account> accounts = ir.getAccounts(ir.getCurrentGroup());
+        if(accounts.isEmpty()) {
+            Log.i(TAG, "No account");
+            return;
+        }
 
         for(int i = 0; i < accounts.size(); i++) {
             Info_List1 list1 = new Info_List1();

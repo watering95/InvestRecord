@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class Fragment5 extends Fragment {
     private List5Adapter list5Adapter;
     private ArrayList<Spend> spends = new ArrayList<>();
     private final ArrayList<Info_List5> lists = new ArrayList<>();
+    private static final String TAG = "InvestRecord";
 
     public Fragment5() {
     }
@@ -126,6 +128,12 @@ public class Fragment5 extends Fragment {
     private void updateInfoLists() {
         lists.clear();
         spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
+
+        if(spends.isEmpty()) {
+            Log.i(TAG,"No spend");
+            return;
+        }
+
         for(int i = 0; i < spends.size(); i++) {
             Info_List5 list = new Info_List5();
 

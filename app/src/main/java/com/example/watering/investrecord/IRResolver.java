@@ -187,9 +187,7 @@ public class IRResolver {
         Info_IO io = new Info_IO();
 
         String where = "id_account=? and date=?";
-        String[] selectionArgs = new String[]{"",""};
-        selectionArgs[0] = String.valueOf(id_account);
-        selectionArgs[1] = date;
+        String[] selectionArgs = new String[]{String.valueOf(id_account),date};
 
         c = cr.query(Uri.parse(URI_INFO_IO), null, where, selectionArgs, null);
 
@@ -378,6 +376,35 @@ public class IRResolver {
         return spendCard;
     }
 
+    private Info_IO getInfoIO(int id) {
+        Cursor c;
+        Info_IO io = new Info_IO();
+
+        String where = "_id=?";
+        String[] selectionArgs = new String[]{String.valueOf(id)};
+
+        c = cr.query(Uri.parse(URI_INFO_IO), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        io.setId(c.getInt(c.getColumnIndex("_id")));
+        io.setInput(c.getInt(c.getColumnIndex("input")));
+        io.setOutput(c.getInt(c.getColumnIndex("output")));
+        io.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
+        io.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        io.setDate(c.getString(c.getColumnIndex("date")));
+        io.setIncome(c.getInt(c.getColumnIndex("income")));
+        io.setSpendCash(c.getInt(c.getColumnIndex("spend_cash")));
+        io.setSpendCard(c.getInt(c.getColumnIndex("spend_card")));
+
+        c.close();
+
+        return io;
+    }
+
     public Info_Dairy getLastInfoDairy(int id_account) {
         String[] selectionArgs = new String[] {String.valueOf(id_account)};
 
@@ -542,6 +569,19 @@ public class IRResolver {
     public void insertSpendCard(String code, int id_card) {
         ContentValues cv = new ContentValues();
 
+        Card card = getCard(id_card);
+        if(card == null)
+        {
+            Log.i(TAG,"No card");
+            return;
+        }
+
+        Spend spend = getSpend(code);
+        if(spend == null) {
+            Log.i(TAG,"No spend");
+            return;
+        }
+
         cv.put("spend_code",code);
         cv.put("id_card",id_card);
 
@@ -551,8 +591,7 @@ public class IRResolver {
             Log.e(TAG,"DB insert error");
         }
 
-        String date = getSpend(code).getDate();
-        Card card = getCard(id_card);
+        String date = spend.getDate();
         int sum = getSpendsCardSum(date, card.getAccount());
         Info_IO io = getInfoIO(card.getAccount(),date);
 
@@ -570,13 +609,17 @@ public class IRResolver {
     }
     public void insertSpendCash(String code, int id_account) {
         ContentValues cv = new ContentValues();
+        String date = null;
+
+        Spend spend = getSpend(code);
+        if(spend != null) date = spend.getDate();
 
         cv.put("spend_code",code);
         cv.put("id_account",id_account);
 
         cr.insert(Uri.parse(URI_SPEND_CASH),cv);
 
-        String date = getSpend(code).getDate();
+
         int sum = getSpendsCashSum(date,id_account);
         Info_IO io = getInfoIO(id_account,date);
 
@@ -654,10 +697,6 @@ public class IRResolver {
     public void deleteAccount(String where, String[] args) {
         cr.delete(Uri.parse(URI_ACCOUNT),where,args);
     }
-    public void deleteInfoIO(String where, String[] args) {
-        cr.delete(Uri.parse(URI_INFO_IO),where,args);
-        modifyInfoDiary(1, Integer.valueOf(args[0]), args[1]);
-    }
     public void deleteCategoryMain(String where, String[] args) {
         cr.delete(Uri.parse(URI_CATEGORY_MAIN),where,args);
     }
@@ -667,19 +706,31 @@ public class IRResolver {
     public void deleteCard(String where, String[] args) {
         cr.delete(Uri.parse(URI_CARD),where,args);
     }
-    public void deleteSpend(String where, String[] args) {
-        cr.delete(Uri.parse(URI_SPEND),where,args);
-    }
     public void deleteSpendCard(String where, String[] args) {
-        SpendCard spendCard = getSpendCard(args[0]);
 
-        String date = getSpend(spendCard.getCode()).getDate();
+        SpendCard spendCard = getSpendCard(args[0]);
+        if(spendCard == null) {
+            Log.i(TAG,"No spendCard");
+            return;
+        }
+
         Card card = getCard(spendCard.getCard());
+        if(card == null) {
+            Log.i(TAG,"No card");
+            return;
+        }
+
+        Spend spend = getSpend(spendCard.getCode());
+        if(spend == null) {
+            Log.i(TAG,"No spend");
+            return;
+        }
 
         deleteSpend(where, args);
 
         cr.delete(Uri.parse(URI_SPEND_CARD),where,args);
 
+        String date = spend.getDate();
         int sum = getSpendsCardSum(date, card.getAccount());
         Info_IO io = getInfoIO(card.getAccount(),date);
 
@@ -696,15 +747,25 @@ public class IRResolver {
         }
     }
     public void deleteSpendCash(String where, String[] args) {
-        SpendCash spendCash = getSpendCash(args[0]);
 
-        int id_account = spendCash.getAccount();
-        String date = getSpend(spendCash.getCode()).getDate();
+        SpendCash spendCash = getSpendCash(args[0]);
+        if(spendCash == null) {
+            Log.i(TAG,"No spandCash");
+            return;
+        }
+
+        Spend spend = getSpend(spendCash.getCode());
+        if(spend == null) {
+            Log.i(TAG,"No spand");
+        }
 
         deleteSpend(where, args);
 
         cr.delete(Uri.parse(URI_SPEND_CASH),where,args);
 
+        assert spend != null;
+        String date = spend.getDate();
+        int id_account = spendCash.getAccount();
         int sum = getSpendsCashSum(date,id_account);
         Info_IO io = getInfoIO(id_account,date);
 
@@ -716,6 +777,8 @@ public class IRResolver {
     }
     public void deleteIncome(String where, String[] args) {
         Income income = getIncome(Integer.valueOf(args[0]));
+
+        if(income == null) return;
 
         String date = income.getDate();
         int id_account = income.getAccount();
@@ -738,6 +801,27 @@ public class IRResolver {
         }
     }
 
+    private void deleteSpend(String where, String[] args) {
+        cr.delete(Uri.parse(URI_SPEND),where,args);
+    }
+    private void deleteInfoIO(String where, String[] args) {
+        Info_IO io = getInfoIO(Integer.valueOf(args[0]));
+
+        if(io == null) {
+            Log.i(TAG,"The DB is not exist");
+            return;
+        }
+
+        int id_account = io.getAccount();
+        String date = io.getDate();
+
+        try {
+            cr.delete(Uri.parse(URI_INFO_IO), where, args);
+            modifyInfoDiary(1, id_account, date);
+        } catch (Exception e) {
+            Log.e(TAG, "DB delete Error");
+        }
+    }
     private void deleteInfoDairy() {
         cr.delete(Uri.parse(URI_INFO_DAIRY), null, null);
     }
@@ -853,9 +937,23 @@ public class IRResolver {
         }
     }
     public void updateSpendCard(int id, String code, int id_card) {
-        ContentValues cv = new ContentValues();
+
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        Card card = getCard(id_card);
+        if(card == null) {
+            Log.i(TAG,"No card");
+            return;
+        }
+
+        Spend spend = getSpend(code);
+        if(spend == null) {
+            Log.i(TAG,"No spend");
+            return;
+        }
+
+        ContentValues cv = new ContentValues();
 
         cv.put("spend_code",code);
         cv.put("id_card",id_card);
@@ -866,8 +964,7 @@ public class IRResolver {
             Log.e(TAG,"DB update error");
         }
 
-        String date = getSpend(code).getDate();
-        Card card = getCard(id_card);
+        String date = spend.getDate();
         int sum = getSpendsCardSum(date, card.getAccount());
         Info_IO io = getInfoIO(card.getAccount(),date);
         if(io != null) {
@@ -886,6 +983,10 @@ public class IRResolver {
         ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
+        String date = null;
+
+        Spend spend = getSpend(code);
+        if(spend != null) date = spend.getDate();
 
         cv.put("spend_code",code);
         cv.put("id_account",id_account);
@@ -896,7 +997,6 @@ public class IRResolver {
             Log.e(TAG,"DB update error");
         }
 
-        String date = getSpend(code).getDate();
         int sum = getSpendsCashSum(date, id_account);
         Info_IO io = getInfoIO(id_account,date);
         if(io != null) {
@@ -1168,16 +1268,23 @@ public class IRResolver {
     private void modifyInfoDiary(int select, int id_account, String selectedDate) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String txtDate;
-        int evaluation;
+        int evaluation = 0;
         int index = 0;
+        Info_IO io;
 
         if(select == 0) {
-            evaluation = getInfoIO(id_account, selectedDate).getEvaluation();
+            io = getInfoIO(id_account, selectedDate);
+
+            if(io != null) evaluation = io.getEvaluation();
             calInfoDairy(select,0,id_account,selectedDate,evaluation);
             select = 1;
         }
 
         List<Info_Dairy> daires = getInfoDaires(id_account);
+        if(daires.isEmpty()) {
+            Log.i(TAG,"No dairy");
+            return;
+        }
 
         try {
             @SuppressWarnings("UnusedAssignment")
@@ -1186,7 +1293,11 @@ public class IRResolver {
             do {
                 txtDate = daires.get(index).getDate();
                 date = df.parse(txtDate);
-                evaluation = getInfoIO(id_account,txtDate).getEvaluation();
+
+                io = getInfoIO(id_account,txtDate);
+
+                if(io != null) evaluation = io.getEvaluation();
+
                 calInfoDairy(select,daires.get(index).getId(),id_account,txtDate,evaluation);
                 index++;
 

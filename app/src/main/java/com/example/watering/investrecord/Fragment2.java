@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ public class Fragment2 extends Fragment {
     private IRResolver ir;
     private WebView mWeb;
     private final ArrayList<Info_List2> lists = new ArrayList<>();
+    private static final String TAG = "InvestRecord";
 
     public Fragment2() {
     }
@@ -97,6 +99,11 @@ public class Fragment2 extends Fragment {
     private void updateInfoLists() {
         lists.clear();
         ArrayList<Info_Dairy> daires = (ArrayList<Info_Dairy>) ir.getInfoDaires(ir.getCurrentAccount());
+        if(daires.isEmpty()) {
+            Log.i(TAG,"No dairy");
+            return;
+        }
+
         for(int i = 0; i < daires.size(); i++) {
             Info_IO io;
             Info_Dairy dairy;
@@ -105,7 +112,7 @@ public class Fragment2 extends Fragment {
             dairy = daires.get(i);
 
             io = ir.getInfoIO(dairy.getAccount(), dairy.getDate());
-            list.setEvaluation(io.getEvaluation());
+            if(io != null) list.setEvaluation(io.getEvaluation());
             list.setDairy(dairy);
             lists.add(list);
         }
@@ -140,13 +147,13 @@ public class Fragment2 extends Fragment {
                 data = new StringBuilder("[0, 0, 0]\n");
             }
 
-            String accountnumber;
+            String accountnumber = null;
 
             if(lists.isEmpty()) accountnumber = "";
             else {
                 int id_account = lists.get(0).getDairy().getAccount();
                 Account account = ir.getAccount(id_account);
-                accountnumber = account.getNumber();
+                if(account != null) accountnumber = account.getNumber();
             }
 
             String function = "function drawChart() {\n"

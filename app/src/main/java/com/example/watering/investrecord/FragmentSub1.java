@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +31,7 @@ public class FragmentSub1 extends Fragment {
     private View mView;
     private IRResolver ir;
     private ViewPager mFragSub1ViewPager;
+    private static final String TAG = "InvestRecord";
 
     private ArrayAdapter<String> groupAdapter;
     private ArrayAdapter<String> accountAdapter;
@@ -200,8 +202,10 @@ public class FragmentSub1 extends Fragment {
     private void updateGroupList() {
         grouplists.clear();
         groups = ir.getGroups();
-
-        if(groups.isEmpty()) return;
+        if(groups.isEmpty()) {
+            Log.i(TAG, "No group");
+            return;
+        }
 
         for(int i = 0; i < groups.size(); i++) {
             grouplists.add(groups.get(i).getName());
@@ -213,8 +217,10 @@ public class FragmentSub1 extends Fragment {
 
         accountlists.clear();
         accounts = ir.getAccounts(ir.getCurrentGroup());
-
-        if(accounts.isEmpty()) return;
+        if(accounts.isEmpty()) {
+            Log.i(TAG, "No account");
+            return;
+        }
 
         for (int i = 0; i < accounts.size(); i++) {
             account = accounts.get(i);
