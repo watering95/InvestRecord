@@ -179,6 +179,7 @@ public class UserDialogFragment extends DialogFragment {
         int position = 0;
         Spend spend = new Spend();
 
+        // Dialog 초기화
         if(selectedSpendCode.isEmpty()) editText_date.setText(selectedDate);
         else {
             spend = ir.getSpend(selectedSpendCode);
@@ -191,6 +192,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         }
 
+        //날짜 변경 시
         editText_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,6 +209,8 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
+
+        // 메인 카테고리 선택
         updateCategoryMainList(KIND_SPEND);
         if(categoryMains.size() > 0) {
             if(selectedSpendCode.isEmpty()) {
@@ -240,6 +244,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
+        // Sub 카테고리 선택
         updateCategorySubList();
         if (categorySubs.size() > 0) {
             if(selectedSpendCode.isEmpty()) {
@@ -267,6 +272,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
+        // 현금, 카드 선택
         List<String> lists_approval = new ArrayList<>();
         lists_approval.clear();
         lists_approval.add(getString(R.string.cash));
@@ -311,6 +317,7 @@ public class UserDialogFragment extends DialogFragment {
             }
         });
 
+        // 현금 선택 시 계좌 List
         updateAccountList(ir.getCurrentGroup());
         if(type_spend == TYPE_CASH) {
             if(selectedSpendCode.isEmpty()) {
@@ -330,6 +337,7 @@ public class UserDialogFragment extends DialogFragment {
         //noinspection ConstantConditions
         adapter_account = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item, lists_account);
 
+        // 카드 선택 시 카드 List
         updateCardList();
         if(type_spend == TYPE_CARD) {
             if (selectedSpendCode.isEmpty()) {
@@ -381,7 +389,12 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String details = editText_details.getText().toString();
-                int amount = Integer.parseInt(editText_amount.getText().toString());
+                int amount = 0;
+                try {
+                    amount = df.parse(editText_amount.getText().toString()).intValue();
+                } catch (Exception e) {
+                    Log.e(TAG, "parse error");
+                }
                 selectedDate = editText_date.getText().toString();
                 List<Spend> spends = ir.getSpends(selectedDate);
                 Calendar today = Calendar.getInstance();
@@ -394,11 +407,23 @@ public class UserDialogFragment extends DialogFragment {
                 switch (type_spend) {
                     case TYPE_CASH:
                         if (selectedSpendCode.isEmpty()) ir.insertSpendCash(newCode, selectedAccountId);
-                        else ir.updateSpendCash(id_spend_cash, newCode, selectedAccountId);
+                        else {
+                            if(selectedSpendCode.charAt(0) == '1') ir.updateSpendCash(id_spend_cash, newCode, selectedAccountId);
+                            else {
+                                ir.deleteSpendCard("spend_code",new String[] {selectedSpendCode});
+                                ir.insertSpendCash(newCode, selectedAccountId);
+                            }
+                        }
                         break;
                     case TYPE_CARD:
                         if (selectedSpendCode.isEmpty()) ir.insertSpendCard(newCode, selectedCardId);
-                        else ir.updateSpendCard(id_spend_card, newCode, selectedCardId);
+                        else {
+                            if(selectedSpendCode.charAt(0) == '2') ir.updateSpendCard(id_spend_card, newCode, selectedCardId);
+                            else {
+                                ir.deleteSpendCash("spend_code",new String[] {selectedSpendCode});
+                                ir.insertSpendCard(newCode, selectedCardId);
+                            }
+                        }
                         break;
                 }
 
@@ -557,7 +582,12 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String details = editText_details.getText().toString();
-                int amount = Integer.parseInt(editText_amount.getText().toString());
+                int amount = 0;
+                try {
+                    amount = df.parse(editText_amount.getText().toString()).intValue();
+                } catch (Exception e) {
+                    Log.e(TAG, "Parse error");
+                }
                 selectedDate = editText_date.getText().toString();
 
                 if(selectedId < 0) ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
@@ -699,6 +729,15 @@ public class UserDialogFragment extends DialogFragment {
         }
 
         Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
+        Info_IO io_latest = ir.getLatestInfoIO(ir.getCurrentAccount(),selectedDate);
+
+        int evaluation = 0;
+
+        if(io_latest == null) evaluation = io.getEvaluation();
+        else {
+            if(io == null) evaluation = io_latest.getEvaluation();
+            else evaluation = io_latest.getEvaluation() + io.getInput() + io.getIncome() -io.getOutput() - (io.getSpendCard()+io.getSpendCash());
+        }
 
         DecimalFormat df = new DecimalFormat("#,###");
 
@@ -708,7 +747,7 @@ public class UserDialogFragment extends DialogFragment {
             exist = false;
             txtInput.setText("0");
             txtOutput.setText("0");
-            txtEvaluation.setText("0");
+            txtEvaluation.setText(String.valueOf(evaluation));
             txtIncome.setText("0");
             txtSpend.setText("0");
         }
@@ -716,7 +755,7 @@ public class UserDialogFragment extends DialogFragment {
             exist = true;
             txtInput.setText(df.format(io.getInput()));
             txtOutput.setText(df.format(io.getOutput()));
-            txtEvaluation.setText(df.format(io.getEvaluation()));
+            txtEvaluation.setText(df.format(evaluation));
             txtIncome.setText(df.format(io.getIncome()));
             txtSpend.setText(df.format(io.getSpendCard()+io.getSpendCash()));
         }

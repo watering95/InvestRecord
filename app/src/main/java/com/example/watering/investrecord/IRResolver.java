@@ -41,6 +41,7 @@ public class IRResolver {
 
     private final List<Group> groups = new ArrayList<>();
     private final List<Account> accounts = new ArrayList<>();
+    private final List<Info_IO> IOs = new ArrayList<>();
     private final List<Info_Dairy> dairies = new ArrayList<>();
     private final List<CategoryMain> categoryMains = new ArrayList<>();
     private final List<CategorySub> categorySubs = new ArrayList<>();
@@ -413,6 +414,15 @@ public class IRResolver {
         if(dairies.isEmpty()) return null;
         else return dairies.get(0);
     }
+    public Info_IO getLatestInfoIO(int id_account, String date) {
+        String selection = "id_account=? and date<?";
+        String[] selectionArgs = new String[] {String.valueOf(id_account),date};
+
+        IOs.clear();
+        getData(CODE_INFO_IO, URI_INFO_IO, selection,selectionArgs,"date DESC");
+        if(IOs.isEmpty()) return null;
+        else return IOs.get(0);
+    }
     public int getCategoryMainId(String name) {
         Cursor c;
 
@@ -594,7 +604,6 @@ public class IRResolver {
         String date = spend.getDate();
         int sum = getSpendsCardSum(date, card.getAccount());
         Info_IO io = getInfoIO(card.getAccount(),date);
-
         if(io != null) {
             io.setSpendCard(sum);
             updateInfoIO(io);
@@ -757,6 +766,7 @@ public class IRResolver {
         Spend spend = getSpend(spendCash.getCode());
         if(spend == null) {
             Log.i(TAG,"No spand");
+            return;
         }
 
         deleteSpend(where, args);
@@ -1108,6 +1118,19 @@ public class IRResolver {
                     accounts.add(account);
                     break;
                 case CODE_INFO_IO:
+                    Info_IO io = new Info_IO();
+
+                    io.setId(cursor.getInt(0));
+                    io.setDate(cursor.getString(1));
+                    io.setInput(cursor.getInt(2));
+                    io.setOutput(cursor.getInt(3));
+                    io.setEvaluation(cursor.getInt(4));
+                    io.setSpendCash(cursor.getInt(5));
+                    io.setSpendCard(cursor.getInt(6));
+                    io.setIncome(cursor.getInt(7));
+                    io.setAccount(cursor.getInt(8));
+
+                    IOs.add(io);
                     break;
                 case CODE_INFO_DAIRY:
                     Info_Dairy dairy = new Info_Dairy();
