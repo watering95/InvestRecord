@@ -733,11 +733,9 @@ public class UserDialogFragment extends DialogFragment {
 
         int evaluation = 0;
 
-        if(io_latest == null) evaluation = io.getEvaluation();
-        else {
-            if(io == null) evaluation = io_latest.getEvaluation();
-            else evaluation = io_latest.getEvaluation() + io.getInput() + io.getIncome() -io.getOutput() - (io.getSpendCard()+io.getSpendCash());
-        }
+        if(io != null) evaluation = io.getEvaluation();
+        else if(io_latest != null) evaluation = io_latest.getEvaluation();
+        else evaluation = 0;
 
         DecimalFormat df = new DecimalFormat("#,###");
 
@@ -786,15 +784,20 @@ public class UserDialogFragment extends DialogFragment {
                     }
                 }
 
+                int in = 0, out = 0, evaluation = 0;
                 try {
-                    io.setDate(selectedDate);
-                    io.setInput(df.parse(str_in).intValue());
-                    io.setOutput(df.parse(str_out).intValue());
-                    io.setEvaluation(df.parse(str_eval).intValue());
-                    io.setAccount(ir.getCurrentAccount());
+                    in = df.parse(str_in).intValue();
+                    out = df.parse(str_out).intValue();
+                    evaluation = df.parse(str_eval).intValue();
+                    if(evaluation == 0) evaluation = in - out;
                 } catch (ParseException e) {
-                    Log.e(TAG,"Data Format Pasrse Error");
+                    Log.e(TAG,"Data Format Parse Error");
                 }
+                io.setDate(selectedDate);
+                io.setInput(in);
+                io.setOutput(out);
+                io.setEvaluation(evaluation);
+                io.setAccount(ir.getCurrentAccount());
 
                 if(!exist) ir.insertInfoIO(io);
                 else ir.updateInfoIO(io);

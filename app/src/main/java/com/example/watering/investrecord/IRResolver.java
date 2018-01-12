@@ -602,15 +602,30 @@ public class IRResolver {
         }
 
         String date = spend.getDate();
-        int sum = getSpendsCardSum(date, card.getAccount());
+        int id_account = card.getAccount();
+
         Info_IO io = getInfoIO(card.getAccount(),date);
+        Info_IO io_latest = getLatestInfoIO(card.getAccount(),date);
+
+        int evaluation = 0;
+
+        // io_latest가 없으면 0
+        if(io_latest != null) evaluation = io_latest.getEvaluation();
+        // evaluation에 해당일 input, output값 반영
+        if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+        // evaluation에 해당일 spendcash, spendcard, income 반영
+        evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
+
+        int sum = getSpendsCardSum(date, card.getAccount());
+
         if(io != null) {
             io.setSpendCard(sum);
+            io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, 0);
+                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -628,15 +643,26 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_SPEND_CASH),cv);
 
+        Info_IO io = getInfoIO(id_account,date);
+        Info_IO io_latest = getLatestInfoIO(id_account,date);
+
+        int evaluation = 0;
+
+        // io_latest가 없으면 0
+        if(io_latest != null) evaluation = io_latest.getEvaluation();
+        // evaluation에 해당일 input, output값 반영
+        if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+        // evaluation에 해당일 spendcash, spendcard, income 반영
+        evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
 
         int sum = getSpendsCashSum(date,id_account);
-        Info_IO io = getInfoIO(id_account,date);
 
         if(io != null) {
             io.setSpendCash(sum);
+            io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
-        else insertInfoIO(getCurrentAccount(), date,0,0,0,sum,0,0);
+        else insertInfoIO(getCurrentAccount(), date,0,0,0,sum,0,evaluation);
     }
     public void insertIncome(String details, String date, int id_account, int id_category_sub, int amount) {
         ContentValues cv = new ContentValues();
@@ -655,14 +681,26 @@ public class IRResolver {
 
         int sum = getIncomeSum(date, id_account);
         Info_IO io = getInfoIO(id_account,date);
+        Info_IO io_latest = getLatestInfoIO(id_account,date);
+
+        int evaluation = 0;
+
+        // io_latest가 없으면 0
+        if(io_latest != null) evaluation = io_latest.getEvaluation();
+        // evaluation에 해당일 input, output값 반영
+        if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+        // evaluation에 해당일 spendcash, spendcard, income 반영
+        evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
+
 
         if(io != null) {
             io.setIncome(sum);
+            io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, 0);
+                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -740,16 +778,29 @@ public class IRResolver {
         cr.delete(Uri.parse(URI_SPEND_CARD),where,args);
 
         String date = spend.getDate();
+        int id_account = card.getAccount();
         int sum = getSpendsCardSum(date, card.getAccount());
+
         Info_IO io = getInfoIO(card.getAccount(),date);
+        Info_IO io_latest = getLatestInfoIO(card.getAccount(),date);
+
+        int evaluation = 0;
+
+        // io_latest가 없으면 0
+        if(io_latest != null) evaluation = io_latest.getEvaluation();
+        // evaluation에 해당일 input, output값 반영
+        if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+        // evaluation에 해당일 spendcash, spendcard, income 반영
+        evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
 
         if(io != null) {
             io.setSpendCard(sum);
+            io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, 0);
+                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -777,13 +828,25 @@ public class IRResolver {
         String date = spend.getDate();
         int id_account = spendCash.getAccount();
         int sum = getSpendsCashSum(date,id_account);
+
         Info_IO io = getInfoIO(id_account,date);
+        Info_IO io_latest = getLatestInfoIO(id_account,date);
+
+        int evaluation = 0;
+
+        // io_latest가 없으면 0
+        if(io_latest != null) evaluation = io_latest.getEvaluation();
+        // evaluation에 해당일 input, output값 반영
+        if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+        // evaluation에 해당일 spendcash, spendcard, income 반영
+        evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
 
         if(io != null) {
             io.setSpendCash(sum);
+            io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
-        else insertInfoIO(getCurrentAccount(), date,0,0,0,sum,0,0);
+        else insertInfoIO(getCurrentAccount(), date,0,0,0,sum,0,evaluation);
     }
     public void deleteIncome(String where, String[] args) {
         Income income = getIncome(Integer.valueOf(args[0]));
@@ -797,14 +860,25 @@ public class IRResolver {
 
         int sum = getIncomeSum(date, id_account);
         Info_IO io = getInfoIO(id_account,date);
+        Info_IO io_latest = getLatestInfoIO(id_account,date);
+
+        int evaluation = 0;
+
+        // io_latest가 없으면 0
+        if(io_latest != null) evaluation = io_latest.getEvaluation();
+        // evaluation에 해당일 input, output값 반영
+        if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+        // evaluation에 해당일 spendcash, spendcard, income 반영
+        evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
 
         if(io != null) {
             io.setIncome(sum);
+            io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, 0);
+                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -975,15 +1049,28 @@ public class IRResolver {
         }
 
         String date = spend.getDate();
+        int id_account = card.getAccount();
+        Info_IO io = getInfoIO(id_account,date);
+        Info_IO io_latest = getLatestInfoIO(id_account,date);
+
+        int evaluation = 0;
+
+        // io_latest가 없으면 0
+        if(io_latest != null) evaluation = io_latest.getEvaluation();
+        // evaluation에 해당일 input, output값 반영
+        if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+        // evaluation에 해당일 spendcash, spendcard, income 반영
+        evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
+
         int sum = getSpendsCardSum(date, card.getAccount());
-        Info_IO io = getInfoIO(card.getAccount(),date);
         if(io != null) {
             io.setSpendCard(sum);
+            io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, 0);
+                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, evaluation);
             } catch (Exception e) {
                 Log.e(TAG, "DB update error");
             }
@@ -1007,15 +1094,27 @@ public class IRResolver {
             Log.e(TAG,"DB update error");
         }
 
-        int sum = getSpendsCashSum(date, id_account);
         Info_IO io = getInfoIO(id_account,date);
+        Info_IO io_latest = getLatestInfoIO(id_account,date);
+
+        int evaluation = 0;
+
+        // io_latest가 없으면 0
+        if(io_latest != null) evaluation = io_latest.getEvaluation();
+        // evaluation에 해당일 input, output값 반영
+        if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+        // evaluation에 해당일 spendcash, spendcard, income 반영
+        evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
+
+        int sum = getSpendsCashSum(date, id_account);
         if(io != null) {
             io.setSpendCash(sum);
+            io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, sum, 0, 0);
+                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, sum, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG, "DB update error");
             }
@@ -1040,14 +1139,25 @@ public class IRResolver {
 
         int sum = getIncomeSum(date, id_account);
         Info_IO io = getInfoIO(id_account, date);
+        Info_IO io_latest = getLatestInfoIO(id_account,date);
+
+        int evaluation = 0;
+
+        // io_latest가 없으면 0
+        if(io_latest != null) evaluation = io_latest.getEvaluation();
+        // evaluation에 해당일 input, output값 반영
+        if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+        // evaluation에 해당일 spendcash, spendcard, income 반영
+        evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
 
         if(io != null) {
             io.setIncome(sum);
+            io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, 0);
+                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -1241,7 +1351,10 @@ public class IRResolver {
 
         String where = "A.date_use=? and B.id_account=?";
         String[] selectionArgs = new String[]{date,String.valueOf(id_account)};
-        String[] select = {"total(A.amount) FROM tbl_spend AS A LEFT JOIN tbl_spend_cash AS B ON A.spend_code = B.spend_code"};
+        String[] select = {"total(A.amount) "
+                + "FROM tbl_spend AS A "
+                + "LEFT JOIN tbl_spend_cash AS B "
+                + "ON A.spend_code = B.spend_code"};
 
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
 
@@ -1256,9 +1369,14 @@ public class IRResolver {
     private int getSpendsCardSum(String date, int id_account) {
         Cursor c;
 
-        String where = "A.date_use=? and B.id_account=?";
+        String where = "A.date_use=? and C.id_account=?";
         String[] selectionArgs = new String[]{date,String.valueOf(id_account)};
-        String[] select = {"total(A.amount) FROM tbl_spend AS A LEFT JOIN tbl_spend_card AS B ON A.spend_code = B.spend_code"};
+        String[] select = {"total(A.amount) "
+                + "FROM tbl_spend AS A "
+                + "LEFT JOIN tbl_spend_card AS B "
+                + "ON A.spend_code = B.spend_code "
+                + "LEFT JOIN tbl_card AS C "
+                + "ON B.id_card = C._id"};
 
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
 
