@@ -45,6 +45,7 @@ public class UserDialogFragment extends DialogFragment {
     private ArrayAdapter<String> adapter_category_main, adapter_category_sub;
     private ArrayAdapter<String> adapter_account, adapter_card;
     private ArrayAdapter<String> adapter_account_from, adapter_account_to;
+    private ArrayAdapter<String> adapter_approval_2;
 
     private final List<String> lists_group = new ArrayList<>();
     private final List<String> lists_category_main = new ArrayList<>();
@@ -294,21 +295,28 @@ public class UserDialogFragment extends DialogFragment {
         }
 
         @SuppressWarnings("ConstantConditions")
-        ArrayAdapter<String> adapter_approval = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item,lists_approval);
-        spinner_approval_1.setAdapter(adapter_approval);
-        if(!adapter_approval.isEmpty()) spinner_approval_1.setSelection(position);
+        final ArrayAdapter<String> adapter_approval_1 = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item,lists_approval);
+
+        spinner_approval_1.setAdapter(adapter_approval_1);
+        if(!adapter_approval_1.isEmpty()) spinner_approval_1.setSelection(position);
+
         spinner_approval_1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                int position = 0;
                 type_spend = i+1;
                 switch(type_spend) {
                     case 1:
-                        spinner_approval_2.setAdapter(adapter_account);
+                        adapter_approval_2 = adapter_account;
+                        position = findAccount(selectedAccountId);
                         break;
                     case 2:
-                        spinner_approval_2.setAdapter(adapter_card);
+                        adapter_approval_2 = adapter_card;
+                        position = findCard(selectedCardId);
                         break;
                 }
+                spinner_approval_2.setAdapter(adapter_approval_2);
+                spinner_approval_2.setSelection(position);
             }
 
             @Override
@@ -355,16 +363,17 @@ public class UserDialogFragment extends DialogFragment {
         //noinspection ConstantConditions
         adapter_card = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item, lists_card);
 
-        switch(type_spend) {
+        switch (type_spend) {
             case TYPE_CASH:
-                spinner_approval_2.setAdapter(adapter_account);
-                if(!adapter_account.isEmpty()) spinner_approval_2.setSelection(position);
+                adapter_approval_2 = adapter_account;
                 break;
             case TYPE_CARD:
-                spinner_approval_2.setAdapter(adapter_card);
-                if(!adapter_card.isEmpty()) spinner_approval_2.setSelection(position);
+                adapter_approval_2 = adapter_card;
                 break;
         }
+
+        spinner_approval_2.setAdapter(adapter_approval_2);
+        spinner_approval_2.setSelection(position);
         spinner_approval_2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
