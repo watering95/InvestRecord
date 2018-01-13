@@ -65,6 +65,7 @@ public class IRResolver {
     private static final String URI_SPEND_CARD = "content://watering.investrecord.provider/spend_card";
     private static final String URI_SPEND_CASH = "content://watering.investrecord.provider/spend_cash";
     private static final String URI_JOIN = "content://watering.investrecord.provider/join";
+    private static final String URI_TABLE = "content://watering.investrecord.provider/table";
 
     public void getContentResolver(ContentResolver cr) {
         this.cr = cr;
@@ -773,8 +774,6 @@ public class IRResolver {
             return;
         }
 
-        deleteSpend(where, args);
-
         cr.delete(Uri.parse(URI_SPEND_CARD),where,args);
 
         String date = spend.getDate();
@@ -810,17 +809,15 @@ public class IRResolver {
 
         SpendCash spendCash = getSpendCash(args[0]);
         if(spendCash == null) {
-            Log.i(TAG,"No spandCash");
+            Log.i(TAG,"No spendCash");
             return;
         }
 
         Spend spend = getSpend(spendCash.getCode());
         if(spend == null) {
-            Log.i(TAG,"No spand");
+            Log.i(TAG,"No spend");
             return;
         }
-
-        deleteSpend(where, args);
 
         cr.delete(Uri.parse(URI_SPEND_CASH),where,args);
 
@@ -846,7 +843,7 @@ public class IRResolver {
             io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
-        else insertInfoIO(getCurrentAccount(), date,0,0,0,sum,0,evaluation);
+        else insertInfoIO(id_account, date,0,0,0,sum,0,evaluation);
     }
     public void deleteIncome(String where, String[] args) {
         Income income = getIncome(Integer.valueOf(args[0]));
@@ -884,10 +881,10 @@ public class IRResolver {
             }
         }
     }
-
-    private void deleteSpend(String where, String[] args) {
+    public void deleteSpend(String where, String[] args) {
         cr.delete(Uri.parse(URI_SPEND),where,args);
     }
+
     private void deleteInfoIO(String where, String[] args) {
         Info_IO io = getInfoIO(Integer.valueOf(args[0]));
 
@@ -999,23 +996,6 @@ public class IRResolver {
 
         try {
             cr.update(Uri.parse(URI_CARD), cv, where, selectionArgs);
-        } catch (Exception e) {
-            Log.e(TAG,"DB update error");
-        }
-    }
-    public void updateSpend(int id, String code, String details, String date, int amount, int id_category) {
-        ContentValues cv = new ContentValues();
-        String where = "_id";
-        String[] selectionArgs = new String[] {String.valueOf(id)};
-
-        cv.put("details",details);
-        cv.put("date_use",date);
-        cv.put("amount",amount);
-        cv.put("id_sub",id_category);
-        cv.put("spend_code",code);
-
-        try {
-            cr.update(Uri.parse(URI_SPEND), cv, where, selectionArgs);
         } catch (Exception e) {
             Log.e(TAG,"DB update error");
         }
@@ -1334,7 +1314,7 @@ public class IRResolver {
         Cursor c;
 
         String[] select = {"total(" + column[0] + ") AS SUM"};
-        String where = "date<=? and id_account=?";
+        String where = "date<=? AND id_account=?";
         String[] selectionArgs = new String[]{selectedDate,String.valueOf(id_account)};
 
         c = cr.query(Uri.parse(uri), select, where, selectionArgs, null);
@@ -1349,12 +1329,15 @@ public class IRResolver {
     private int getSpendsCashSum(String date, int id_account) {
         Cursor c;
 
-        String where = "A.date_use=? and B.id_account=?";
-        String[] selectionArgs = new String[]{date,String.valueOf(id_account)};
+        // table이 존재하지 않으면
+        if(checkDBTable("tbl_spend_cash") == 0) return 0;
+
+        String where = "A.date_use=? AND B.id_account=?";
+        String[] selectionArgs = {date,String.valueOf(id_account)};
         String[] select = {"total(A.amount) "
                 + "FROM tbl_spend AS A "
                 + "LEFT JOIN tbl_spend_cash AS B "
-                + "ON A.spend_code = B.spend_code"};
+                + "ON A.spend_code=B.spend_code"};
 
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
 
@@ -1369,14 +1352,17 @@ public class IRResolver {
     private int getSpendsCardSum(String date, int id_account) {
         Cursor c;
 
-        String where = "A.date_use=? and C.id_account=?";
-        String[] selectionArgs = new String[]{date,String.valueOf(id_account)};
+        // table이 존재하지 않으면
+        if(checkDBTable("tbl_spend_card") == 0) return 0;
+
+        String where = "A.date_use=? AND C.id_account=?";
+        String[] selectionArgs = {date,String.valueOf(id_account)};
         String[] select = {"total(A.amount) "
                 + "FROM tbl_spend AS A "
-                + "LEFT JOIN tbl_spend_card AS B "
-                + "ON A.spend_code = B.spend_code "
-                + "LEFT JOIN tbl_card AS C "
-                + "ON B.id_card = C._id"};
+                + "JOIN tbl_spend_card AS B "
+                + "ON A.spend_code=B.spend_code "
+                + "JOIN tbl_card AS C "
+                + "ON B.id_card=C._id"};
 
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
 
@@ -1391,9 +1377,12 @@ public class IRResolver {
     private int getIncomeSum(String date, int id_account) {
         Cursor c;
 
+        // table이 존재하지 않으면
+        if(checkDBTable("tbl_income") == 0) return 0;
+
+        String where = "date=? AND id_account=?";
         String[] select = {"total(amount) AS SUM"};
-        String where = "date=? and id_account=?";
-        String[] selectionArgs = new String[]{date,String.valueOf(id_account)};
+        String[] selectionArgs = {date,String.valueOf(id_account)};
 
         c = cr.query(Uri.parse(URI_INCOME), select, where, selectionArgs, null);
 
@@ -1469,5 +1458,22 @@ public class IRResolver {
                 updateInfoDairy(id, id_account, date, principal, rate);
                 break;
         }
+    }
+    private int checkDBTable(String name) {
+        Cursor c;
+
+        String where = "Name=?";
+        String[] selectionArgs = new String[]{name};
+        String[] select = {"count(*) FROM sqlite_master"};
+
+        c = cr.query(Uri.parse(URI_TABLE), select, where, selectionArgs, null);
+
+        assert c != null;
+        c.moveToNext();
+
+        int result = c.getInt(0);
+        c.close();
+
+        return result;
     }
 }

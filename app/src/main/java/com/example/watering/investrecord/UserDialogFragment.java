@@ -409,33 +409,49 @@ public class UserDialogFragment extends DialogFragment {
                 Calendar today = Calendar.getInstance();
                 String newCode = String.format(Locale.getDefault(), "%d%d%04d%02d%02d%02d", type_spend, schedule, today.get(Calendar.YEAR), today.get(Calendar.MONTH) + 1, today.get(Calendar.DAY_OF_MONTH), spends.size());
 
-                if (selectedSpendCode.isEmpty())
-                    ir.insertSpend(newCode, details, selectedDate, amount, selectedSubId);
-                else
-                    ir.updateSpend(id_spend, newCode, details, selectedDate, amount, selectedSubId);
+                ir.insertSpend(newCode, details, selectedDate, amount, selectedSubId);
+                // 현금 지출인지 카드 지출인지
                 switch (type_spend) {
                     case TYPE_CASH:
+                        // 현금 지출을 새로 입력하는 경우
                         if (selectedSpendCode.isEmpty()) ir.insertSpendCash(newCode, selectedAccountId);
                         else {
-                            if(selectedSpendCode.charAt(0) == '1') ir.updateSpendCash(id_spend_cash, newCode, selectedAccountId);
-                            else {
+                            // 카드에서 현금으로 변경한 경우
+                            if(selectedSpendCode.charAt(0) != '1') {
                                 ir.deleteSpendCard("spend_code",new String[] {selectedSpendCode});
                                 ir.insertSpendCash(newCode, selectedAccountId);
+                            }
+                            // 현금인데 계좌가 변경된 경우
+                            else if(ir.getSpendCash(selectedSpendCode).getAccount() != selectedAccountId) {
+                                ir.deleteSpendCash("spend_code",new String[] {selectedSpendCode});
+                                ir.insertSpendCash(newCode, selectedAccountId);
+                            }
+                            else {
+                                ir.updateSpendCash(id_spend_cash, newCode, selectedAccountId);
                             }
                         }
                         break;
                     case TYPE_CARD:
+                        // 카드 지출을 새로 입력하는 경우
                         if (selectedSpendCode.isEmpty()) ir.insertSpendCard(newCode, selectedCardId);
                         else {
-                            if(selectedSpendCode.charAt(0) == '2') ir.updateSpendCard(id_spend_card, newCode, selectedCardId);
-                            else {
+                            // 현금에서 카드로 변경한 경우
+                            if(selectedSpendCode.charAt(0) != '2') {
                                 ir.deleteSpendCash("spend_code",new String[] {selectedSpendCode});
                                 ir.insertSpendCard(newCode, selectedCardId);
+                            }
+                            // 카드가 변경된 경우
+                            else if(ir.getSpendCard(selectedSpendCode).getCard() != selectedCardId) {
+                                ir.deleteSpendCard("spend_code", new String[] {selectedSpendCode});
+                                ir.insertSpendCard(newCode, selectedCardId);
+                            }
+                            else {
+                                ir.updateSpendCard(id_spend_card, newCode, selectedCardId);
                             }
                         }
                         break;
                 }
-
+                ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
                 mActivity.fragmentSub2.CallUpdate5();
             }
         });
@@ -450,6 +466,7 @@ public class UserDialogFragment extends DialogFragment {
                         ir.deleteSpendCard("spend_code",new String[] {selectedSpendCode});
                         break;
                 }
+                ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
 
                 mActivity.fragmentSub2.CallUpdate5();
             }

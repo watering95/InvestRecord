@@ -59,14 +59,6 @@ class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    protected void beginTransaction() {
-        getWritableDatabase().beginTransaction();
-    }
-    protected void endTransaction() {
-        getWritableDatabase().setTransactionSuccessful();
-        getWritableDatabase().endTransaction();
-    }
-
     void insert(ContentValues values) throws SQLiteException {
         getWritableDatabase().insert(TABLE_NAME, null, values);
     }
@@ -81,7 +73,7 @@ class DBHelper extends SQLiteOpenHelper {
         }
         getWritableDatabase().delete(TABLE_NAME, selection, whereArgs);
     }
-    void update(ContentValues values, String where, String[] selectionArgs) {
+    void update(ContentValues values, String where, String[] selectionArgs) throws SQLiteException {
         String selection = where + "=?";
         getWritableDatabase().update(TABLE_NAME, values, selection, selectionArgs);
     }

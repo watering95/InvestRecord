@@ -30,6 +30,7 @@ public class IRProvider extends ContentProvider {
     private static final String PATH_SPEND_CASH = "spend_cash";
     private static final String PATH_SPEND_SCHEDULE = "spend_schedule";
     private static final String PATH_JOIN = "join";
+    private static final String PATH_TABLE = "table";
 
     private static final int CODE_GROUP = 0;
     private static final int CODE_ACCOUNT = 1;
@@ -44,6 +45,7 @@ public class IRProvider extends ContentProvider {
     private static final int CODE_SPEND_CASH = 10;
     private static final int CODE_SPEND_SCHEDULE = 11;
     private static final int CODE_JOIN = 12;
+    private static final int CODE_TABLE = 13;
 
     private GroupDBHelper DB_group;
     private AccountDBHelper DB_account;
@@ -72,6 +74,7 @@ public class IRProvider extends ContentProvider {
         Matcher.addURI(AUTHORITY,PATH_SPEND_CASH,CODE_SPEND_CASH);
         Matcher.addURI(AUTHORITY,PATH_SPEND_SCHEDULE,CODE_SPEND_SCHEDULE);
         Matcher.addURI(AUTHORITY,PATH_JOIN,CODE_JOIN);
+        Matcher.addURI(AUTHORITY,PATH_TABLE,CODE_TABLE);
     }
 
     public boolean onCreate() {
@@ -118,6 +121,7 @@ public class IRProvider extends ContentProvider {
             case CODE_SPEND_CASH:
                 return DB_spend_cash.query(projection, selection, selectionArgs, sortOrder);
             case CODE_JOIN:
+            case CODE_TABLE:
                 @SuppressWarnings("ConstantConditions")
                 SQLiteDatabase db = getContext().openOrCreateDatabase("InvestRecord.db",Context.MODE_PRIVATE,null);
 
