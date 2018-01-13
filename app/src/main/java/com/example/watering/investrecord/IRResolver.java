@@ -604,8 +604,8 @@ public class IRResolver {
         String date = spend.getDate();
         int id_account = card.getAccount();
 
-        Info_IO io = getInfoIO(card.getAccount(),date);
-        Info_IO io_latest = getLatestInfoIO(card.getAccount(),date);
+        Info_IO io = getInfoIO(id_account,date);
+        Info_IO io_latest = getLatestInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -616,7 +616,7 @@ public class IRResolver {
         // evaluation에 해당일 spendcash, spendcard, income 반영
         evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
 
-        int sum = getSpendsCardSum(date, card.getAccount());
+        int sum = getSpendsCardSum(date, id_account);
 
         if(io != null) {
             io.setSpendCard(sum);
@@ -625,7 +625,7 @@ public class IRResolver {
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, evaluation);
+                insertInfoIO(id_account, date, 0, 0, 0, 0, sum, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -662,7 +662,7 @@ public class IRResolver {
             io.setEvaluation(evaluation);
             updateInfoIO(io);
         }
-        else insertInfoIO(getCurrentAccount(), date,0,0,0,sum,0,evaluation);
+        else insertInfoIO(id_account, date,0,0,0,sum,0,evaluation);
     }
     public void insertIncome(String details, String date, int id_account, int id_category_sub, int amount) {
         ContentValues cv = new ContentValues();
@@ -700,7 +700,7 @@ public class IRResolver {
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, evaluation);
+                insertInfoIO(id_account, date, 0, 0, sum, 0, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -779,10 +779,10 @@ public class IRResolver {
 
         String date = spend.getDate();
         int id_account = card.getAccount();
-        int sum = getSpendsCardSum(date, card.getAccount());
+        int sum = getSpendsCardSum(date, id_account);
 
-        Info_IO io = getInfoIO(card.getAccount(),date);
-        Info_IO io_latest = getLatestInfoIO(card.getAccount(),date);
+        Info_IO io = getInfoIO(id_account,date);
+        Info_IO io_latest = getLatestInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -800,7 +800,7 @@ public class IRResolver {
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, evaluation);
+                insertInfoIO(id_account, date, 0, 0, 0, 0, sum, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -878,7 +878,7 @@ public class IRResolver {
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, evaluation);
+                insertInfoIO(id_account, date, 0, 0, sum, 0, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -1062,7 +1062,7 @@ public class IRResolver {
         // evaluation에 해당일 spendcash, spendcard, income 반영
         evaluation = evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
 
-        int sum = getSpendsCardSum(date, card.getAccount());
+        int sum = getSpendsCardSum(date, id_account);
         if(io != null) {
             io.setSpendCard(sum);
             io.setEvaluation(evaluation);
@@ -1070,7 +1070,7 @@ public class IRResolver {
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, 0, sum, evaluation);
+                insertInfoIO(id_account, date, 0, 0, 0, 0, sum, evaluation);
             } catch (Exception e) {
                 Log.e(TAG, "DB update error");
             }
@@ -1114,7 +1114,7 @@ public class IRResolver {
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, 0, sum, 0, evaluation);
+                insertInfoIO(id_account, date, 0, 0, 0, sum, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG, "DB update error");
             }
@@ -1157,7 +1157,7 @@ public class IRResolver {
         }
         else {
             try {
-                insertInfoIO(getCurrentAccount(), date, 0, 0, sum, 0, 0, evaluation);
+                insertInfoIO(id_account, date, 0, 0, sum, 0, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
