@@ -50,19 +50,18 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FragmentManager fragmentManager;
-    private FragmentTransaction fragmentTransaction;
     public FragmentSub1 fragmentSub1;
     public FragmentSub2 fragmentSub2;
+    public final IRResolver ir = new IRResolver();
 
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
     private DrawerLayout drawerLayout;
 
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
     private DriveId mCurrentDriveId;
     private DriveContents mDriveContents;
-
-    public final IRResolver ir = new IRResolver();
 
     private static final String TAG = "InvestRecord";
 

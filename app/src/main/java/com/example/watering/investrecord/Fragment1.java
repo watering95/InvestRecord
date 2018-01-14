@@ -26,6 +26,7 @@ import java.util.Locale;
 public class Fragment1 extends Fragment {
 
     private View mView;
+    private MainActivity mActivity;
     private TextView mTxtTotalPrincipal;
     private TextView mTxtTotalEvaluate;
     private TextView mTxtTotalRate;
@@ -44,7 +45,7 @@ public class Fragment1 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final MainActivity mActivity = (MainActivity) getActivity();
+        mActivity = (MainActivity) getActivity();
         assert mActivity != null;
         ir = mActivity.ir;
 
@@ -63,7 +64,6 @@ public class Fragment1 extends Fragment {
                 fragmentSub1.CallUpdate2();
             }
         };
-
 
         fragmentSub1.setCallback1(callbackfromMain);
     }
@@ -95,7 +95,9 @@ public class Fragment1 extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                ir.setCurrentAccount(lists.get(position).getAccount().getId());
+                mActivity.fragmentSub1.setPositionAccountSpinner(position);
+                mActivity.fragmentSub1.setTab(1);
             }
         });
     }

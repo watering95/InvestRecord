@@ -28,9 +28,10 @@ import java.util.List;
 @SuppressWarnings("DefaultFileTemplate")
 public class FragmentSub1 extends Fragment {
 
+    private ViewPager mFragSub1ViewPager;
     private View mView;
     private IRResolver ir;
-    private ViewPager mFragSub1ViewPager;
+    private Spinner mAccountSpinner;
     private static final String TAG = "InvestRecord";
 
     private ArrayAdapter<String> groupAdapter;
@@ -158,6 +159,28 @@ public class FragmentSub1 extends Fragment {
         updateGroupSpinner();
         updateAccountSpinner();
     }
+    public void updateGroupSpinner() {
+        updateGroupList();
+        groupAdapter.notifyDataSetChanged();
+        if(groups.isEmpty()) ir.setCurrentGroup(-1);
+        else ir.setCurrentGroup(groups.get(0).getId());
+    }
+    public void updateAccountSpinner() {
+        updateAccountList();
+        accountAdapter.notifyDataSetChanged();
+        if(accounts.isEmpty()) ir.setCurrentAccount(-1);
+        else ir.setCurrentAccount(accounts.get(0).getId());
+
+        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
+        mAccountSpinner.setSelection(0);
+    }
+    public void setPositionAccountSpinner(int position) {
+        mAccountSpinner.setSelection(position);
+    }
+    public void setTab(int position) {
+        mFragSub1ViewPager.setCurrentItem(position);
+    }
+
     private void initGroupSpinner() {
         //noinspection ConstantConditions
         groupAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, grouplists);
@@ -183,7 +206,7 @@ public class FragmentSub1 extends Fragment {
     private void initAccountSpinner() {
         //noinspection ConstantConditions
         accountAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, accountlists);
-        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
+        mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
         mAccountSpinner.setAdapter(accountAdapter);
         mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -227,20 +250,5 @@ public class FragmentSub1 extends Fragment {
             str = account.getNumber() + " " + account.getInstitute() + " " + account.getDescription();
             accountlists.add(str);
         }
-    }
-    public void updateGroupSpinner() {
-        updateGroupList();
-        groupAdapter.notifyDataSetChanged();
-        if(groups.isEmpty()) ir.setCurrentGroup(-1);
-        else ir.setCurrentGroup(groups.get(0).getId());
-    }
-    public void updateAccountSpinner() {
-        updateAccountList();
-        accountAdapter.notifyDataSetChanged();
-        if(accounts.isEmpty()) ir.setCurrentAccount(-1);
-        else ir.setCurrentAccount(accounts.get(0).getId());
-
-        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
-        mAccountSpinner.setSelection(0);
     }
 }
