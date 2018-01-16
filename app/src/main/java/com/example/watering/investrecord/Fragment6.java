@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -68,6 +69,27 @@ public class Fragment6 extends Fragment {
         final EditText editText_date = mView.findViewById(R.id.editText_frag6_date);
 
         selectedDate = mActivity.getToday();
+
+        ImageButton image_btn_backward = mView.findViewById(R.id.image_btn_frag6_date_backward);
+        ImageButton image_btn_forward = mView.findViewById(R.id.image_btn_frag6_date_forward);
+
+        image_btn_backward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDate = mActivity.dateChange(selectedDate, -1);
+                editText_date.setText(selectedDate);
+                updateListView();
+            }
+        });
+
+        image_btn_forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDate = mActivity.dateChange(selectedDate, 1);
+                editText_date.setText(selectedDate);
+                updateListView();
+            }
+        });
 
         editText_date.setText(selectedDate);
         editText_date.setOnClickListener(new View.OnClickListener() {

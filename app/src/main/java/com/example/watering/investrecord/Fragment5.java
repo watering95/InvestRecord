@@ -11,9 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -27,6 +30,7 @@ public class Fragment5 extends Fragment {
     private IRResolver ir;
     private String selectedDate;
     private List5Adapter list5Adapter;
+    private EditText editText_date;
     private ArrayList<Spend> spends = new ArrayList<>();
     private final ArrayList<Info_List5> lists = new ArrayList<>();
     private static final String TAG = "InvestRecord";
@@ -65,9 +69,30 @@ public class Fragment5 extends Fragment {
     }
 
     private void initLayout() {
-        final EditText editText_date = mView.findViewById(R.id.editText_frag5_date);
+        editText_date = mView.findViewById(R.id.editText_frag5_date);
 
         selectedDate = mActivity.getToday();
+
+        ImageButton image_btn_backward = mView.findViewById(R.id.image_btn_frag5_date_backward);
+        ImageButton image_btn_forward = mView.findViewById(R.id.image_btn_frag5_date_forward);
+
+        image_btn_backward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDate = mActivity.dateChange(selectedDate, -1);
+                editText_date.setText(selectedDate);
+                updateListView();
+            }
+        });
+
+        image_btn_forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDate = mActivity.dateChange(selectedDate, 1);
+                editText_date.setText(selectedDate);
+                updateListView();
+            }
+        });
 
         editText_date.setText(selectedDate);
         editText_date.setOnClickListener(new View.OnClickListener() {

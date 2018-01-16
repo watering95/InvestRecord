@@ -141,6 +141,17 @@ public class MainActivity extends AppCompatActivity {
 
         return String.format(Locale.getDefault(), "%04d-%02d-%02d", today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DATE));
     }
+    public String dateChange(String date, int amount) {
+        Calendar calendar = Calendar.getInstance();
+        String year = date.substring(0,4);
+        String month = date.substring(5,7);
+        String day = date.substring(8,10);
+
+        calendar.set(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
+        calendar.add(calendar.DATE,amount);
+
+        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+    }
 
     public void inoutDialog(String selectedDate) {
         UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
