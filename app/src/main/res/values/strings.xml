@@ -81,4 +81,5 @@
     <string name="toast_backup_error">Backup하지 못했습니다.</string>
     <string name="toast_no_account">선택된 계좌가 없습니다.</string>
     <string name="toast_no_amount">이체금액이 없습니다.</string>
+    <string name="toast_same_name">같은 이름이 있습니다.</string>
 </resources>

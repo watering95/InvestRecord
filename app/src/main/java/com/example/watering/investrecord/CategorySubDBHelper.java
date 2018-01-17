@@ -13,6 +13,6 @@ class CategorySubDBHelper extends DBHelper {
         super(context);
 
         TABLE_NAME = "tbl_category_sub";
-        COLUMNS = new String [] {"name TEXT UNIQUE","id_main INTEGER"};
+        COLUMNS = new String [] {"name TEXT","id_main INTEGER"};
     }
 }

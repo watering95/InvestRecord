@@ -264,7 +264,7 @@ public class UserDialogFragment extends DialogFragment {
         spinner_category_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedSubId = categorySubs.get(i).getId();
+                if(categorySubs.size() > 0) selectedSubId = categorySubs.get(i).getId();
             }
 
             @Override
@@ -568,7 +568,7 @@ public class UserDialogFragment extends DialogFragment {
         spinner_category_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedSubId = categorySubs.get(i).getId();
+                if(categorySubs.size() > 0) selectedSubId = categorySubs.get(i).getId();
             }
 
             @Override
@@ -886,7 +886,7 @@ public class UserDialogFragment extends DialogFragment {
         final EditText editText_amount = view.findViewById(R.id.editText_dlg_transfer_amount);
 
         if(groups.size() > 0) {
-            selectedGroupIdFrom = groups.get(0).getId();
+            selectedGroupIdFrom = ir.getCurrentGroup();
             selectedGroupIdTo = groups.get(0).getId();
         }
 
@@ -895,6 +895,7 @@ public class UserDialogFragment extends DialogFragment {
 
         // 출금계좌그룹 선택
         spinnerGroupFrom.setAdapter(adapter_group);
+        spinnerGroupFrom.setSelection(findGroup(selectedGroupIdFrom));
         spinnerGroupFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -932,8 +933,9 @@ public class UserDialogFragment extends DialogFragment {
         accounts_from = accounts;
         //noinspection ConstantConditions
         adapter_account_from = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item,lists_account);
-        if(accounts.size() > 0) selectedAccountIdFrom = accounts.get(0).getId();
+        selectedAccountIdFrom = ir.getCurrentAccount();
         spinnerAccountFrom.setAdapter(adapter_account_from);
+        spinnerAccountFrom.setSelection(findAccount(selectedAccountIdFrom));
         spinnerAccountFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -978,23 +980,45 @@ public class UserDialogFragment extends DialogFragment {
 
                 // 출금계좌
                 Info_IO io = ir.getInfoIO(selectedAccountIdFrom,selectedDate);
+                Info_IO io_latest = ir.getLatestInfoIO(selectedAccountIdFrom,selectedDate);
+
+                int evaluation = 0;
+
+                // io_latest가 없으면 0
+                if(io_latest != null) evaluation = io_latest.getEvaluation();
+                // evaluation에 해당일 input, output값 반영
+                if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+                // evaluation에 해당일 spendcash, spendcard, income 반영
+                evaluation = evaluation - ir.getSpendsCashSum(selectedDate,selectedAccountIdFrom) - ir.getSpendsCardSum(selectedDate,selectedAccountIdFrom) + ir.getIncomeSum(selectedDate,selectedAccountIdFrom);
+                evaluation = evaluation - amount;
 
                 //noinspection ConstantConditions
                 if(io != null) {
                     io.setOutput(io.getOutput() + amount);
+                    io.setEvaluation(evaluation);
                     ir.updateInfoIO(io);
                 }
-                else ir.insertInfoIO(selectedAccountIdFrom, selectedDate,0,amount,0,0,0,0);
+                else ir.insertInfoIO(selectedAccountIdFrom, selectedDate,0,amount,0,0,0,evaluation);
 
                 // 입금계좌
                 io = ir.getInfoIO(selectedAccountIdTo,selectedDate);
+                io_latest = ir.getLatestInfoIO(selectedAccountIdTo,selectedDate);
+
+                // io_latest가 없으면 0
+                if(io_latest != null) evaluation = io_latest.getEvaluation();
+                // evaluation에 해당일 input, output값 반영
+                if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
+                // evaluation에 해당일 spendcash, spendcard, income 반영
+                evaluation = evaluation - ir.getSpendsCashSum(selectedDate,selectedAccountIdFrom) - ir.getSpendsCardSum(selectedDate,selectedAccountIdFrom) + ir.getIncomeSum(selectedDate,selectedAccountIdFrom);
+                evaluation = evaluation + amount;
 
                 //noinspection ConstantConditions
                 if(io != null) {
-                    io.setOutput(io.getInput() + amount);
+                    io.setInput(io.getInput() + amount);
+                    io.setEvaluation(evaluation);
                     ir.updateInfoIO(io);
                 }
-                else ir.insertInfoIO(selectedAccountIdTo,selectedDate,amount,0,0,0,0,0);
+                else ir.insertInfoIO(selectedAccountIdTo,selectedDate,amount,0,0,0,0,evaluation);
 
                 mActivity.fragmentSub1.CallUpdate2();
                 listener.onWorkComplete("");
@@ -1256,7 +1280,7 @@ public class UserDialogFragment extends DialogFragment {
                     if(categoryMain != null) editText_main.setText(categoryMain.getName());
                     updateCategorySubList();
                     adapter_category_sub.notifyDataSetChanged();
-                    selectedSubId = categorySubs.get(0).getId();
+                    if(categorySubs.size() > 0) selectedSubId = categorySubs.get(0).getId();
                     CategorySub categorySub = ir.getCategorySub(selectedSubId);
                     if(categorySub != null) editText_sub.setText(categorySub.getName());
                 }
@@ -1353,7 +1377,7 @@ public class UserDialogFragment extends DialogFragment {
         spinner_sub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedSubId = categorySubs.get(i).getId();
+                if(categorySubs.size() > 0) selectedSubId = categorySubs.get(i).getId();
             }
 
             @Override
@@ -1446,7 +1470,10 @@ public class UserDialogFragment extends DialogFragment {
                 String num = editText_num.getText().toString();
                 String date = editText_date.getText().toString();
 
-                ir.insertCard(name,num,com,Integer.parseInt(date),selectedAccountId);
+                if(checkCategorySubName(name)) {
+                    ir.insertCard(name, num, com, Integer.parseInt(date), selectedAccountId);
+                }
+                else Toast.makeText(getContext(),R.string.toast_same_name,Toast.LENGTH_SHORT).show();
                 listener.onWorkComplete(null);
             }
         });
@@ -1647,6 +1674,16 @@ public class UserDialogFragment extends DialogFragment {
         }
     }
 
+    private int findGroup(int id) {
+        int result = -1;
+
+        if(groups.isEmpty()) return -1;
+
+        for (int i = 0; i < groups.size(); i++) {
+            if(groups.get(i).getId() == id) result = i;
+        }
+        return result;
+    }
     private int findCategoryMain(int id) {
         int result = -1;
 
@@ -1686,5 +1723,17 @@ public class UserDialogFragment extends DialogFragment {
             if(cards.get(i).getId() == id) result = i;
         }
         return result;
+    }
+
+    private boolean checkCategorySubName(String name) {
+        CategorySub categorySub;
+        for (int i = 0; i < categorySubs.size(); i++) {
+            categorySub = categorySubs.get(i);
+            if(categorySub.getCategoryMain() == selectedMainId) {
+                if (categorySub.getName().compareTo(name) == 0) return false;
+            }
+        }
+
+        return true;
     }
 }

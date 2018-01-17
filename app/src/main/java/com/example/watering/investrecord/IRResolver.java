@@ -1310,23 +1310,7 @@ public class IRResolver {
         cursor.close();
     }
 
-    private int getSum(String uri, int id_account, String[] column, String selectedDate) {
-        Cursor c;
-
-        String[] select = {"total(" + column[0] + ") AS SUM"};
-        String where = "date<=? AND id_account=?";
-        String[] selectionArgs = new String[]{selectedDate,String.valueOf(id_account)};
-
-        c = cr.query(Uri.parse(uri), select, where, selectionArgs, null);
-        assert c != null;
-        c.moveToNext();
-
-        int sum = c.getInt(0);
-        c.close();
-
-        return sum;
-    }
-    private int getSpendsCashSum(String date, int id_account) {
+    public int getSpendsCashSum(String date, int id_account) {
         Cursor c;
 
         // table이 존재하지 않으면
@@ -1349,7 +1333,7 @@ public class IRResolver {
 
         return sum;
     }
-    private int getSpendsCardSum(String date, int id_account) {
+    public int getSpendsCardSum(String date, int id_account) {
         Cursor c;
 
         // table이 존재하지 않으면
@@ -1374,7 +1358,7 @@ public class IRResolver {
 
         return sum;
     }
-    private int getIncomeSum(String date, int id_account) {
+    public int getIncomeSum(String date, int id_account) {
         Cursor c;
 
         // table이 존재하지 않으면
@@ -1386,6 +1370,23 @@ public class IRResolver {
 
         c = cr.query(Uri.parse(URI_INCOME), select, where, selectionArgs, null);
 
+        assert c != null;
+        c.moveToNext();
+
+        int sum = c.getInt(0);
+        c.close();
+
+        return sum;
+    }
+
+    private int getSum(String uri, int id_account, String[] column, String selectedDate) {
+        Cursor c;
+
+        String[] select = {"total(" + column[0] + ") AS SUM"};
+        String where = "date<=? AND id_account=?";
+        String[] selectionArgs = new String[]{selectedDate,String.valueOf(id_account)};
+
+        c = cr.query(Uri.parse(uri), select, where, selectionArgs, null);
         assert c != null;
         c.moveToNext();
 

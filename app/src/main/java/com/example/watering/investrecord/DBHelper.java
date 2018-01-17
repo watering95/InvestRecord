@@ -15,7 +15,7 @@ import android.provider.BaseColumns;
 @SuppressWarnings("DefaultFileTemplate")
 class DBHelper extends SQLiteOpenHelper {
 
-    private static final int db_version = 6;
+    private static final int db_version = 7;
     private static final String DB_FILE_NAME = "InvestRecord.db";
     String TABLE_NAME;
     String [] COLUMNS;
