@@ -1378,6 +1378,46 @@ public class IRResolver {
 
         return sum;
     }
+    public int getSpendMonth() {
+        Cursor c;
+
+        // table이 존재하지 않으면
+        if(checkDBTable("tbl_spend") == 0) return 0;
+
+        String where = "date_use BETWEEN date('now','start of month') AND date('now')";
+        String[] select = {"total(amount) AS SUM"};
+        String[] selectionArgs = null;
+
+        c = cr.query(Uri.parse(URI_SPEND), select, where, selectionArgs, null);
+
+        assert c != null;
+        c.moveToNext();
+
+        int sum = c.getInt(0);
+        c.close();
+
+        return sum;
+    }
+    public int getIncomeMonth() {
+        Cursor c;
+
+        // table이 존재하지 않으면
+        if(checkDBTable("tbl_income") == 0) return 0;
+
+        String where = "date BETWEEN date('now','start of month') AND date('now')";
+        String[] select = {"total(amount) AS SUM"};
+        String[] selectionArgs = null;
+
+        c = cr.query(Uri.parse(URI_INCOME), select, where, selectionArgs, null);
+
+        assert c != null;
+        c.moveToNext();
+
+        int sum = c.getInt(0);
+        c.close();
+
+        return sum;
+    }
 
     private int getSum(String uri, int id_account, String[] column, String selectedDate) {
         Cursor c;

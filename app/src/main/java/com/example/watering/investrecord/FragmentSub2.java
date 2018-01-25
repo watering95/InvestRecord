@@ -13,7 +13,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DecimalFormat;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -26,6 +29,9 @@ public class FragmentSub2 extends Fragment {
 
     private View mView;
     private IRResolver ir;
+
+    private TextView textView_spend_month;
+    private TextView textView_income_month;
 
     interface Callback {
         void updateList();
@@ -96,6 +102,10 @@ public class FragmentSub2 extends Fragment {
         mFragSub2TabLayout.addTab(mFragSub2TabLayout.newTab().setText(R.string.income));
         mFragSub2TabLayout.addTab(mFragSub2TabLayout.newTab().setText(R.string.statistic));
         mFragSub2TabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        textView_spend_month = mView.findViewById(R.id.textView_frag_sub2_spend_month);
+        textView_income_month = mView.findViewById(R.id.textView_frag_sub2_income_month);
+        updateFragSub2();
 
         mFragSub2ViewPager = mView.findViewById(R.id.viewpager_frag_sub2);
         FragSub2TabPagerAdapter mFragSub2PagerAdapter = new FragSub2TabPagerAdapter(getChildFragmentManager());
@@ -229,6 +239,15 @@ public class FragmentSub2 extends Fragment {
         this.m_callback7 = callback;
     }
 
+    public void updateFragSub2() {
+
+        DecimalFormat df = new DecimalFormat("#,###");
+
+        int spend_month = ir.getSpendMonth();
+        int income_month = ir.getIncomeMonth();
+        textView_income_month.setText(df.format(income_month));
+        textView_spend_month.setText(df.format(spend_month));
+    }
     public void CallUpdate5() {
         if(m_callback5 != null) {
             m_callback5.updateList();

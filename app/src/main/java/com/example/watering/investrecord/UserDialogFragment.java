@@ -453,6 +453,7 @@ public class UserDialogFragment extends DialogFragment {
                 }
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
                 mActivity.fragmentSub2.CallUpdate5();
+                mActivity.fragmentSub2.updateFragSub2();
             }
         });
         builder.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -469,6 +470,7 @@ public class UserDialogFragment extends DialogFragment {
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
 
                 mActivity.fragmentSub2.CallUpdate5();
+                mActivity.fragmentSub2.updateFragSub2();
             }
         });
         builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -619,6 +621,7 @@ public class UserDialogFragment extends DialogFragment {
                 if(selectedId < 0) ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
                 else ir.updateIncome(id_income,details,selectedDate,selectedAccountId,selectedSubId,amount);
                 mActivity.fragmentSub2.CallUpdate6();
+                mActivity.fragmentSub2.updateFragSub2();
                 listener.onWorkComplete(null);
             }
         });
@@ -627,6 +630,7 @@ public class UserDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 ir.deleteIncome("_id",new String[] {String.valueOf(id_income)});
                 mActivity.fragmentSub2.CallUpdate6();
+                mActivity.fragmentSub2.updateFragSub2();
             }
         });
         builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -968,7 +972,7 @@ public class UserDialogFragment extends DialogFragment {
         });
 
         builder.setView(view).setTitle(getString(R.string.transfer));
-        builder.setPositiveButton(getString(R.string.excute),new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.execute),new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 int amount = Integer.parseInt(editText_amount.getText().toString());
@@ -1039,7 +1043,7 @@ public class UserDialogFragment extends DialogFragment {
         final EditText edit = view.findViewById(R.id.editText_dlg_group_add);
 
         builder.setView(view).setTitle(getString(R.string.group_regist));
-        builder.setPositiveButton(getString(R.string.excute), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.execute), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String name = edit.getText().toString();
@@ -1080,7 +1084,7 @@ public class UserDialogFragment extends DialogFragment {
         });
 
         builder.setView(view).setTitle(getString(R.string.group_edit));
-        builder.setPositiveButton(getString(R.string.excute), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.execute), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String name = edit.getText().toString();
@@ -1129,7 +1133,7 @@ public class UserDialogFragment extends DialogFragment {
         });
 
         builder.setView(view).setTitle(getString(R.string.group_delete));
-        builder.setPositiveButton(getString(R.string.excute), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.execute), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ir.deleteGroup("name",new String[] {select[0]});
