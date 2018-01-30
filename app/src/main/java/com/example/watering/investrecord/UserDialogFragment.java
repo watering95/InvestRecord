@@ -761,7 +761,7 @@ public class UserDialogFragment extends DialogFragment {
         Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
         Info_IO io_latest = ir.getLatestInfoIO(ir.getCurrentAccount(),selectedDate);
 
-        int evaluation = 0;
+        int evaluation;
 
         if(io != null) evaluation = io.getEvaluation();
         else if(io_latest != null) evaluation = io_latest.getEvaluation();

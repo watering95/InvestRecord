@@ -137,7 +137,7 @@ public class FragmentSub1 extends Fragment {
         this.m_callback4 = callback;
     }
 
-    public void CallUpdate1() {
+    private void CallUpdate1() {
         if(m_callback1 != null) {
             m_callback1.updateList();
         }

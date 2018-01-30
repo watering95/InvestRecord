@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/image_btn_frag6_date_backward"
-            app:srcCompat="@drawable/backward" />
+            app:srcCompat="@drawable/backward"
+            android:contentDescription="TODO" />
 
         <EditText
             android:id="@+id/editText_frag6_date"
@@ -31,7 +32,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/image_btn_frag6_date_forward"
-            app:srcCompat="@drawable/forward" />
+            app:srcCompat="@drawable/forward"
+            android:contentDescription="TODO" />
     </LinearLayout>
     <ListView
         android:layout_width="match_parent"

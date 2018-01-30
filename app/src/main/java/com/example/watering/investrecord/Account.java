@@ -12,7 +12,6 @@ public class Account implements Serializable {
     private String institute = null;
     private String number = null;
     private String description = null;
-    private int id_group = -1;
 
     public void setId(int id_account) {
         this.id_account = id_account;
@@ -27,7 +26,6 @@ public class Account implements Serializable {
         this.description = description;
     }
     public void setGroup(int id_group) {
-        this.id_group = id_group;
     }
 
     public int getId() {

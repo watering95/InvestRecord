@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         String day = date.substring(8,10);
 
         calendar.set(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
-        calendar.add(calendar.DATE,amount);
+        calendar.add(Calendar.DATE,amount);
 
         return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
     }
