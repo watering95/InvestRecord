@@ -763,6 +763,7 @@ public class UserDialogFragment extends DialogFragment {
 
         int evaluation;
 
+        //선택한 날짜의 값이 있으면 가져오고 없으면 최근값을 가져온다.
         if(io != null) evaluation = io.getEvaluation();
         else if(io_latest != null) evaluation = io_latest.getEvaluation();
         else evaluation = 0;
@@ -771,6 +772,7 @@ public class UserDialogFragment extends DialogFragment {
 
         txtDate.setText(selectedDate);
 
+        //선택한 날짜의 입력값이 없으면 평가액만 최근값으로 반영한다.
         if(io == null) {
             exist = false;
             txtInput.setText("0");
@@ -802,7 +804,6 @@ public class UserDialogFragment extends DialogFragment {
 
                 if(str_in.isEmpty()) str_in = "0";
                 if(str_out.isEmpty()) str_out = "0";
-                if(str_eval.isEmpty()) str_eval = "0";
 
                 Info_IO io = new Info_IO();
 
@@ -818,8 +819,12 @@ public class UserDialogFragment extends DialogFragment {
                 try {
                     in = df.parse(str_in).intValue();
                     out = df.parse(str_out).intValue();
-                    evaluation = df.parse(str_eval).intValue();
-                    if(evaluation == 0) evaluation = in - out;
+                    if(str_eval.isEmpty()) {
+                        evaluation = in - out;
+                    }
+                    else {
+                        evaluation = df.parse(str_eval).intValue();
+                    }
                 } catch (ParseException e) {
                     Log.e(TAG,"Data Format Parse Error");
                 }
@@ -832,6 +837,7 @@ public class UserDialogFragment extends DialogFragment {
                 if(!exist) ir.insertInfoIO(io);
                 else ir.updateInfoIO(io);
 
+                mActivity.fragmentSub1.CallUpdate1();
                 mActivity.fragmentSub1.CallUpdate2();
             }
         });
@@ -891,7 +897,7 @@ public class UserDialogFragment extends DialogFragment {
 
         if(groups.size() > 0) {
             selectedGroupIdFrom = ir.getCurrentGroup();
-            selectedGroupIdTo = groups.get(0).getId();
+            selectedGroupIdTo = ir.getCurrentGroup();
         }
 
         @SuppressWarnings("ConstantConditions")
@@ -988,12 +994,13 @@ public class UserDialogFragment extends DialogFragment {
 
                 int evaluation = 0;
 
-                // io_latest가 없으면 0
+                // io_latest가 없으면 0, 있으면 반영
                 if(io_latest != null) evaluation = io_latest.getEvaluation();
                 // evaluation에 해당일 input, output값 반영
                 if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
                 // evaluation에 해당일 spendcash, spendcard, income 반영
                 evaluation = evaluation - ir.getSpendsCashSum(selectedDate,selectedAccountIdFrom) - ir.getSpendsCardSum(selectedDate,selectedAccountIdFrom) + ir.getIncomeSum(selectedDate,selectedAccountIdFrom);
+                // 반영된 평가액에 출금액 반영
                 evaluation = evaluation - amount;
 
                 //noinspection ConstantConditions
@@ -1024,6 +1031,7 @@ public class UserDialogFragment extends DialogFragment {
                 }
                 else ir.insertInfoIO(selectedAccountIdTo,selectedDate,amount,0,0,0,0,evaluation);
 
+                mActivity.fragmentSub1.CallUpdate1();
                 mActivity.fragmentSub1.CallUpdate2();
                 listener.onWorkComplete("");
             }

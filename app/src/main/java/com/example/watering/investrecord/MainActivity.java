@@ -147,10 +147,10 @@ public class MainActivity extends AppCompatActivity {
         String month = date.substring(5,7);
         String day = date.substring(8,10);
 
-        calendar.set(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
+        calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
         calendar.add(Calendar.DATE,amount);
 
-        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
     }
 
     public void inoutDialog(String selectedDate) {
@@ -356,8 +356,7 @@ public class MainActivity extends AppCompatActivity {
             Log.w(TAG, "Unable to write file contents.", e);
         }
 
-        Calendar today = Calendar.getInstance();
-        String filename = String.format(Locale.getDefault(),"InvestRecord_%d%02d%02d.db",today.get(Calendar.YEAR),today.get(Calendar.MONTH),today.get(Calendar.DATE));
+        String filename = "InvestRecord_" + getToday() + ".db";
 
         MetadataChangeSet metadataChangeSet =
                 new MetadataChangeSet.Builder()
