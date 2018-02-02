@@ -13,10 +13,10 @@
 
         <ImageButton
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:id="@+id/image_btn_frag6_date_backward"
-            app:srcCompat="@drawable/backward"
+            android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
             android:contentDescription="TODO" />
 
         <EditText
@@ -29,10 +29,10 @@
 
         <ImageButton
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:id="@+id/image_btn_frag6_date_forward"
-            app:srcCompat="@drawable/forward"
+            android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:contentDescription="TODO" />
     </LinearLayout>
     <ListView

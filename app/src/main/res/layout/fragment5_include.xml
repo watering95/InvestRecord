@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/backward"
+            android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
             android:contentDescription="TODO" />
 
         <EditText
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/forward"
+            android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:contentDescription="TODO" />
 
     </LinearLayout>

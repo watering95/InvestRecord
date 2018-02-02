@@ -84,7 +84,7 @@ public class Fragment4 extends Fragment {
                     if(!account.isEmpty()) ir.updateAccount(ir.getCurrentAccount(),institute,account,descript);
                     break;
                 case R.id.button_frag4_delete:
-                    if(!account.isEmpty()) ir.deleteAccount("num",new String[] {account});
+                    if(!account.isEmpty()) ir.deleteAccount("number",new String[] {account});
                     break;
             }
 
