@@ -5,14 +5,20 @@ package com.example.watering.investrecord;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-class Info_List6 {
-    private Income income = null;
+public class Info_List6 {
+    private Info_Dairy dairy = null;
+    private int evaluation = 0;
 
-    public void setIncome(Income income) {
-        this.income = income;
+    public void setDairy(Info_Dairy dairy) {
+        this.dairy = dairy;
     }
-
-    public Income getIncome() {
-        return this.income;
+    public void setEvaluation(int evaluation) {
+        this.evaluation = evaluation;
+    }
+    public Info_Dairy getDairy() {
+        return dairy;
+    }
+    public int getEvaluation() {
+        return evaluation;
     }
 }

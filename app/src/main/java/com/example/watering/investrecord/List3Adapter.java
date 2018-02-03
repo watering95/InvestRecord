@@ -9,19 +9,18 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Created by watering on 17. 11. 17.
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-class List2Adapter extends BaseAdapter {
+class List3Adapter extends BaseAdapter {
 
-    private final ArrayList<Info_List2> mData;
+    private final ArrayList<Info_List3> mData;
     private final LayoutInflater inflater;
 
-    public List2Adapter(Context context, ArrayList<Info_List2> data) {
+    public List3Adapter(Context context, ArrayList<Info_List3> data) {
         mData = data;
         inflater = LayoutInflater.from(context);
     }
@@ -40,23 +39,17 @@ class List2Adapter extends BaseAdapter {
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         if(convertView == null) {
-            convertView = inflater.inflate(R.layout.layout_list2,parent,false);
+            convertView = inflater.inflate(R.layout.layout_list3,parent,false);
         }
 
-        Info_Dairy dairy;
-        TextView date = convertView.findViewById(R.id.textView_layout_list2_1);
-        TextView principal = convertView.findViewById(R.id.textView_layout_list2_2);
-        TextView evaluation = convertView.findViewById(R.id.textView_layout_list2_3);
-        TextView rate = convertView.findViewById(R.id.textView_layout_list2_4);
         DecimalFormat df = new DecimalFormat("#,###");
+        TextView textView_1 = convertView.findViewById(R.id.textView_layout_list5_1);
+        TextView textView_2 = convertView.findViewById(R.id.textView_layout_list5_2);
+        TextView textView_3 = convertView.findViewById(R.id.textView_layout_list5_3);
 
-        dairy = mData.get(position).getDairy();
-        date.setText(String.valueOf(dairy.getDate()));
-        principal.setText(df.format(dairy.getPrincipal()));
-        rate.setText(String.format(Locale.getDefault(),"%.2f",dairy.getRate()));
-        evaluation.setText(df.format(mData.get(position).getEvaluation()));
+        textView_1.setText(mData.get(position).getSpend().getDetails());
+        textView_3.setText(df.format(mData.get(position).getSpend().getAmount()));
 
         return convertView;
     }

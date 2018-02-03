@@ -37,7 +37,7 @@ public class FragmentSub2 extends Fragment {
         void updateList();
     }
 
-    private FragmentSub2.Callback m_callback5,m_callback6,m_callback7;
+    private FragmentSub2.Callback m_callback3, m_callback4, m_callback5;
 
     public FragmentSub2() {
     }
@@ -229,14 +229,14 @@ public class FragmentSub2 extends Fragment {
         Toast.makeText(getContext(),"카테고리 초기화",Toast.LENGTH_SHORT).show();
     }
 
+    public void setCallback3(FragmentSub2.Callback callback) {
+        this.m_callback3 = callback;
+    }
+    public void setCallback4(FragmentSub2.Callback callback) {
+        this.m_callback4 = callback;
+    }
     public void setCallback5(FragmentSub2.Callback callback) {
         this.m_callback5 = callback;
-    }
-    public void setCallback6(FragmentSub2.Callback callback) {
-        this.m_callback6 = callback;
-    }
-    public void setCallback7(FragmentSub2.Callback callback) {
-        this.m_callback7 = callback;
     }
 
     public void updateFragSub2() {
@@ -248,19 +248,19 @@ public class FragmentSub2 extends Fragment {
         textView_income_month.setText(df.format(income_month));
         textView_spend_month.setText(df.format(spend_month));
     }
+    public void CallUpdate3() {
+        if(m_callback3 != null) {
+            m_callback3.updateList();
+        }
+    }
+    public void CallUpdate4() {
+        if(m_callback4 != null) {
+            m_callback4.updateList();
+        }
+    }
     public void CallUpdate5() {
         if(m_callback5 != null) {
             m_callback5.updateList();
-        }
-    }
-    public void CallUpdate6() {
-        if(m_callback6 != null) {
-            m_callback6.updateList();
-        }
-    }
-    public void CallUpdate7() {
-        if(m_callback7 != null) {
-            m_callback7.updateList();
         }
     }
 }

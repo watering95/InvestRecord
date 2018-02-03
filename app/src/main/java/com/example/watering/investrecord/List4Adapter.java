@@ -15,12 +15,12 @@ import java.util.ArrayList;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-class List5Adapter extends BaseAdapter {
+class List4Adapter extends BaseAdapter {
 
-    private final ArrayList<Info_List5> mData;
+    private final ArrayList<Info_List4> mData;
     private final LayoutInflater inflater;
 
-    public List5Adapter(Context context, ArrayList<Info_List5> data) {
+    public List4Adapter(Context context, ArrayList<Info_List4> data) {
         mData = data;
         inflater = LayoutInflater.from(context);
     }
@@ -39,17 +39,18 @@ class List5Adapter extends BaseAdapter {
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         if(convertView == null) {
-            convertView = inflater.inflate(R.layout.layout_list5,parent,false);
+            convertView = inflater.inflate(R.layout.layout_list4,parent,false);
         }
 
         DecimalFormat df = new DecimalFormat("#,###");
-        TextView textView_1 = convertView.findViewById(R.id.textView_layout_list5_1);
-        TextView textView_2 = convertView.findViewById(R.id.textView_layout_list5_2);
-        TextView textView_3 = convertView.findViewById(R.id.textView_layout_list5_3);
+        TextView textView_1 = convertView.findViewById(R.id.textView_layout_list6_1);
+        TextView textView_2 = convertView.findViewById(R.id.textView_layout_list6_2);
+        TextView textView_3 = convertView.findViewById(R.id.textView_layout_list6_3);
 
-        textView_1.setText(mData.get(position).getSpend().getDetails());
-        textView_3.setText(df.format(mData.get(position).getSpend().getAmount()));
+        textView_1.setText(mData.get(position).getIncome().getDetails());
+        textView_3.setText(df.format(mData.get(position).getIncome().getAmount()));
 
         return convertView;
     }

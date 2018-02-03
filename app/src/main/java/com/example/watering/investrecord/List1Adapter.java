@@ -51,7 +51,7 @@ class List1Adapter extends BaseAdapter {
         TextView rate = convertView.findViewById(R.id.textView_layout_list1_4);
         TextView accountInfo = convertView.findViewById(R.id.textView_layout_list1_5);
 
-        Info_List2 list2 = mData.get(position).getList2();
+        Info_List6 list2 = mData.get(position).getList2();
         Account account = mData.get(position).getAccount();
         DecimalFormat df = new DecimalFormat("#,###");
 

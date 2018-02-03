@@ -7,6 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -15,7 +20,9 @@ import android.view.ViewGroup;
 @SuppressWarnings("DefaultFileTemplate")
 public class Fragment7 extends Fragment {
 
-    private IRResolver ir;
+    private View mView;
+    private MainActivity mActivity;
+    private String selectedDate;
 
     public Fragment7() {
     }
@@ -24,26 +31,13 @@ public class Fragment7 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final MainActivity mActivity = (MainActivity) getActivity();
-        assert mActivity != null;
-        ir = mActivity.ir;
-
-        final FragmentSub2 fragmentSub2 = mActivity.fragmentSub2;
-
-        FragmentSub2.Callback callbackfromMain = new FragmentSub2.Callback() {
-            @Override
-            public void updateList() {
-
-            }
-        };
-
-        fragmentSub2.setCallback7(callbackfromMain);
+        mActivity = (MainActivity) getActivity();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View mView = inflater.inflate(R.layout.fragment7, container, false);
+        mView = inflater.inflate(R.layout.fragment7, container, false);
 
         initLayout();
 
@@ -51,6 +45,29 @@ public class Fragment7 extends Fragment {
     }
 
     private void initLayout() {
+        final DatePicker date = mView.findViewById(R.id.datePicker_frag7);
+        selectedDate = String.format(Locale.getDefault(),"%04d-%02d-%02d", date.getYear(), date.getMonth(), date.getDayOfMonth());
+        date.init(date.getYear(), date.getMonth(), date.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar select = Calendar.getInstance();
+                select.set(year,monthOfYear,dayOfMonth);
 
+                if(Calendar.getInstance().before(select)) {
+                    Toast.makeText(mActivity.getApplicationContext(),R.string.toast_date_error,Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                selectedDate = String.format(Locale.getDefault(),"%04d-%02d-%02d",year,monthOfYear+1,dayOfMonth);
+
+                UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
+                    }
+                });
+                dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
+                dialog.show(getFragmentManager(), "dialog");
+            }
+        });
     }
 }

@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView_layout_list6_1"/>
-    <RelativeLayout
+        android:layout_weight="1"
+        android:id="@+id/textView_layout_list2_1"
+        android:textAlignment="center"/>
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView_layout_list6_2"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView_layout_list6_3"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            tools:ignore="RelativeOverlap" />
-    </RelativeLayout>
+        android:layout_weight="1"
+        android:id="@+id/textView_layout_list2_2"
+        android:layout_gravity="end"
+        android:textAlignment="textEnd"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/textView_layout_list2_3"
+        android:layout_gravity="end"
+        android:textAlignment="textEnd"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:id="@+id/textView_layout_list2_4"
+        android:layout_gravity="end"
+        android:textAlignment="textEnd"/>
+
 </LinearLayout>

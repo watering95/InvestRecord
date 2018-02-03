@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by watering on 17. 11. 17.
@@ -44,13 +45,18 @@ class List6Adapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.layout_list6,parent,false);
         }
 
+        Info_Dairy dairy;
+        TextView date = convertView.findViewById(R.id.textView_layout_list2_1);
+        TextView principal = convertView.findViewById(R.id.textView_layout_list2_2);
+        TextView evaluation = convertView.findViewById(R.id.textView_layout_list2_3);
+        TextView rate = convertView.findViewById(R.id.textView_layout_list2_4);
         DecimalFormat df = new DecimalFormat("#,###");
-        TextView textView_1 = convertView.findViewById(R.id.textView_layout_list6_1);
-        TextView textView_2 = convertView.findViewById(R.id.textView_layout_list6_2);
-        TextView textView_3 = convertView.findViewById(R.id.textView_layout_list6_3);
 
-        textView_1.setText(mData.get(position).getIncome().getDetails());
-        textView_3.setText(df.format(mData.get(position).getIncome().getAmount()));
+        dairy = mData.get(position).getDairy();
+        date.setText(String.valueOf(dairy.getDate()));
+        principal.setText(df.format(dairy.getPrincipal()));
+        rate.setText(String.format(Locale.getDefault(),"%.2f",dairy.getRate()));
+        evaluation.setText(df.format(mData.get(position).getEvaluation()));
 
         return convertView;
     }

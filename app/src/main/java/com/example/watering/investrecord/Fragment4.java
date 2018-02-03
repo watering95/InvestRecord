@@ -3,12 +3,18 @@ package com.example.watering.investrecord;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -18,10 +24,13 @@ import android.widget.EditText;
 public class Fragment4 extends Fragment {
 
     private View mView;
+    private MainActivity mActivity;
     private IRResolver ir;
-    private EditText mTxtAccount;
-    private EditText mTxtInstitute;
-    private EditText mTxtDescription;
+    private String selectedDate;
+    private List4Adapter list4Adapter;
+    private ArrayList<Income> incomes = new ArrayList<>();
+    private final ArrayList<Info_List4> lists = new ArrayList<>();
+    private static final String TAG = "InvestRecord";
 
     public Fragment4() {
     }
@@ -30,24 +39,25 @@ public class Fragment4 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MainActivity mActivity = (MainActivity) getActivity();
+        mActivity = (MainActivity) getActivity();
         assert mActivity != null;
         ir = mActivity.ir;
 
-        final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
+        final FragmentSub2 fragmentSub2 = mActivity.fragmentSub2;
 
-        FragmentSub1.Callback callbackfromMain = new FragmentSub1.Callback() {
+        FragmentSub2.Callback callbackfromMain = new FragmentSub2.Callback() {
             @Override
             public void updateList() {
-                update();
+                updateListView();
             }
         };
-        fragmentSub1.setCallback4(callbackfromMain);
+
+        fragmentSub2.setCallback4(callbackfromMain);
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment4, container, false);
 
         initLayout();
@@ -56,68 +66,104 @@ public class Fragment4 extends Fragment {
     }
 
     private void initLayout() {
+        final EditText editText_date = mView.findViewById(R.id.editText_frag4_date);
 
-        mTxtAccount = mView.findViewById(R.id.editText_frag4_account);
-        mTxtInstitute = mView.findViewById(R.id.editText_frag4_institute);
-        mTxtDescription = mView.findViewById(R.id.editText_frag4_description);
+        selectedDate = mActivity.getToday();
 
-        update();
+        ImageButton image_btn_backward = mView.findViewById(R.id.image_btn_frag4_date_backward);
+        ImageButton image_btn_forward = mView.findViewById(R.id.image_btn_frag4_date_forward);
 
-        mView.findViewById(R.id.button_frag4_regist).setOnClickListener(mClickListener);
-        mView.findViewById(R.id.button_frag4_edit).setOnClickListener(mClickListener);
-        mView.findViewById(R.id.button_frag4_delete).setOnClickListener(mClickListener);
+        image_btn_backward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDate = mActivity.dateChange(selectedDate, -1);
+                editText_date.setText(selectedDate);
+                updateListView();
+            }
+        });
+
+        image_btn_forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedDate = mActivity.dateChange(selectedDate, 1);
+                editText_date.setText(selectedDate);
+                updateListView();
+            }
+        });
+
+        editText_date.setText(selectedDate);
+        editText_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.editText_frag4_date, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
+                        selectedDate = date;
+                        editText_date.setText(selectedDate);
+                        updateListView();
+                    }
+                });
+                dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
+                dialog.show(getFragmentManager(), "dialog");
+            }
+        });
+
+        ListView listView = mView.findViewById(R.id.listview_frag4);
+
+        updateInfoLists();
+        list4Adapter = new List4Adapter(mView.getContext(),lists);
+        listView.setAdapter(list4Adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int id_income = incomes.get(position).getId();
+                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag4, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
+                        updateListView();
+                    }
+                });
+                dialog.initId(id_income);
+                //noinspection ConstantConditions
+                dialog.show(getFragmentManager(),"dialog");
+            }
+        });
+
+        FloatingActionButton floating = mView.findViewById(R.id.floating_frag4);
+        floating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag4, new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String date) {
+                        updateListView();
+                    }
+                });
+                dialog.setSelectedDate(selectedDate);
+                //noinspection ConstantConditions
+                dialog.show(getFragmentManager(), "dialog");
+            }
+        });
     }
 
-    private final Button.OnClickListener mClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            final FragmentSub1 fragmentSub1 = (FragmentSub1) getParentFragment();
-
-            String account = mTxtAccount.getText().toString();
-            String institute = mTxtInstitute.getText().toString();
-            String descript = mTxtDescription.getText().toString();
-
-            switch(v.getId()) {
-                case R.id.button_frag4_regist:
-                    if(!account.isEmpty()) ir.insertAccount(institute,account,descript);
-                    break;
-                case R.id.button_frag4_edit:
-                    if(!account.isEmpty()) ir.updateAccount(ir.getCurrentAccount(),institute,account,descript);
-                    break;
-                case R.id.button_frag4_delete:
-                    if(!account.isEmpty()) ir.deleteAccount("number",new String[] {account});
-                    break;
-            }
-
-            assert fragmentSub1 != null;
-            fragmentSub1.updateAccountSpinner();
-        }
-    };
-
-    private void update() {
-        int id_account = ir.getCurrentAccount();
-        Account account;
-
-        if(id_account > 0) {
-            account = ir.getAccount(id_account);
-        }
-        else {
-            mTxtAccount.setText("");
-            mTxtDescription.setText("");
-            mTxtInstitute.setText("");
-
+    private void updateInfoLists() {
+        lists.clear();
+        incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
+        if(incomes.isEmpty()) {
+            Log.i(TAG, "No income");
             return;
         }
 
-        if(account == null) {
-            mTxtAccount.setText("");
-            mTxtDescription.setText("");
-            mTxtInstitute.setText("");
+        for(int i = 0; i < incomes.size(); i++) {
+            Info_List4 list = new Info_List4();
+
+            list.setIncome(incomes.get(i));
+            lists.add(list);
         }
-        else {
-            mTxtAccount.setText(account.getNumber());
-            mTxtDescription.setText(account.getDescription());
-            mTxtInstitute.setText(account.getInstitute());
-            ir.setCurrentAccount(account.getId());
-        }
+    }
+    private void updateListView() {
+        updateInfoLists();
+        list4Adapter.notifyDataSetChanged();
     }
 }

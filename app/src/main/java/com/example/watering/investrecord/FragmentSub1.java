@@ -29,23 +29,21 @@ import java.util.List;
 public class FragmentSub1 extends Fragment {
 
     private ViewPager mFragSub1ViewPager;
+    private MainActivity mActivity;
+
     private View mView;
     private IRResolver ir;
-    private Spinner mAccountSpinner;
     private static final String TAG = "InvestRecord";
 
     private ArrayAdapter<String> groupAdapter;
-    private ArrayAdapter<String> accountAdapter;
     private final List<String> grouplists = new ArrayList<>();
-    private final List<String> accountlists = new ArrayList<>();
     private List<Group> groups = new ArrayList<>();
-    private List<Account> accounts = new ArrayList<>();
 
     interface Callback {
         void updateList();
     }
 
-    private Callback m_callback1,m_callback2,m_callback4;
+    private Callback m_callback1, m_callback2;
 
     public FragmentSub1() {
     }
@@ -54,10 +52,9 @@ public class FragmentSub1 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        assert getActivity() != null;
-        ir = ((MainActivity) getActivity()).ir;
-
-        setHasOptionsMenu(true);
+        mActivity = (MainActivity) getActivity();
+        assert mActivity != null;
+        ir = mActivity.ir;
     }
 
     @Nullable
@@ -67,7 +64,6 @@ public class FragmentSub1 extends Fragment {
 
         initLayout();
         initGroupSpinner();
-        initAccountSpinner();
         initDataBase();
 
         return mView;
@@ -82,25 +78,27 @@ public class FragmentSub1 extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(item.getItemId(), new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                updateGroupSpinner();
-            }
-        });
-        //noinspection ConstantConditions
-        dialog.show(getFragmentManager(), "dialog");
+        switch(item.getItemId()) {
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
+    public void setCallback1(FragmentSub1.Callback callback) {
+        this.m_callback1 = callback;
+    }
+    public void CallUpdate1() {
+        if(m_callback1 != null) {
+            m_callback1.updateList();
+        }
+    }
+
     private void initLayout() {
-        TabLayout mFragSub1TabLayout = mView.findViewById(R.id.frag_sub1_tab);
+        TabLayout mFragSub1TabLayout = mView.findViewById(R.id.tab_frag_sub1);
 
         mFragSub1TabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
-        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText("통합자산"));
-        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText("계좌별이력"));
-        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText("입출금입력"));
-        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText("계좌관리"));
+        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText(R.string.total_review));
+        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText(R.string.analysis));
         mFragSub1TabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         mFragSub1ViewPager = mView.findViewById(R.id.viewpager_frag_sub1);
@@ -127,65 +125,17 @@ public class FragmentSub1 extends Fragment {
         });
     }
 
-    public void setCallback1(Callback callback) {
-        this.m_callback1 = callback;
-    }
-    public void setCallback2(Callback callback) {
-        this.m_callback2 = callback;
-    }
-    public void setCallback4(Callback callback) {
-        this.m_callback4 = callback;
-    }
-
-    public void CallUpdate1() {
-        if(m_callback1 != null) {
-            m_callback1.updateList();
-        }
-    }
-    public void CallUpdate2() {
-        if(m_callback2 != null) {
-            m_callback2.updateList();
-        }
-    }
-    public void CallUpdate4() {
-        if(m_callback4 != null) {
-            m_callback4.updateList();
-        }
-    }
-
-    public void initDataBase() {
+    private void initDataBase() {
         //noinspection ConstantConditions
         ir.getContentResolver(getActivity().getContentResolver());
         updateGroupSpinner();
-        updateAccountSpinner();
-    }
-    public void updateGroupSpinner() {
-        updateGroupList();
-        groupAdapter.notifyDataSetChanged();
-        if(groups.isEmpty()) ir.setCurrentGroup(-1);
-        else ir.setCurrentGroup(groups.get(0).getId());
-    }
-    public void updateAccountSpinner() {
-        updateAccountList();
-        accountAdapter.notifyDataSetChanged();
-        if(accounts.isEmpty()) ir.setCurrentAccount(-1);
-        else ir.setCurrentAccount(accounts.get(0).getId());
-
-        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
-        mAccountSpinner.setSelection(0);
-    }
-    public void setPositionAccountSpinner(int position) {
-        mAccountSpinner.setSelection(position);
-    }
-    public void setTab(int position) {
-        mFragSub1ViewPager.setCurrentItem(position);
-    }
+     }
 
     private void initGroupSpinner() {
         //noinspection ConstantConditions
         groupAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, grouplists);
 
-        Spinner mGroupSpinner = mView.findViewById(R.id.spinner_group);
+        Spinner mGroupSpinner = mView.findViewById(R.id.spinner_frag_sub1_group);
         mGroupSpinner.setAdapter(groupAdapter);
         mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -193,8 +143,7 @@ public class FragmentSub1 extends Fragment {
                 if(groups.size() != 0 ) {
                     ir.setCurrentGroup(groups.get(position).getId());
                 }
-                updateAccountSpinner();
-                CallUpdate1();
+                mActivity.fragmentSub1.CallUpdate1();
             }
 
             @Override
@@ -203,23 +152,12 @@ public class FragmentSub1 extends Fragment {
             }
         });
     }
-    private void initAccountSpinner() {
-        //noinspection ConstantConditions
-        accountAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, accountlists);
-        mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub1_account);
-        mAccountSpinner.setAdapter(accountAdapter);
-        mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ir.setCurrentAccount(accounts.get(position).getId());
-                CallUpdate1();
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+    private void updateGroupSpinner() {
+        updateGroupList();
+        groupAdapter.notifyDataSetChanged();
+        if(groups.isEmpty()) ir.setCurrentGroup(-1);
+        else ir.setCurrentGroup(groups.get(0).getId());
     }
 
     private void updateGroupList() {
@@ -232,23 +170,6 @@ public class FragmentSub1 extends Fragment {
 
         for(int i = 0; i < groups.size(); i++) {
             grouplists.add(groups.get(i).getName());
-        }
-    }
-    private void updateAccountList() {
-        String str;
-        Account account;
-
-        accountlists.clear();
-        accounts = ir.getAccounts(ir.getCurrentGroup());
-        if(accounts.isEmpty()) {
-            Log.i(TAG, "No account");
-            return;
-        }
-
-        for (int i = 0; i < accounts.size(); i++) {
-            account = accounts.get(i);
-            str = account.getNumber() + " " + account.getInstitute() + " " + account.getDescription();
-            accountlists.add(str);
         }
     }
 }

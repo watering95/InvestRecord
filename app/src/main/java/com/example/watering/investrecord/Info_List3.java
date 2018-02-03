@@ -5,7 +5,7 @@ package com.example.watering.investrecord;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-class Info_List5 {
+class Info_List3 {
     private Spend spend = null;
 
     public void setSpend(Spend spend) {

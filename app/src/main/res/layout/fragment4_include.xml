@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -15,12 +14,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/image_btn_frag6_date_backward"
+            android:id="@+id/image_btn_frag4_date_backward"
             android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/todo" />
 
         <EditText
-            android:id="@+id/editText_frag6_date"
+            android:id="@+id/editText_frag4_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.3"
@@ -31,13 +30,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/image_btn_frag6_date_forward"
+            android:id="@+id/image_btn_frag4_date_forward"
             android:background="@drawable/ic_keyboard_arrow_right_black_24dp"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/todo" />
     </LinearLayout>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listview_frag6"/>
+        android:id="@+id/listview_frag4"/>
 
 </LinearLayout>

@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     public FragmentSub1 fragmentSub1;
     public FragmentSub2 fragmentSub2;
+    public FragmentSub3 fragmentSub3;
     public final IRResolver ir = new IRResolver();
 
     private FragmentManager fragmentManager;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentSub1 = new FragmentSub1();
         fragmentSub2 = new FragmentSub2();
+        fragmentSub3 = new FragmentSub3();
 
         fragmentManager = getSupportFragmentManager();
 
@@ -125,6 +127,11 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.frame_main, fragmentSub2).commit();
                         mToolbar.setTitle(R.string.title2);
+                        break;
+                    case R.id.navigation_item_sub3:
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.frame_main, fragmentSub3).commit();
+                        mToolbar.setTitle(R.string.title3);
                         break;
                     case R.id.navigation_item_setting:
                         settingDialog();
@@ -171,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
                 switch(name) {
                     case "delall":
                         ir.deleteAll();
-                        fragmentSub1.updateGroupSpinner();
-                        fragmentSub1.updateAccountSpinner();
+                        fragmentSub3.updateGroupSpinner();
+                        fragmentSub3.updateAccountSpinner();
                         break;
                     case "del":
                         deleteDBFile();
@@ -198,8 +205,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             //noinspection ResultOfMethodCallIgnored
             dbFile.delete();
-            fragmentSub1.updateGroupSpinner();
-            fragmentSub1.updateAccountSpinner();
+            fragmentSub3.updateGroupSpinner();
+            fragmentSub3.updateAccountSpinner();
             Toast.makeText(this,R.string.toast_db_del_ok,Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this,R.string.toast_db_del_error,Toast.LENGTH_SHORT).show();
@@ -326,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,R.string.toast_db_error,Toast.LENGTH_SHORT).show();
             return;
         }
-        fragmentSub1.initDataBase();
+        fragmentSub3.initDataBase();
         Toast.makeText(this,R.string.toast_db_restore_ok,Toast.LENGTH_SHORT).show();
     }
 

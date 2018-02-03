@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +52,7 @@ public class Fragment1 extends Fragment {
         ir = mActivity.ir;
 
         final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
+        final FragmentSub3 fragmentSub3 = mActivity.fragmentSub3;
 
         FragmentSub1.Callback callbackfromMain = new FragmentSub1.Callback() {
             @Override
@@ -61,7 +64,7 @@ public class Fragment1 extends Fragment {
                 mTxtTotalRate.setText(String.format(Locale.getDefault(),"%.2f",total_rate));
                 listAdapter.notifyDataSetChanged();
 
-                fragmentSub1.CallUpdate2();
+                fragmentSub3.CallUpdate6();
             }
         };
 
@@ -96,8 +99,11 @@ public class Fragment1 extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ir.setCurrentAccount(lists.get(position).getAccount().getId());
-                mActivity.fragmentSub1.setPositionAccountSpinner(position);
-                mActivity.fragmentSub1.setTab(1);
+
+                FragmentManager fragmentManager = mActivity.getSupportFragmentManager();
+
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_main, mActivity.fragmentSub3).commit();
             }
         });
     }
@@ -119,7 +125,7 @@ public class Fragment1 extends Fragment {
 
         for(int i = 0; i < accounts.size(); i++) {
             Info_List1 list1 = new Info_List1();
-            Info_List2 list2 = new Info_List2();
+            Info_List6 list2 = new Info_List6();
 
             int id_account = accounts.get(i).getId();
 
