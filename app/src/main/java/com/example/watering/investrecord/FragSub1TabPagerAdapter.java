@@ -14,7 +14,7 @@ class FragSub1TabPagerAdapter extends FragmentPagerAdapter {
     private final Fragment1 fragment1;
     private final Fragment2 fragment2;
 
-    public FragSub1TabPagerAdapter(FragmentManager fm) {
+    FragSub1TabPagerAdapter(FragmentManager fm) {
         super(fm);
         fragment1 = new Fragment1();
         fragment2 = new Fragment2();

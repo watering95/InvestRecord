@@ -452,7 +452,7 @@ public class UserDialogFragment extends DialogFragment {
                         break;
                 }
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
-                mActivity.fragmentSub2.CallUpdate3();
+                mActivity.fragmentSub2.callUpdateFrag3();
                 mActivity.fragmentSub2.updateFragSub2();
             }
         });
@@ -469,7 +469,7 @@ public class UserDialogFragment extends DialogFragment {
                 }
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
 
-                mActivity.fragmentSub2.CallUpdate3();
+                mActivity.fragmentSub2.callUpdateFrag3();
                 mActivity.fragmentSub2.updateFragSub2();
             }
         });
@@ -620,7 +620,7 @@ public class UserDialogFragment extends DialogFragment {
 
                 if(selectedId < 0) ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
                 else ir.updateIncome(id_income,details,selectedDate,selectedAccountId,selectedSubId,amount);
-                mActivity.fragmentSub2.CallUpdate4();
+                mActivity.fragmentSub2.callUpdateFrag4();
                 mActivity.fragmentSub2.updateFragSub2();
                 listener.onWorkComplete(null);
             }
@@ -629,7 +629,7 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ir.deleteIncome("_id",new String[] {String.valueOf(id_income)});
-                mActivity.fragmentSub2.CallUpdate4();
+                mActivity.fragmentSub2.callUpdateFrag4();
                 mActivity.fragmentSub2.updateFragSub2();
             }
         });
@@ -837,8 +837,8 @@ public class UserDialogFragment extends DialogFragment {
                 if(!exist) ir.insertInfoIO(io);
                 else ir.updateInfoIO(io);
 
-                mActivity.fragmentSub1.CallUpdate1();
-                mActivity.fragmentSub3.CallUpdate6();
+                mActivity.fragmentSub1.callUpdateFrag1();
+                mActivity.fragmentSub3.callUpdateFrag6();
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -1031,8 +1031,8 @@ public class UserDialogFragment extends DialogFragment {
                 }
                 else ir.insertInfoIO(selectedAccountIdTo,selectedDate,amount,0,0,0,0,evaluation);
 
-                mActivity.fragmentSub1.CallUpdate1();
-                mActivity.fragmentSub3.CallUpdate6();
+                mActivity.fragmentSub1.callUpdateFrag1();
+                mActivity.fragmentSub3.callUpdateFrag6();
                 listener.onWorkComplete("");
             }
         });

@@ -13,8 +13,13 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.graphics.Color;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -59,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTransaction fragmentTransaction;
     private DrawerLayout drawerLayout;
 
+    private ArrayAdapter<String> groupAdapter;
+    private final List<String> grouplists = new ArrayList<>();
+    private List<Group> groups = new ArrayList<>();
+
     private DriveClient mDriveClient;
     private DriveResourceClient mDriveResourceClient;
     private DriveId mCurrentDriveId;
@@ -71,12 +80,28 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CREATOR = 2;
     private static final int REQUEST_CODE_OPENER = 3;
 
+    interface Callback {
+        void update();
+    }
+
+    private Callback m_callbackSub3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ir.getContentResolver(getContentResolver());
 
         initLayout();
+        initGroupSpinner();
+        initDataBase();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_toolbar_main, menu);
+        return true;
     }
 
     @Override
@@ -86,6 +111,15 @@ public class MainActivity extends AppCompatActivity {
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
                 return true;
+            default:
+                UserDialogFragment dialog = UserDialogFragment.newInstance(item.getItemId(), new UserDialogFragment.UserListener() {
+                    @Override
+                    public void onWorkComplete(String name) {
+                        updateGroupSpinner();
+                    }
+                });
+                //noinspection ConstantConditions
+                dialog.show(getSupportFragmentManager(), "dialog");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -93,7 +127,9 @@ public class MainActivity extends AppCompatActivity {
     private void initLayout() {
         final Toolbar mToolbar = findViewById(R.id.toolbar_main);
         mToolbar.setTitleTextColor(Color.parseColor("#ffffff"));
+
         setSupportActionBar(mToolbar);
+
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -142,6 +178,50 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private void initGroupSpinner() {
+        //noinspection ConstantConditions
+        groupAdapter = new ArrayAdapter<>(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, grouplists);
+
+        Spinner mGroupSpinner = findViewById(R.id.spinner_group);
+        mGroupSpinner.setAdapter(groupAdapter);
+        mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(groups.size() != 0 ) {
+                    ir.setCurrentGroup(groups.get(position).getId());
+                }
+                fragmentSub1.callUpdateFrag1();
+                callUpdateFragSub3();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+    private void initDataBase() {
+        updateGroupSpinner();
+    }
+
+    private void updateGroupSpinner() {
+        updateGroupList();
+        groupAdapter.notifyDataSetChanged();
+        if(groups.isEmpty()) ir.setCurrentGroup(-1);
+        else ir.setCurrentGroup(groups.get(0).getId());
+    }
+    private void updateGroupList() {
+        grouplists.clear();
+        groups = ir.getGroups();
+        if(groups.isEmpty()) {
+            Log.i(TAG, "No group");
+            return;
+        }
+
+        for(int i = 0; i < groups.size(); i++) {
+            grouplists.add(groups.get(i).getName());
+        }
+    }
 
     public String getToday() {
         Calendar today = Calendar.getInstance();
@@ -156,6 +236,11 @@ public class MainActivity extends AppCompatActivity {
 
         calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
         calendar.add(Calendar.DATE,amount);
+
+        if (Calendar.getInstance().before(calendar)) {
+            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
+            return date;
+        }
 
         return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
     }
@@ -178,8 +263,6 @@ public class MainActivity extends AppCompatActivity {
                 switch(name) {
                     case "delall":
                         ir.deleteAll();
-                        fragmentSub3.updateGroupSpinner();
-                        fragmentSub3.updateAccountSpinner();
                         break;
                     case "del":
                         deleteDBFile();
@@ -191,6 +274,8 @@ public class MainActivity extends AppCompatActivity {
                         signIn(REQUEST_CODE_SIGN_IN_DOWN);
                         break;
                 }
+                updateGroupSpinner();
+                fragmentSub3.updateAccountSpinner();
             }
         });
 
@@ -205,8 +290,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             //noinspection ResultOfMethodCallIgnored
             dbFile.delete();
-            fragmentSub3.updateGroupSpinner();
-            fragmentSub3.updateAccountSpinner();
             Toast.makeText(this,R.string.toast_db_del_ok,Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this,R.string.toast_db_del_error,Toast.LENGTH_SHORT).show();
@@ -333,7 +416,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this,R.string.toast_db_error,Toast.LENGTH_SHORT).show();
             return;
         }
-        fragmentSub3.initDataBase();
+        // DB 복원 후 해야 할 일 추가
+
         Toast.makeText(this,R.string.toast_db_restore_ok,Toast.LENGTH_SHORT).show();
     }
 
@@ -426,5 +510,15 @@ public class MainActivity extends AppCompatActivity {
             default:
                 super.onActivityResult(requestCode,resultCode,data);
         }
+    }
+
+    public void callUpdateFragSub3() {
+        if(m_callbackSub3 != null) {
+            m_callbackSub3.update();
+        }
+    }
+
+    public void setCallbackSub3(Callback callback) {
+        this.m_callbackSub3 = callback;
     }
 }

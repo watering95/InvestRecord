@@ -15,7 +15,7 @@ class FragSub2TabPagerAdapter extends FragmentPagerAdapter {
     private final Fragment4 fragment4;
     private final Fragment5 fragment5;
 
-    public FragSub2TabPagerAdapter(FragmentManager fm) {
+    FragSub2TabPagerAdapter(FragmentManager fm) {
         super(fm);
         fragment3 = new Fragment3();
         fragment4 = new Fragment4();

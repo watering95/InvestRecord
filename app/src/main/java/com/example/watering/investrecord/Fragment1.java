@@ -52,23 +52,20 @@ public class Fragment1 extends Fragment {
         ir = mActivity.ir;
 
         final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
-        final FragmentSub3 fragmentSub3 = mActivity.fragmentSub3;
 
-        FragmentSub1.Callback callbackfromMain = new FragmentSub1.Callback() {
+        FragmentSub1.Callback callback = new FragmentSub1.Callback() {
             @Override
-            public void updateList() {
+            public void update() {
                 DecimalFormat df = new DecimalFormat("#,###");
                 updateInfoLists();
                 mTxtTotalPrincipal.setText(df.format(sum_principal));
                 mTxtTotalEvaluate.setText(df.format(sum_evaluate));
                 mTxtTotalRate.setText(String.format(Locale.getDefault(),"%.2f",total_rate));
                 listAdapter.notifyDataSetChanged();
-
-                fragmentSub3.CallUpdate6();
             }
         };
 
-        fragmentSub1.setCallback1(callbackfromMain);
+        fragmentSub1.setCallback1(callback);
     }
 
     @Nullable

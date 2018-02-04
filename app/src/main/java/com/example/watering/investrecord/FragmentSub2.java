@@ -34,7 +34,7 @@ public class FragmentSub2 extends Fragment {
     private TextView textView_income_month;
 
     interface Callback {
-        void updateList();
+        void update();
     }
 
     private FragmentSub2.Callback m_callback3, m_callback4, m_callback5;
@@ -248,19 +248,19 @@ public class FragmentSub2 extends Fragment {
         textView_income_month.setText(df.format(income_month));
         textView_spend_month.setText(df.format(spend_month));
     }
-    public void CallUpdate3() {
+    public void callUpdateFrag3() {
         if(m_callback3 != null) {
-            m_callback3.updateList();
+            m_callback3.update();
         }
     }
-    public void CallUpdate4() {
+    public void callUpdateFrag4() {
         if(m_callback4 != null) {
-            m_callback4.updateList();
+            m_callback4.update();
         }
     }
-    public void CallUpdate5() {
+    public void callUpdateFrag5() {
         if(m_callback5 != null) {
-            m_callback5.updateList();
+            m_callback5.update();
         }
     }
 }

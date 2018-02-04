@@ -36,13 +36,13 @@ public class Fragment8 extends Fragment {
 
         final FragmentSub3 fragmentSub3 = mActivity.fragmentSub3;
 
-        FragmentSub3.Callback callbackfromMain = new FragmentSub3.Callback() {
+        FragmentSub3.Callback callback = new FragmentSub3.Callback() {
             @Override
-            public void updateList() {
-                update();
+            public void update() {
+                Fragment8.this.update();
             }
         };
-        fragmentSub3.setCallback8(callbackfromMain);
+        fragmentSub3.setCallback8(callback);
     }
 
     @Nullable

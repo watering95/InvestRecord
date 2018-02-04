@@ -18,9 +18,6 @@ import java.text.DecimalFormat;
 @SuppressWarnings("DefaultFileTemplate")
 public class Fragment2 extends Fragment {
 
-    private View mView;
-    private MainActivity mActivity;
-    private IRResolver ir;
     private static final String TAG = "InvestRecord";
 
     public Fragment2() {
@@ -30,16 +27,16 @@ public class Fragment2 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mActivity = (MainActivity) getActivity();
+        MainActivity mActivity = (MainActivity) getActivity();
         assert mActivity != null;
-        ir = mActivity.ir;
+        IRResolver ir = mActivity.ir;
 
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment2, container, false);
+        View mView = inflater.inflate(R.layout.fragment2, container, false);
 
         initLayout();
 

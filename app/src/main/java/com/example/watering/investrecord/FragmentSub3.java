@@ -9,9 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,18 +29,14 @@ public class FragmentSub3 extends Fragment {
     private ViewPager mFragSub3ViewPager;
     private View mView;
     private IRResolver ir;
-    private Spinner mAccountSpinner;
     private static final String TAG = "InvestRecord";
 
-    private ArrayAdapter<String> groupAdapter;
     private ArrayAdapter<String> accountAdapter;
-    private final List<String> grouplists = new ArrayList<>();
     private final List<String> accountlists = new ArrayList<>();
-    private List<Group> groups = new ArrayList<>();
     private List<Account> accounts = new ArrayList<>();
 
     interface Callback {
-        void updateList();
+        void update();
     }
 
     private Callback m_callback6, m_callback8;
@@ -61,6 +54,17 @@ public class FragmentSub3 extends Fragment {
         ir = mActivity.ir;
 
         setHasOptionsMenu(true);
+
+        MainActivity.Callback callback = new MainActivity.Callback() {
+            @Override
+            public void update() {
+                updateAccountSpinner();
+                callUpdateFrag6();
+                callUpdateFrag8();
+            }
+        };
+
+        mActivity.setCallbackSub3(callback);
     }
 
     @Nullable
@@ -69,31 +73,10 @@ public class FragmentSub3 extends Fragment {
         mView = inflater.inflate(R.layout.fragment_sub3, container, false);
 
         initLayout();
-        initGroupSpinner();
         initAccountSpinner();
         initDataBase();
 
         return mView;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-        inflater.inflate(R.menu.menu_toolbar_sub1,menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(item.getItemId(), new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-                updateGroupSpinner();
-            }
-        });
-        //noinspection ConstantConditions
-        dialog.show(getFragmentManager(), "dialog");
-        return super.onOptionsItemSelected(item);
     }
 
     private void initLayout() {
@@ -128,6 +111,28 @@ public class FragmentSub3 extends Fragment {
             }
         });
     }
+    private void initAccountSpinner() {
+        //noinspection ConstantConditions
+        accountAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, accountlists);
+        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub3_account);
+        mAccountSpinner.setAdapter(accountAdapter);
+        mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ir.setCurrentAccount(accounts.get(position).getId());
+                callUpdateFrag6();
+                callUpdateFrag8();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+    private void initDataBase() {
+        updateAccountSpinner();
+    }
 
     public void setCallback6(Callback callback) {
         this.m_callback6 = callback;
@@ -136,29 +141,17 @@ public class FragmentSub3 extends Fragment {
         this.m_callback8 = callback;
     }
 
-    public void CallUpdate6() {
+    public void callUpdateFrag6() {
         if(m_callback6 != null) {
-            m_callback6.updateList();
+            m_callback6.update();
         }
     }
-    public void CallUpdate8() {
+    public void callUpdateFrag8() {
         if(m_callback8 != null) {
-            m_callback8.updateList();
+            m_callback8.update();
         }
     }
 
-    public void initDataBase() {
-        //noinspection ConstantConditions
-        ir.getContentResolver(getActivity().getContentResolver());
-        updateGroupSpinner();
-        updateAccountSpinner();
-    }
-    public void updateGroupSpinner() {
-        updateGroupList();
-        groupAdapter.notifyDataSetChanged();
-        if(groups.isEmpty()) ir.setCurrentGroup(-1);
-        else ir.setCurrentGroup(groups.get(0).getId());
-    }
     public void updateAccountSpinner() {
         updateAccountList();
         accountAdapter.notifyDataSetChanged();
@@ -167,63 +160,6 @@ public class FragmentSub3 extends Fragment {
 
         Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub3_account);
         mAccountSpinner.setSelection(0);
-    }
-    public void setPositionAccountSpinner(int position) {
-        mAccountSpinner.setSelection(position);
-    }
-
-    private void initGroupSpinner() {
-        //noinspection ConstantConditions
-        groupAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, grouplists);
-
-        Spinner mGroupSpinner = mView.findViewById(R.id.spinner_frag_sub3_group);
-        mGroupSpinner.setAdapter(groupAdapter);
-        mGroupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(groups.size() != 0 ) {
-                    ir.setCurrentGroup(groups.get(position).getId());
-                }
-                updateAccountSpinner();
-                mActivity.fragmentSub1.CallUpdate1();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-    private void initAccountSpinner() {
-        //noinspection ConstantConditions
-        accountAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, accountlists);
-        mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub3_account);
-        mAccountSpinner.setAdapter(accountAdapter);
-        mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ir.setCurrentAccount(accounts.get(position).getId());
-                mActivity.fragmentSub1.CallUpdate1();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-
-    private void updateGroupList() {
-        grouplists.clear();
-        groups = ir.getGroups();
-        if(groups.isEmpty()) {
-            Log.i(TAG, "No group");
-            return;
-        }
-
-        for(int i = 0; i < groups.size(); i++) {
-            grouplists.add(groups.get(i).getName());
-        }
     }
     private void updateAccountList() {
         String str;
@@ -241,16 +177,5 @@ public class FragmentSub3 extends Fragment {
             str = account.getNumber() + " " + account.getInstitute() + " " + account.getDescription();
             accountlists.add(str);
         }
-    }
-
-    private int findAccount(int id) {
-        int result = -1;
-
-        if(accounts.isEmpty()) return -1;
-
-        for (int i = 0; i < accounts.size(); i++) {
-            if(accounts.get(i).getId() == id) result = i;
-        }
-        return result;
     }
 }

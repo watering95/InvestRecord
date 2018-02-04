@@ -19,11 +19,30 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
         </android.support.v7.widget.Toolbar>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/toolbar_main"
+            android:id="@+id/linearLayout_spinner_group">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/group"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="5"/>
+            <Spinner
+                android:id="@+id/spinner_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+        </LinearLayout>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/frame_main"
-            android:layout_below="@id/toolbar_main"/>
+            android:layout_below="@id/linearLayout_spinner_group"/>
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView

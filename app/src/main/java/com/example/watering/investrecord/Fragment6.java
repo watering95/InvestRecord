@@ -52,17 +52,17 @@ public class Fragment6 extends Fragment {
 
         makeHTMLFile();
 
-        FragmentSub3.Callback callbackfromMain = new FragmentSub3.Callback() {
+        FragmentSub3.Callback callback = new FragmentSub3.Callback() {
             @Override
-            public void updateList() {
+            public void update() {
                 updateListView();
 
                 makeHTMLFile();
                 mWeb.reload();
-                fragmentSub3.CallUpdate8();
             }
         };
-        fragmentSub3.setCallback6(callbackfromMain);
+
+        fragmentSub3.setCallback6(callback);
     }
 
     @Nullable

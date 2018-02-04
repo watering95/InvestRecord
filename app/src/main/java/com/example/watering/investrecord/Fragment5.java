@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 @SuppressWarnings("DefaultFileTemplate")
 public class Fragment5 extends Fragment {
 
-    private IRResolver ir;
-
     public Fragment5() {
     }
 
@@ -26,18 +24,18 @@ public class Fragment5 extends Fragment {
 
         final MainActivity mActivity = (MainActivity) getActivity();
         assert mActivity != null;
-        ir = mActivity.ir;
+        IRResolver ir = mActivity.ir;
 
         final FragmentSub2 fragmentSub2 = mActivity.fragmentSub2;
 
-        FragmentSub2.Callback callbackfromMain = new FragmentSub2.Callback() {
+        FragmentSub2.Callback callback = new FragmentSub2.Callback() {
             @Override
-            public void updateList() {
+            public void update() {
 
             }
         };
 
-        fragmentSub2.setCallback5(callbackfromMain);
+        fragmentSub2.setCallback5(callback);
     }
 
     @Nullable
