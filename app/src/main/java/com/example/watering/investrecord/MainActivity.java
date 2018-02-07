@@ -521,4 +521,8 @@ public class MainActivity extends AppCompatActivity {
     public void setCallbackSub3(Callback callback) {
         this.m_callbackSub3 = callback;
     }
+
+    public List<Group> getGroups() {
+        return this.groups;
+    }
 }

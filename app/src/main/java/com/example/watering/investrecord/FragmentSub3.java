@@ -203,4 +203,8 @@ public class FragmentSub3 extends Fragment {
 
         }
     };
+
+    public List<Account> getAccounts() {
+        return this.accounts;
+    }
 }

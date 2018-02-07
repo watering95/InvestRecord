@@ -139,7 +139,7 @@ public class Fragment6 extends Fragment {
 
     private void makeHTMLFile() {
         try{
-            BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph.html",false));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph_account.html",false));
 
             StringBuilder data = new StringBuilder();
             String date;
@@ -216,6 +216,6 @@ public class Fragment6 extends Fragment {
         WebSettings set = mWeb.getSettings();
         set.setJavaScriptEnabled(true);
         set.setBuiltInZoomControls(true);
-        mWeb.loadUrl("file:///" + mActivity.getFilesDir() + "graph.html");
+        mWeb.loadUrl("file:///" + mActivity.getFilesDir() + "graph_account.html");
     }
 }
