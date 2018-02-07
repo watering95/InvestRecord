@@ -25,8 +25,8 @@ import java.util.List;
 @SuppressWarnings("DefaultFileTemplate")
 public class FragmentSub3 extends Fragment {
 
-    private MainActivity mActivity;
     private ViewPager mFragSub3ViewPager;
+    private Spinner mAccountSpinner;
     private View mView;
     private IRResolver ir;
     private static final String TAG = "InvestRecord";
@@ -48,7 +48,7 @@ public class FragmentSub3 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mActivity = (MainActivity) getActivity();
+        MainActivity mActivity = (MainActivity) getActivity();
 
         assert mActivity != null;
         ir = mActivity.ir;
@@ -73,10 +73,17 @@ public class FragmentSub3 extends Fragment {
         mView = inflater.inflate(R.layout.fragment_sub3, container, false);
 
         initLayout();
-        initAccountSpinner();
         initDataBase();
+        initAccountSpinner();
 
         return mView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mAccountSpinner.setSelection(findAccount(ir.getCurrentAccount()),false);
     }
 
     private void initLayout() {
@@ -111,27 +118,22 @@ public class FragmentSub3 extends Fragment {
             }
         });
     }
+    private void initDataBase() {
+        updateAccountList();
+
+        if(accounts.isEmpty()) {
+            ir.setCurrentAccount(-1);
+        }
+        else if(ir.getCurrentAccount() < 0) {
+            ir.setCurrentAccount(accounts.get(0).getId());
+        }
+    }
     private void initAccountSpinner() {
         //noinspection ConstantConditions
         accountAdapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, accountlists);
-        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub3_account);
+        mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub3_account);
         mAccountSpinner.setAdapter(accountAdapter);
-        mAccountSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ir.setCurrentAccount(accounts.get(position).getId());
-                callUpdateFrag6();
-                callUpdateFrag8();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
-    private void initDataBase() {
-        updateAccountSpinner();
+        mAccountSpinner.setOnItemSelectedListener(listener);
     }
 
     public void setCallback6(Callback callback) {
@@ -146,7 +148,7 @@ public class FragmentSub3 extends Fragment {
             m_callback6.update();
         }
     }
-    public void callUpdateFrag8() {
+    private void callUpdateFrag8() {
         if(m_callback8 != null) {
             m_callback8.update();
         }
@@ -155,11 +157,7 @@ public class FragmentSub3 extends Fragment {
     public void updateAccountSpinner() {
         updateAccountList();
         accountAdapter.notifyDataSetChanged();
-        if(accounts.isEmpty()) ir.setCurrentAccount(-1);
-        else ir.setCurrentAccount(accounts.get(0).getId());
 
-        Spinner mAccountSpinner = mView.findViewById(R.id.spinner_frag_sub3_account);
-        mAccountSpinner.setSelection(0);
     }
     private void updateAccountList() {
         String str;
@@ -178,4 +176,31 @@ public class FragmentSub3 extends Fragment {
             accountlists.add(str);
         }
     }
+    private int findAccount(int id) {
+        int result = -1;
+
+        if(accounts.isEmpty()) return -1;
+
+        for (int i = 0; i < accounts.size(); i++) {
+            if(accounts.get(i).getId() == id) {
+                result = i;
+                break;
+            }
+        }
+        return result;
+    }
+
+    private AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            ir.setCurrentAccount(accounts.get(position).getId());
+            callUpdateFrag6();
+            callUpdateFrag8();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 }
