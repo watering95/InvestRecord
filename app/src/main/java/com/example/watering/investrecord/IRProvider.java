@@ -97,29 +97,42 @@ public class IRProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
 
+        Cursor cursor;
+
         switch (Matcher.match(uri)) {
             case CODE_GROUP:
-                return DB_group.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_group.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_ACCOUNT:
-                return DB_account.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_account.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_INFO_IO:
-                return DB_info_IO.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_info_IO.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_INFO_DAIRY:
-                return DB_info_dairy.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_info_dairy.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_CARD:
-                return DB_card.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_card.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_CATEGORY_MAIN:
-                return DB_category_main.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_category_main.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_CATEGORY_SUB:
-                return DB_category_sub.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_category_sub.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_INCOME:
-                return DB_income.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_income.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_SPEND:
-                return DB_spend.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_spend.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_SPEND_CARD:
-                return DB_spend_card.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_spend_card.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_SPEND_CASH:
-                return DB_spend_cash.query(projection, selection, selectionArgs, sortOrder);
+                cursor = DB_spend_cash.query(projection, selection, selectionArgs, sortOrder);
+                break;
             case CODE_JOIN:
             case CODE_TABLE:
                 @SuppressWarnings("ConstantConditions")
@@ -127,10 +140,13 @@ public class IRProvider extends ContentProvider {
 
                 assert projection != null;
                 String sql = "SELECT " + projection[0] + " WHERE " + selection;
-                return db.rawQuery(sql, selectionArgs);
+                cursor = db.rawQuery(sql, selectionArgs);
+                db.close();
+                break;
             default:
                 return null;
         }
+        return cursor;
     }
     @Nullable
     @Override

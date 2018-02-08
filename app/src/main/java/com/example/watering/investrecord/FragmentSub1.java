@@ -54,10 +54,18 @@ public class FragmentSub1 extends Fragment {
     public void setCallback1(FragmentSub1.Callback callback) {
         this.m_callback1 = callback;
     }
+    public void setCallback2(FragmentSub1.Callback callback) {
+        this.m_callback2 = callback;
+    }
 
     public void callUpdateFrag1() {
         if(m_callback1 != null) {
             m_callback1.update();
+        }
+    }
+    public void callUpdateFrag2() {
+        if(m_callback2 != null) {
+            m_callback2.update();
         }
     }
 

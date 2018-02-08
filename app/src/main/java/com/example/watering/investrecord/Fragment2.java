@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +52,18 @@ public class Fragment2 extends Fragment {
         ir = mActivity.ir;
 
         makeHTMLFile();
+
+        final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
+
+        FragmentSub1.Callback callback = new FragmentSub1.Callback() {
+            @Override
+            public void update() {
+                makeHTMLFile();
+                mWeb.reload();
+            }
+        };
+
+        fragmentSub1.setCallback2(callback);
     }
 
     @Nullable
@@ -83,8 +97,9 @@ public class Fragment2 extends Fragment {
             Map<String, Integer> dataMap = new HashMap<>();
 
             StringBuilder data = new StringBuilder();
-            String today = mActivity.getToday();
-            String date = today;
+            String strToday = mActivity.getToday();
+            String strDate = strToday;
+            Calendar firstDate = mActivity.strToCalendar(ir.getFirstDate());
             Info_IO io;
 
             dataMap.clear();
@@ -92,30 +107,20 @@ public class Fragment2 extends Fragment {
             int i = 0, sum = 0;
             do {
                 for (int index = 0; index < accounts.size(); index++) {
-                    io = ir.getLatestInfoIO(accounts.get(index).getId(), date);
+                    io = ir.getLatestInfoIO(accounts.get(index).getId(), strDate);
                     if(io != null) {
                         sum += io.getEvaluation();
                     }
-                    else {
-                        break;
-                    }
                 }
-                if(i < 100) {
-                    dataMap.put(date,sum);
-                    sum = 0;
-                    i++;
-                    date = mActivity.dateChange(today, -i);
-                }
-            } while(i < 100);
+                data.append("[").append("new Date('").append(strDate).append("')").append(", ").append(sum).append("],\n");
+                sum = 0;
+                i++;
+                strDate = mActivity.dateChange(strToday, -i);
+            } while(mActivity.strToCalendar(strDate).compareTo(firstDate) > 0);
 
-            Set<String> set = dataMap.keySet();
-            Iterator<String> iterator = set.iterator();
-            while(iterator.hasNext()) {
-                String key = iterator.next();
-                int value = dataMap.get(key);
-                data.append("[").append("new Date('").append(key).append("')").append(", ").append(value).append("],\n");
-            }
             data.delete(data.length()-2,data.length()-1);
+
+            Log.i(TAG, String.format("%s",data));
 
             String function = "function drawChart() {\n"
                     + "var chartDiv = document.getElementById('chart_div');\n\n"

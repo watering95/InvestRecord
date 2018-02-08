@@ -416,13 +416,19 @@ public class IRResolver {
         else return dairies.get(0);
     }
     public Info_IO getLatestInfoIO(int id_account, String date) {
-        String selection = "id_account=? and date<?";
+        String selection = "id_account=? and date<=?";
         String[] selectionArgs = new String[] {String.valueOf(id_account),date};
 
         IOs.clear();
         getData(CODE_INFO_IO, URI_INFO_IO, selection,selectionArgs,"date DESC");
         if(IOs.isEmpty()) return null;
         else return IOs.get(0);
+    }
+    public String getFirstDate() {
+        IOs.clear();
+        getData(CODE_INFO_IO, URI_INFO_IO, null, null, "date ASC");
+        if(IOs.isEmpty()) return null;
+        else return IOs.get(0).getDate();
     }
     public int getCategoryMainId(String name) {
         Cursor c;

@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
                     ir.setCurrentGroup(groups.get(position).getId());
                 }
                 fragmentSub1.callUpdateFrag1();
+                fragmentSub1.callUpdateFrag2();
                 callUpdateFragSub3();
             }
 
@@ -229,12 +230,8 @@ public class MainActivity extends AppCompatActivity {
         return String.format(Locale.getDefault(), "%04d-%02d-%02d", today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DATE));
     }
     public String dateChange(String date, int amount) {
-        Calendar calendar = Calendar.getInstance();
-        String year = date.substring(0,4);
-        String month = date.substring(5,7);
-        String day = date.substring(8,10);
+        Calendar calendar = strToCalendar(date);
 
-        calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
         calendar.add(Calendar.DATE,amount);
 
         if (Calendar.getInstance().before(calendar)) {
@@ -243,6 +240,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
+    }
+    public Calendar strToCalendar(String date) {
+        Calendar calendar = Calendar.getInstance();
+
+        String year = date.substring(0,4);
+        String month = date.substring(5,7);
+        String day = date.substring(8,10);
+
+        calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
+
+        return calendar;
+    }
+    public String calendarToStr(Calendar calendar) {
+        return String.format(Locale.getDefault(), "%04d-%02d-%02d", calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
     }
 
     public void inoutDialog(String selectedDate) {
