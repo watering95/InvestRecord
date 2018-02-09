@@ -1188,6 +1188,7 @@ public class IRResolver {
                     currentAccount = -1;
                     break;
             }
+            cursor.close();
             return;
         }
 

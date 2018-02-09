@@ -115,6 +115,7 @@ public class Fragment2 extends Fragment {
                 data.append("[").append("new Date('").append(strDate).append("')").append(", ").append(sum).append("],\n");
                 sum = 0;
                 i++;
+                if(i > 30) break;
                 strDate = mActivity.dateChange(strToday, -i);
             } while(mActivity.strToCalendar(strDate).compareTo(firstDate) > 0);
 

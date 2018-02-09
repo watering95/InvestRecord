@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 updateGroupSpinner();
-                fragmentSub3.updateAccountSpinner();
+                callUpdateFragSub3();
             }
         });
 
