@@ -415,7 +415,16 @@ public class IRResolver {
         if(dairies.isEmpty()) return null;
         else return dairies.get(0);
     }
-    public Info_IO getLatestInfoIO(int id_account, String date) {
+    public Info_Dairy getLastInfoDairy(int id_account, String date) {
+        String selection = "id_account=? and date<=?";
+        String[] selectionArgs = new String[] {String.valueOf(id_account),date};
+
+        dairies.clear();
+        getData(CODE_INFO_DAIRY, URI_INFO_DAIRY, selection,selectionArgs,"date DESC");
+        if(dairies.isEmpty()) return null;
+        else return dairies.get(0);
+    }
+    public Info_IO getLastInfoIO(int id_account, String date) {
         String selection = "id_account=? and date<=?";
         String[] selectionArgs = new String[] {String.valueOf(id_account),date};
 
@@ -612,7 +621,7 @@ public class IRResolver {
         int id_account = card.getAccount();
 
         Info_IO io = getInfoIO(id_account,date);
-        Info_IO io_latest = getLatestInfoIO(id_account,date);
+        Info_IO io_latest = getLastInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -651,7 +660,7 @@ public class IRResolver {
         cr.insert(Uri.parse(URI_SPEND_CASH),cv);
 
         Info_IO io = getInfoIO(id_account,date);
-        Info_IO io_latest = getLatestInfoIO(id_account,date);
+        Info_IO io_latest = getLastInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -688,7 +697,7 @@ public class IRResolver {
 
         int sum = getIncomeSum(date, id_account);
         Info_IO io = getInfoIO(id_account,date);
-        Info_IO io_latest = getLatestInfoIO(id_account,date);
+        Info_IO io_latest = getLastInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -787,7 +796,7 @@ public class IRResolver {
         int sum = getSpendsCardSum(date, id_account);
 
         Info_IO io = getInfoIO(id_account,date);
-        Info_IO io_latest = getLatestInfoIO(id_account,date);
+        Info_IO io_latest = getLastInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -833,7 +842,7 @@ public class IRResolver {
         int sum = getSpendsCashSum(date,id_account);
 
         Info_IO io = getInfoIO(id_account,date);
-        Info_IO io_latest = getLatestInfoIO(id_account,date);
+        Info_IO io_latest = getLastInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -863,7 +872,7 @@ public class IRResolver {
 
         int sum = getIncomeSum(date, id_account);
         Info_IO io = getInfoIO(id_account,date);
-        Info_IO io_latest = getLatestInfoIO(id_account,date);
+        Info_IO io_latest = getLastInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -1037,7 +1046,7 @@ public class IRResolver {
         String date = spend.getDate();
         int id_account = card.getAccount();
         Info_IO io = getInfoIO(id_account,date);
-        Info_IO io_latest = getLatestInfoIO(id_account,date);
+        Info_IO io_latest = getLastInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -1081,7 +1090,7 @@ public class IRResolver {
         }
 
         Info_IO io = getInfoIO(id_account,date);
-        Info_IO io_latest = getLatestInfoIO(id_account,date);
+        Info_IO io_latest = getLastInfoIO(id_account,date);
 
         int evaluation = 0;
 
@@ -1125,7 +1134,7 @@ public class IRResolver {
 
         int sum = getIncomeSum(date, id_account);
         Info_IO io = getInfoIO(id_account, date);
-        Info_IO io_latest = getLatestInfoIO(id_account,date);
+        Info_IO io_latest = getLastInfoIO(id_account,date);
 
         int evaluation = 0;
 

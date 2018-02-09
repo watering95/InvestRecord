@@ -759,7 +759,7 @@ public class UserDialogFragment extends DialogFragment {
         }
 
         Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
-        Info_IO io_latest = ir.getLatestInfoIO(ir.getCurrentAccount(),selectedDate);
+        Info_IO io_latest = ir.getLastInfoIO(ir.getCurrentAccount(),selectedDate);
 
         int evaluation;
 
@@ -990,7 +990,7 @@ public class UserDialogFragment extends DialogFragment {
 
                 // 출금계좌
                 Info_IO io = ir.getInfoIO(selectedAccountIdFrom,selectedDate);
-                Info_IO io_latest = ir.getLatestInfoIO(selectedAccountIdFrom,selectedDate);
+                Info_IO io_latest = ir.getLastInfoIO(selectedAccountIdFrom,selectedDate);
 
                 int evaluation = 0;
 
@@ -1013,7 +1013,7 @@ public class UserDialogFragment extends DialogFragment {
 
                 // 입금계좌
                 io = ir.getInfoIO(selectedAccountIdTo,selectedDate);
-                io_latest = ir.getLatestInfoIO(selectedAccountIdTo,selectedDate);
+                io_latest = ir.getLastInfoIO(selectedAccountIdTo,selectedDate);
 
                 // io_latest가 없으면 0
                 if(io_latest != null) evaluation = io_latest.getEvaluation();

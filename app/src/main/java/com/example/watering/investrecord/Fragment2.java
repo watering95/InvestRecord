@@ -17,14 +17,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -94,28 +88,33 @@ public class Fragment2 extends Fragment {
             BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph_total.html",false));
 
             List<Account> accounts = ir.getAccounts(ir.getCurrentGroup());
-            Map<String, Integer> dataMap = new HashMap<>();
 
             StringBuilder data = new StringBuilder();
             String strToday = mActivity.getToday();
             String strDate = strToday;
             Calendar firstDate = mActivity.strToCalendar(ir.getFirstDate());
             Info_IO io;
+            Info_Dairy dairy;
+            final int duration = 30;
 
-            dataMap.clear();
-
-            int i = 0, sum = 0;
+            int i = 0, sumEvaluation = 0, sumPrincipal = 0;
+            double rate = 0;
             do {
                 for (int index = 0; index < accounts.size(); index++) {
-                    io = ir.getLatestInfoIO(accounts.get(index).getId(), strDate);
+                    dairy = ir.getLastInfoDairy(accounts.get(index).getId(), strDate);
+                    io = ir.getLastInfoIO(accounts.get(index).getId(), strDate);
                     if(io != null) {
-                        sum += io.getEvaluation();
+                        sumEvaluation += io.getEvaluation();
+                        sumPrincipal += dairy.getPrincipal();
                     }
                 }
-                data.append("[").append("new Date('").append(strDate).append("')").append(", ").append(sum).append("],\n");
-                sum = 0;
+                if(sumPrincipal != 0 && sumEvaluation != 0) rate = (double)sumEvaluation / (double)sumPrincipal * 100 - 100;
+                data.append("[").append("new Date('").append(strDate).append("')").append(", ").append(sumEvaluation).append(", ").append(rate).append("],\n");
+                sumEvaluation = 0;
+                sumPrincipal = 0;
+                rate = 0;
                 i++;
-                if(i > 30) break;
+                if(i > duration) break;
                 strDate = mActivity.dateChange(strToday, -i);
             } while(mActivity.strToCalendar(strDate).compareTo(firstDate) > 0);
 
@@ -129,11 +128,12 @@ public class Fragment2 extends Fragment {
                     + "var data = new google.visualization.DataTable();\n"
                     + "data.addColumn('date','Day');\n"
                     + "data.addColumn('number','평가액');\n"
+                    + "data.addColumn('number','수익율');\n"
                     + "data.addRows([\n" + data + "]);\n\n"
 
                     + "var options = {"
-                    + "series: {0: {targetAxisIndex: 0}},"
-                    + "vAxes: {0: {title: '평가액'}},"
+                    + "series: {0: {targetAxisIndex: 0}, 1: {targetAxisIndex: 1}},"
+                    + "vAxes: {0: {title: '평가액'}, 1: {title: '수익율'}},"
                     + "};\n\n"
 
                     + "var chart = new google.visualization.LineChart(chartDiv);\n"
