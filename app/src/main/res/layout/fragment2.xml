@@ -1,13 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout_frag2">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/week1"
+            android:layout_weight="1"
+            android:id="@+id/button_frag2_due_week_1"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/month1"
+            android:layout_weight="1"
+            android:id="@+id/button_frag2_due_month_1"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/year1"
+            android:layout_weight="1"
+            android:id="@+id/button_frag2_due_year_1"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/full"
+            android:layout_weight="1"
+            android:id="@+id/button_frag2_due_full"/>
+    </LinearLayout>
     <WebView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:id="@+id/webView_frag2"/>
+        android:id="@+id/webView_frag2"
+        android:layout_below="@id/linearLayout_frag2"/>
 
-</LinearLayout>
+</RelativeLayout>

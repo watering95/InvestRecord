@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.BufferedWriter;
@@ -33,6 +34,8 @@ public class Fragment2 extends Fragment {
     private View mView;
     private WebView mWeb;
     private static final String TAG = "InvestRecord";
+    private int duration = 7;
+    private int interval = 1;
 
     public Fragment2() {
     }
@@ -45,7 +48,7 @@ public class Fragment2 extends Fragment {
         assert mActivity != null;
         ir = mActivity.ir;
 
-        makeHTMLFile();
+//        makeHTMLFile();
 
         final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
 
@@ -81,7 +84,42 @@ public class Fragment2 extends Fragment {
     private void initLayout() {
         DecimalFormat df = new DecimalFormat("#,###");
 
+        Button buttonWeek = mView.findViewById(R.id.button_frag2_due_week_1);
+        Button buttonMonth = mView.findViewById(R.id.button_frag2_due_month_1);
+        Button buttonYear = mView.findViewById(R.id.button_frag2_due_year_1);
+        Button buttonFull = mView.findViewById(R.id.button_frag2_due_full);
+
+        buttonWeek.setOnClickListener(listener);
+        buttonMonth.setOnClickListener(listener);
+        buttonYear.setOnClickListener(listener);
+        buttonFull.setOnClickListener(listener);
     }
+
+    Button.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.button_frag2_due_week_1:
+                    duration = 7;
+                    interval = 1;
+                    break;
+                case R.id.button_frag2_due_month_1:
+                    duration = 30;
+                    interval = 1;
+                    break;
+                case R.id.button_frag2_due_year_1:
+                    duration = 365;
+                    interval = 7;
+                    break;
+                case R.id.button_frag2_due_full:
+                    duration = -1;
+                    interval = 10;
+                    break;
+            }
+            makeHTMLFile();
+            mWeb.reload();
+        }
+    };
 
     private void makeHTMLFile() {
         try{
@@ -95,7 +133,6 @@ public class Fragment2 extends Fragment {
             Calendar firstDate = mActivity.strToCalendar(ir.getFirstDate());
             Info_IO io;
             Info_Dairy dairy;
-            final int duration = 30;
 
             int i = 0, sumEvaluation = 0, sumPrincipal = 0;
             double rate = 0;
@@ -114,8 +151,8 @@ public class Fragment2 extends Fragment {
                 sumPrincipal = 0;
                 rate = 0;
                 i++;
-                if(i > duration) break;
-                strDate = mActivity.dateChange(strToday, -i);
+                if(duration >= 0 && i > duration) break;
+                strDate = mActivity.dateChange(strToday, -i*interval);
             } while(mActivity.strToCalendar(strDate).compareTo(firstDate) > 0);
 
             data.delete(data.length()-2,data.length()-1);
