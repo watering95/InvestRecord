@@ -141,7 +141,6 @@ public class IRProvider extends ContentProvider {
                 assert projection != null;
                 String sql = "SELECT " + projection[0] + " WHERE " + selection;
                 cursor = db.rawQuery(sql, selectionArgs);
-                db.close();
                 break;
             default:
                 return null;

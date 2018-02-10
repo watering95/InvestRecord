@@ -80,9 +80,4 @@ class DBHelper extends SQLiteOpenHelper {
     Cursor query(String[] columns, String selection, String[] selectionArgs, String orderBy) throws SQLiteException {
         return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
     }
-
-    @Override
-    public synchronized void close() {
-        super.close();
-    }
 }

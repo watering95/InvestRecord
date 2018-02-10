@@ -1402,9 +1402,8 @@ public class IRResolver {
 
         String where = "date_use BETWEEN date('now','start of month') AND date('now')";
         String[] select = {"total(amount) AS SUM"};
-        String[] selectionArgs = null;
 
-        c = cr.query(Uri.parse(URI_SPEND), select, where, selectionArgs, null);
+        c = cr.query(Uri.parse(URI_SPEND), select, where, null, null);
 
         assert c != null;
         c.moveToNext();
@@ -1422,9 +1421,8 @@ public class IRResolver {
 
         String where = "date BETWEEN date('now','start of month') AND date('now')";
         String[] select = {"total(amount) AS SUM"};
-        String[] selectionArgs = null;
 
-        c = cr.query(Uri.parse(URI_INCOME), select, where, selectionArgs, null);
+        c = cr.query(Uri.parse(URI_INCOME), select, where, null, null);
 
         assert c != null;
         c.moveToNext();

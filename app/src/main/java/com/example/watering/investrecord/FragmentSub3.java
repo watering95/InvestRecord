@@ -190,7 +190,7 @@ public class FragmentSub3 extends Fragment {
         return result;
     }
 
-    private AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             ir.setCurrentAccount(accounts.get(position).getId());
