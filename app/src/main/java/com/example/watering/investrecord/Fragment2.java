@@ -95,7 +95,7 @@ public class Fragment2 extends Fragment {
         buttonFull.setOnClickListener(listener);
     }
 
-    final Button.OnClickListener listener = new View.OnClickListener() {
+    private final Button.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch(v.getId()) {

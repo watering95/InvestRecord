@@ -286,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 updateGroupSpinner();
+                fragmentSub1.callUpdateFrag1();
+                fragmentSub1.callUpdateFrag2();
                 callUpdateFragSub3();
             }
         });
@@ -523,7 +525,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void callUpdateFragSub3() {
+    private void callUpdateFragSub3() {
         if(m_callbackSub3 != null) {
             m_callbackSub3.update();
         }
@@ -531,9 +533,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void setCallbackSub3(Callback callback) {
         this.m_callbackSub3 = callback;
-    }
-
-    public List<Group> getGroups() {
-        return this.groups;
     }
 }

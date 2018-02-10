@@ -836,7 +836,6 @@ public class IRResolver {
 
         cr.delete(Uri.parse(URI_SPEND_CASH),where,args);
 
-        assert spend != null;
         String date = spend.getDate();
         int id_account = spendCash.getAccount();
         int sum = getSpendsCashSum(date,id_account);
@@ -1197,6 +1196,7 @@ public class IRResolver {
                     currentAccount = -1;
                     break;
             }
+            assert cursor != null;
             cursor.close();
             return;
         }
