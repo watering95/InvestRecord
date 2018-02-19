@@ -406,8 +406,8 @@ public class UserDialogFragment extends DialogFragment {
                 }
                 selectedDate = editText_date.getText().toString();
                 List<Spend> spends = ir.getSpends(selectedDate);
-                Calendar today = Calendar.getInstance();
-                String newCode = String.format(Locale.getDefault(), "%d%d%04d%02d%02d%02d", type_spend, schedule, today.get(Calendar.YEAR), today.get(Calendar.MONTH) + 1, today.get(Calendar.DAY_OF_MONTH), spends.size());
+                Calendar date = mActivity.strToCalendar(selectedDate);
+                String newCode = String.format(Locale.getDefault(), "%d%d%04d%02d%02d%02d", type_spend, schedule, date.get(Calendar.YEAR), date.get(Calendar.MONTH) + 1, date.get(Calendar.DAY_OF_MONTH), spends.size());
 
                 ir.insertSpend(newCode, details, selectedDate, amount, selectedSubId);
                 // 현금 지출인지 카드 지출인지
@@ -452,6 +452,8 @@ public class UserDialogFragment extends DialogFragment {
                         break;
                 }
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
+                mActivity.fragmentSub1.callUpdateFrag1();
+                mActivity.fragmentSub1.callUpdateFrag2();
                 mActivity.fragmentSub2.callUpdateFrag3();
                 mActivity.fragmentSub2.updateFragSub2();
             }
@@ -468,7 +470,8 @@ public class UserDialogFragment extends DialogFragment {
                         break;
                 }
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
-
+                mActivity.fragmentSub1.callUpdateFrag1();
+                mActivity.fragmentSub1.callUpdateFrag2();
                 mActivity.fragmentSub2.callUpdateFrag3();
                 mActivity.fragmentSub2.updateFragSub2();
             }
