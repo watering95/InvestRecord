@@ -91,9 +91,12 @@ public class Fragment1 extends Fragment {
 
         ListView listView = mView.findViewById(R.id.listview_frag1_totalasset);
         listAdapter = new List1Adapter(mView.getContext(),lists);
-        if(lists.size() != 0) listView.setAdapter(listAdapter);
-        // 처음 시작 시 현재 계좌 선택이 되지 않는 문제를 해결하기 위해 추가
-        ir.setCurrentAccount(lists.get(0).getAccount().getId());
+        if(lists.size() != 0) {
+            listView.setAdapter(listAdapter);
+            // 처음 시작 시 현재 계좌 선택이 되지 않는 문제를 해결하기 위해 추가
+            ir.setCurrentAccount(lists.get(0).getAccount().getId());
+        }
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
