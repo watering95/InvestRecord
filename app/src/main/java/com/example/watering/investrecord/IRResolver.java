@@ -439,6 +439,15 @@ public class IRResolver {
         if(IOs.isEmpty()) return null;
         else return IOs.get(0).getDate();
     }
+    public String getLastSpendCode(String date) {
+        String selection = "date_use=?";
+        String[] selectionArgs = new String[] {date};
+
+        spends.clear();
+        getData(CODE_SPEND, URI_SPEND, selection,selectionArgs,"_id DESC");
+        if(spends.isEmpty()) return null;
+        else return spends.get(0).getCode();
+    }
     public int getCategoryMainId(String name) {
         Cursor c;
 

@@ -407,7 +407,11 @@ public class UserDialogFragment extends DialogFragment {
                 selectedDate = editText_date.getText().toString();
                 List<Spend> spends = ir.getSpends(selectedDate);
                 Calendar date = mActivity.strToCalendar(selectedDate);
-                String newCode = String.format(Locale.getDefault(), "%d%d%04d%02d%02d%02d", type_spend, schedule, date.get(Calendar.YEAR), date.get(Calendar.MONTH) + 1, date.get(Calendar.DAY_OF_MONTH), spends.size());
+
+                // spend 항목이 삭제된 경우 등 코드 중복 방지
+                int lastCode = 0;
+                if(spends.size() > 0) lastCode = Integer.parseInt(ir.getLastSpendCode(selectedDate).substring(10)) + 1;
+                String newCode = String.format(Locale.getDefault(), "%d%d%04d%02d%02d%02d", type_spend, schedule, date.get(Calendar.YEAR), date.get(Calendar.MONTH) + 1, date.get(Calendar.DAY_OF_MONTH), lastCode);
 
                 ir.insertSpend(newCode, details, selectedDate, amount, selectedSubId);
                 // 현금 지출인지 카드 지출인지
