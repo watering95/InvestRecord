@@ -9,6 +9,7 @@ import android.util.Log;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -1320,13 +1321,13 @@ public class IRResolver {
 
         return sum;
     }
-    int getSpendMonth() {
+    int getSpendMonth(String date) {
         Cursor c;
 
         // table이 존재하지 않으면
         if(checkDBTable("tbl_spend") == 0) return 0;
 
-        String where = "date_use BETWEEN date('now','start of month') AND date('now')";
+        String where = "date_use BETWEEN date('" + date + "','start of month') AND date('" + date + "','start of month','+1 month','-1 day')";
         String[] select = {"total(amount) AS SUM"};
 
         c = cr.query(Uri.parse(URI_SPEND), select, where, null, null);
@@ -1339,13 +1340,13 @@ public class IRResolver {
 
         return sum;
     }
-    int getIncomeMonth() {
+    int getIncomeMonth(String date) {
         Cursor c;
 
         // table이 존재하지 않으면
         if(checkDBTable("tbl_income") == 0) return 0;
 
-        String where = "date BETWEEN date('now','start of month') AND date('now')";
+        String where = "date BETWEEN date('" + date + "','start of month') AND date('" + date + "','start of month','+1 month','-1 day')";;
         String[] select = {"total(amount) AS SUM"};
 
         c = cr.query(Uri.parse(URI_INCOME), select, where, null, null);
@@ -1440,20 +1441,30 @@ public class IRResolver {
                 break;
         }
     }
-    private int calEvaluation(int id_account, String date) {
-        Info_IO io = getInfoIO(id_account, date);
-        Info_IO io_latest = getLastInfoIO(id_account, date);
+    private int calEvaluation(int id_account, String txtDate) {
+        Info_IO io = getInfoIO(id_account, txtDate);
+
+        // 전날 데이터 가져오기
+        String year = txtDate.substring(0,4);
+        String month = txtDate.substring(5,7);
+        String day = txtDate.substring(8,10);
+
+        Calendar before = Calendar.getInstance();
+        before.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
+        before.add(Calendar.DATE,-1);
+
+        Info_IO io_latest = getLastInfoIO(id_account, String.format(Locale.getDefault(), "%04d-%02d-%02d", before.get(Calendar.YEAR),before.get(Calendar.MONTH)+1,before.get(Calendar.DATE)));
 
         int evaluation = 0;
 
         // io_latest가 없으면 0
         if(io_latest != null) {
-            if(io == null) evaluation = io_latest.getEvaluation();
-            // evaluation에 해당일 input, output값 반영
-            else evaluation = io_latest.getEvaluation() - io.getOutput() + io.getInput();
+            evaluation = io_latest.getEvaluation();
+            // 현재값이 있을 경우 무시하고 전날 데이터에 입출력값 반영
+            if(io != null) evaluation = evaluation - io.getOutput() + io.getInput();
         }
         // evaluation에 해당일 spendcash, spendcard, income 반영
-        return evaluation - getSpendsCashSum(date,id_account) - getSpendsCardSum(date,id_account) + getIncomeSum(date,id_account);
+        return evaluation - getSpendsCashSum(txtDate,id_account) - getSpendsCardSum(txtDate,id_account) + getIncomeSum(txtDate,id_account);
     }
     private int checkDBTable(String name) {
         Cursor c;

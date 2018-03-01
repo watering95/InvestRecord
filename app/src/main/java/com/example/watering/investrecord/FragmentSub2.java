@@ -28,6 +28,7 @@ public class FragmentSub2 extends Fragment {
     private ViewPager mFragSub2ViewPager;
 
     private View mView;
+    private MainActivity mActivity;
     private IRResolver ir;
 
     private TextView textView_spend_month;
@@ -46,7 +47,7 @@ public class FragmentSub2 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final MainActivity mActivity = (MainActivity) getActivity();
+        mActivity = (MainActivity) getActivity();
         assert mActivity != null;
         ir = mActivity.ir;
 
@@ -243,8 +244,8 @@ public class FragmentSub2 extends Fragment {
 
         DecimalFormat df = new DecimalFormat("#,###");
 
-        int spend_month = ir.getSpendMonth();
-        int income_month = ir.getIncomeMonth();
+        int spend_month = ir.getSpendMonth(mActivity.getToday());
+        int income_month = ir.getIncomeMonth(mActivity.getToday());
         textView_income_month.setText(df.format(income_month));
         textView_spend_month.setText(df.format(spend_month));
     }

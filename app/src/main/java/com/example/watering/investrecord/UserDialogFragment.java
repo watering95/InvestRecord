@@ -460,8 +460,9 @@ public class UserDialogFragment extends DialogFragment {
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
                 mActivity.fragmentSub1.callUpdateFrag1();
                 mActivity.fragmentSub1.callUpdateFrag2();
-                mActivity.fragmentSub2.callUpdateFrag3();
                 mActivity.fragmentSub2.updateFragSub2();
+                mActivity.fragmentSub2.callUpdateFrag3();
+                mActivity.fragmentSub2.callUpdateFrag5();
             }
         });
         builder.setNegativeButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -478,8 +479,9 @@ public class UserDialogFragment extends DialogFragment {
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
                 mActivity.fragmentSub1.callUpdateFrag1();
                 mActivity.fragmentSub1.callUpdateFrag2();
-                mActivity.fragmentSub2.callUpdateFrag3();
                 mActivity.fragmentSub2.updateFragSub2();
+                mActivity.fragmentSub2.callUpdateFrag3();
+                mActivity.fragmentSub2.callUpdateFrag5();
             }
         });
         builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -629,8 +631,11 @@ public class UserDialogFragment extends DialogFragment {
 
                 if(selectedId < 0) ir.insertIncome(details,selectedDate,selectedAccountId,selectedSubId,amount);
                 else ir.updateIncome(id_income,details,selectedDate,selectedAccountId,selectedSubId,amount);
-                mActivity.fragmentSub2.callUpdateFrag4();
+                mActivity.fragmentSub1.callUpdateFrag1();
+                mActivity.fragmentSub1.callUpdateFrag2();
                 mActivity.fragmentSub2.updateFragSub2();
+                mActivity.fragmentSub2.callUpdateFrag4();
+                mActivity.fragmentSub2.callUpdateFrag5();
                 listener.onWorkComplete(null);
             }
         });
@@ -638,8 +643,11 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 ir.deleteIncome("_id",new String[] {String.valueOf(id_income)});
-                mActivity.fragmentSub2.callUpdateFrag4();
+                mActivity.fragmentSub1.callUpdateFrag1();
+                mActivity.fragmentSub1.callUpdateFrag2();
                 mActivity.fragmentSub2.updateFragSub2();
+                mActivity.fragmentSub2.callUpdateFrag4();
+                mActivity.fragmentSub2.callUpdateFrag5();
             }
         });
         builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {

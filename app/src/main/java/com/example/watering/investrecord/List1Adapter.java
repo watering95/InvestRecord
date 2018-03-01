@@ -51,14 +51,14 @@ class List1Adapter extends BaseAdapter {
         TextView rate = convertView.findViewById(R.id.textView_layout_list1_4);
         TextView accountInfo = convertView.findViewById(R.id.textView_layout_list1_5);
 
-        Info_List6 list2 = mData.get(position).getList2();
+        Info_List6 list6 = mData.get(position).getList6();
         Account account = mData.get(position).getAccount();
         DecimalFormat df = new DecimalFormat("#,###");
 
         txtAccount.setText(String.valueOf(account.getNumber()));
-        principal.setText(df.format(list2.getDairy().getPrincipal()));
-        rate.setText(String.format(Locale.getDefault(),"%.2f",list2.getDairy().getRate()));
-        evaluation.setText(df.format(list2.getEvaluation()));
+        principal.setText(df.format(list6.getDairy().getPrincipal()));
+        rate.setText(String.format(Locale.getDefault(),"%.2f",list6.getDairy().getRate()));
+        evaluation.setText(df.format(list6.getEvaluation()));
         accountInfo.setText(String.format(Locale.getDefault(),"%s %s",account.getInstitute(),account.getDescription()));
 
         return convertView;

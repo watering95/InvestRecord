@@ -229,6 +229,18 @@ public class MainActivity extends AppCompatActivity {
 
         return String.format(Locale.getDefault(), "%04d-%02d-%02d", today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DATE));
     }
+    public String monthChange(String date, int amount) {
+        Calendar calendar = strToCalendar(date);
+
+        calendar.add(Calendar.MONTH, amount);
+
+        if (Calendar.getInstance().before(calendar)) {
+            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
+            return date;
+        }
+
+        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
+    }
     public String dateChange(String date, int amount) {
         Calendar calendar = strToCalendar(date);
 

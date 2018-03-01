@@ -147,6 +147,8 @@ public class Fragment6 extends Fragment {
             String eval,rate;
 
             if(size != 0) {
+                // 그래프 표시를 30개로 제한
+                if(size > 30) size = 30;
                 for (int i = size - 1; i > 0; i--) {
                     eval = String.valueOf(lists.get(i).getEvaluation());
                     rate = String.format(Locale.getDefault(),"%.2f",lists.get(i).getDairy().getRate());

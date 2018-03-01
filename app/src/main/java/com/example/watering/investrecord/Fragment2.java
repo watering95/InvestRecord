@@ -137,6 +137,7 @@ public class Fragment2 extends Fragment {
             int i = 0, sumEvaluation = 0, sumPrincipal = 0;
             double rate = 0;
             do {
+                // 특정일의 합계와 평가액 계산
                 for (int index = 0; index < accounts.size(); index++) {
                     dairy = ir.getLastInfoDairy(accounts.get(index).getId(), strDate);
                     io = ir.getLastInfoIO(accounts.get(index).getId(), strDate);
@@ -145,12 +146,16 @@ public class Fragment2 extends Fragment {
                         sumPrincipal += dairy.getPrincipal();
                     }
                 }
+                // 특정일의 수익율 계산
                 if(sumPrincipal != 0 && sumEvaluation != 0) rate = (double)sumEvaluation / (double)sumPrincipal * 100 - 100;
+                // 특정일 데이터 추가
                 data.append("[").append("new Date('").append(strDate).append("')").append(", ").append(sumEvaluation).append(", ").append(rate).append("],\n");
+                // 초기화
                 sumEvaluation = 0;
                 sumPrincipal = 0;
                 rate = 0;
                 i++;
+                // 날짜 변경
                 if(duration >= 0 && i > duration) break;
                 strDate = mActivity.dateChange(strToday, -i*interval);
             } while(mActivity.strToCalendar(strDate).compareTo(firstDate) > 0);

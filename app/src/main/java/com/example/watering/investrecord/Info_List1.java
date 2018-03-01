@@ -7,16 +7,16 @@ package com.example.watering.investrecord;
 @SuppressWarnings("DefaultFileTemplate")
 class Info_List1 {
     private Account account = null;
-    private Info_List6 list2 = null;
+    private Info_List6 list6 = null;
 
-    public void setInfoList2(Info_List6 list2) {
-        this.list2 = list2;
+    public void setInfoList6(Info_List6 list6) {
+        this.list6 = list6;
     }
     public void setAccount(Account account) {
         this.account = account;
     }
-    public Info_List6 getList2() {
-        return list2;
+    public Info_List6 getList6() {
+        return list6;
     }
     public Account getAccount() {
         return account;

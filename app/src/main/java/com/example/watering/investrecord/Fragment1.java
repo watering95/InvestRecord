@@ -127,7 +127,7 @@ public class Fragment1 extends Fragment {
 
         for(int i = 0; i < accounts.size(); i++) {
             Info_List1 list1 = new Info_List1();
-            Info_List6 list2 = new Info_List6();
+            Info_List6 list6 = new Info_List6();
 
             int id_account = accounts.get(i).getId();
 
@@ -150,12 +150,12 @@ public class Fragment1 extends Fragment {
                 io.setEvaluation(0);
             }
 
-            list2.setDairy(dairy);
-            list2.setEvaluation(io.getEvaluation());
+            list6.setDairy(dairy);
+            list6.setEvaluation(io.getEvaluation());
 
             list1.setAccount(accounts.get(i));
-            list1.setInfoList2(list2);
-            sum_evaluate += list1.getList2().getEvaluation();
+            list1.setInfoList6(list6);
+            sum_evaluate += list1.getList6().getEvaluation();
             sum_principal += dairy.getPrincipal();
 
             lists.add(list1);
