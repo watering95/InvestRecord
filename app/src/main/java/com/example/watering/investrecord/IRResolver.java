@@ -1346,7 +1346,7 @@ public class IRResolver {
         // table이 존재하지 않으면
         if(checkDBTable("tbl_income") == 0) return 0;
 
-        String where = "date BETWEEN date('" + date + "','start of month') AND date('" + date + "','start of month','+1 month','-1 day')";;
+        String where = "date BETWEEN date('" + date + "','start of month') AND date('" + date + "','start of month','+1 month','-1 day')";
         String[] select = {"total(amount) AS SUM"};
 
         c = cr.query(Uri.parse(URI_INCOME), select, where, null, null);

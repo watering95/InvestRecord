@@ -44,9 +44,9 @@ class List3Adapter extends BaseAdapter {
         }
 
         DecimalFormat df = new DecimalFormat("#,###");
-        TextView textView_1 = convertView.findViewById(R.id.textView_layout_list5_1);
-        TextView textView_2 = convertView.findViewById(R.id.textView_layout_list5_2);
-        TextView textView_3 = convertView.findViewById(R.id.textView_layout_list5_3);
+        TextView textView_1 = convertView.findViewById(R.id.textView_layout_list3_1);
+        TextView textView_2 = convertView.findViewById(R.id.textView_layout_list3_2);
+        TextView textView_3 = convertView.findViewById(R.id.textView_layout_list3_3);
 
         textView_1.setText(mData.get(position).getSpend().getDetails());
         textView_3.setText(df.format(mData.get(position).getSpend().getAmount()));

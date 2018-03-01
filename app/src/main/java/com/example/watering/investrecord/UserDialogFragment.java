@@ -51,8 +51,6 @@ public class UserDialogFragment extends DialogFragment {
     private final List<String> lists_category_main = new ArrayList<>();
     private final List<String> lists_category_sub = new ArrayList<>();
     private final List<String> lists_account = new ArrayList<>();
-    private List<String> lists_account_from;
-    private List<String> lists_account_to;
     private final List<String> lists_card = new ArrayList<>();
     private final List<String> lists_select = new ArrayList<>();
 

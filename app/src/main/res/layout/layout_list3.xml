@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView_layout_list5_1"/>
+        android:id="@+id/textView_layout_list3_1"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,11 +17,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView_layout_list5_2"/>
+            android:id="@+id/textView_layout_list3_2"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView_layout_list5_3"
+            android:id="@+id/textView_layout_list3_3"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             tools:ignore="RelativeOverlap" />

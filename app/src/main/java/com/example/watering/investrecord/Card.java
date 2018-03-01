@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class Card implements Serializable {
+class Card implements Serializable {
     private int id_card = -1;
     private String number = null;
     private String company = null;

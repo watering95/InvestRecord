@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class Info_IO implements Serializable {
+class Info_IO implements Serializable {
     private String date = null;
     private int id_account = -1;
     private int input = 0;

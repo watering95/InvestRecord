@@ -1,5 +1,6 @@
 package com.example.watering.investrecord;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -69,13 +70,14 @@ public class Fragment5 extends Fragment {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private void updateInfoLists() {
         lists.clear();
 
         Info_List5 list5;
         Calendar date = mActivity.strToCalendar(mActivity.getToday());
-        String txtMonth = null, txtDate = mActivity.calendarToStr(date);;
-        int income = 0, spend = 0;
+        String txtMonth, txtDate = mActivity.calendarToStr(date);
+        int income, spend;
 
         for(int i = 0; i < 12; i++) {
             list5 = new Info_List5();

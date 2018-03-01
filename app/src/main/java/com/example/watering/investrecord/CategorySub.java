@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class CategorySub implements Serializable {
+class CategorySub implements Serializable {
     private int id_category_sub = -1;
     private String name = null;
     private int getId_category_main = -1;

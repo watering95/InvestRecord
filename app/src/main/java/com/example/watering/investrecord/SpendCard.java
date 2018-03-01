@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class SpendCard implements Serializable {
+class SpendCard implements Serializable {
     private int id_spend_card = -1;
     private String spend_code = null;
     private int id_card = -1;
