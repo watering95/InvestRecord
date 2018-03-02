@@ -148,6 +148,8 @@ public class Fragment4 extends Fragment {
     }
 
     private void updateInfoLists() {
+        Info_List4 list;
+
         lists.clear();
         incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
         if(incomes.isEmpty()) {
@@ -155,10 +157,10 @@ public class Fragment4 extends Fragment {
             return;
         }
 
-        for(int i = 0; i < incomes.size(); i++) {
-            Info_List4 list = new Info_List4();
-
+        for(int i = 0, n = incomes.size(); i < n; i++) {
+            list = new Info_List4();
             list.setIncome(incomes.get(i));
+
             lists.add(list);
         }
     }

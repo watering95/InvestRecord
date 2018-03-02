@@ -170,7 +170,7 @@ public class FragmentSub3 extends Fragment {
             return;
         }
 
-        for (int i = 0; i < accounts.size(); i++) {
+        for (int i = 0, n = accounts.size(); i < n; i++) {
             account = accounts.get(i);
             str = account.getNumber() + " " + account.getInstitute() + " " + account.getDescription();
             accountlists.add(str);
@@ -181,7 +181,7 @@ public class FragmentSub3 extends Fragment {
 
         if(accounts.isEmpty()) return -1;
 
-        for (int i = 0; i < accounts.size(); i++) {
+        for (int i = 0, n = accounts.size(); i < n; i++) {
             if(accounts.get(i).getId() == id) {
                 result = i;
                 break;

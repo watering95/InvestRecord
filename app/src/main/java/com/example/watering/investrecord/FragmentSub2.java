@@ -60,7 +60,6 @@ public class FragmentSub2 extends Fragment {
         mView = inflater.inflate(R.layout.fragment_sub2, container, false);
 
         initLayout();
-        initDataBase();
 
         return mView;
     }
@@ -130,9 +129,6 @@ public class FragmentSub2 extends Fragment {
 
             }
         });
-    }
-    private void initDataBase() {
-
     }
     private void setBasicCategory() {
         String income = "income";

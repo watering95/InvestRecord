@@ -92,9 +92,10 @@ public class IRResolver {
         return dairies;
     }
     List<CategoryMain> getCategoryMains(int kind) {
-        categoryMains.clear();
         String selection = null;
         String[] selectionArgs = null;
+
+        categoryMains.clear();
 
         switch(kind) {
             case KIND_ALL:
@@ -488,10 +489,9 @@ public class IRResolver {
         }
     }
     void insertAccount(String institute, String number, String description) {
+        ContentValues cv = new ContentValues();
 
         if(currentGroup == -1) return;
-
-        ContentValues cv = new ContentValues();
 
         cv.put("institute", institute);
         cv.put("number",number);
@@ -505,10 +505,9 @@ public class IRResolver {
         }
     }
     void insertInfoIO(int id_account, String date, int input, int output, int income, int spend_cash, int spend_card, int evaluation) {
+        ContentValues cv = new ContentValues();
 
         if(currentGroup == -1 || currentAccount == -1) return;
-
-        ContentValues cv = new ContentValues();
 
         cv.put("id_account",id_account);
         cv.put("date", date);
@@ -527,10 +526,9 @@ public class IRResolver {
         }
     }
     void insertInfoIO(Info_IO io) {
+        ContentValues cv = new ContentValues();
 
         if(currentGroup == -1 || currentAccount == -1) return;
-
-        ContentValues cv = new ContentValues();
 
         cv.put("id_account",io.getAccount());
         cv.put("date",io.getDate());
@@ -606,13 +604,17 @@ public class IRResolver {
         ContentValues cv = new ContentValues();
 
         Card card = getCard(id_card);
-        if(card == null)
-        {
+        Spend spend = getSpend(code);
+        String date = spend.getDate();
+        Info_IO io;
+        int id_account = card.getAccount();
+        int evaluation, sum;
+
+        if(card == null) {
             Log.i(TAG,"No card");
             return;
         }
 
-        Spend spend = getSpend(code);
         if(spend == null) {
             Log.i(TAG,"No spend");
             return;
@@ -627,12 +629,9 @@ public class IRResolver {
             Log.e(TAG,"DB insert error");
         }
 
-        String date = spend.getDate();
-        int id_account = card.getAccount();
-
-        Info_IO io = getInfoIO(id_account,date);
-        int evaluation = calEvaluation(id_account, date);
-        int sum = getSpendsCardSum(date, id_account);
+        io = getInfoIO(id_account,date);
+        evaluation = calEvaluation(id_account, date);
+        sum = getSpendsCardSum(date, id_account);
 
         if(io != null) {
             io.setSpendCard(sum);
@@ -648,8 +647,10 @@ public class IRResolver {
         }
     }
     void insertSpendCash(String code, int id_account) {
-        ContentValues cv = new ContentValues();
+        int evaluation, sum;
         String date = null;
+        Info_IO io;
+        ContentValues cv = new ContentValues();
 
         Spend spend = getSpend(code);
         if(spend != null) date = spend.getDate();
@@ -659,9 +660,9 @@ public class IRResolver {
 
         cr.insert(Uri.parse(URI_SPEND_CASH),cv);
 
-        Info_IO io = getInfoIO(id_account,date);
-        int evaluation = calEvaluation(id_account, date);
-        int sum = getSpendsCashSum(date,id_account);
+        io = getInfoIO(id_account,date);
+        evaluation = calEvaluation(id_account, date);
+        sum = getSpendsCashSum(date,id_account);
 
         if(io != null) {
             io.setSpendCash(sum);
@@ -671,6 +672,8 @@ public class IRResolver {
         else insertInfoIO(id_account, date,0,0,0,sum,0,evaluation);
     }
     void insertIncome(String details, String date, int id_account, int id_category_sub, int amount) {
+        int evaluation, sum;
+        Info_IO io;
         ContentValues cv = new ContentValues();
 
         cv.put("id_sub",id_category_sub);
@@ -685,9 +688,9 @@ public class IRResolver {
             Log.e(TAG,"DB insert error");
         }
 
-        Info_IO io = getInfoIO(id_account,date);
-        int evaluation = calEvaluation(id_account, date);
-        int sum = getIncomeSum(date, id_account);
+        io = getInfoIO(id_account,date);
+        evaluation = calEvaluation(id_account, date);
+        sum = getIncomeSum(date, id_account);
 
         if(io != null) {
             io.setIncome(sum);
@@ -704,10 +707,9 @@ public class IRResolver {
     }
 
     private void insertInfoDairy(int id_account, String date, int principal, double rate) {
+        ContentValues cv = new ContentValues();
 
         if(currentGroup == -1 || currentAccount == -1) return;
-
-        ContentValues cv = new ContentValues();
 
         cv.put("id_account", id_account);
         cv.put("date", date);
@@ -750,20 +752,25 @@ public class IRResolver {
         cr.delete(Uri.parse(URI_CARD),where,args);
     }
     void deleteSpendCard(String where, String[] args) {
-
         SpendCard spendCard = getSpendCard(args[0]);
+        Card card;
+        Spend spend;
+        String date;
+        Info_IO io;
+        int id_account, evaluation, sum;
+
         if(spendCard == null) {
             Log.i(TAG,"No spendCard");
             return;
         }
 
-        Card card = getCard(spendCard.getCard());
+        card = getCard(spendCard.getCard());
         if(card == null) {
             Log.i(TAG,"No card");
             return;
         }
 
-        Spend spend = getSpend(spendCard.getCode());
+        spend = getSpend(spendCard.getCode());
         if(spend == null) {
             Log.i(TAG,"No spend");
             return;
@@ -771,12 +778,12 @@ public class IRResolver {
 
         cr.delete(Uri.parse(URI_SPEND_CARD),where,args);
 
-        String date = spend.getDate();
-        int id_account = card.getAccount();
+        date = spend.getDate();
+        id_account = card.getAccount();
 
-        Info_IO io = getInfoIO(id_account,date);
-        int evaluation = calEvaluation(id_account, date);
-        int sum = getSpendsCardSum(date, id_account);
+        io = getInfoIO(id_account,date);
+        evaluation = calEvaluation(id_account, date);
+        sum = getSpendsCardSum(date, id_account);
 
         if(io != null) {
             io.setSpendCard(sum);
@@ -794,12 +801,17 @@ public class IRResolver {
     void deleteSpendCash(String where, String[] args) {
 
         SpendCash spendCash = getSpendCash(args[0]);
+        Spend spend;
+        String date;
+        int id_account, evaluation, sum;
+        Info_IO io;
+
         if(spendCash == null) {
             Log.i(TAG,"No spendCash");
             return;
         }
 
-        Spend spend = getSpend(spendCash.getCode());
+        spend = getSpend(spendCash.getCode());
         if(spend == null) {
             Log.i(TAG,"No spend");
             return;
@@ -807,12 +819,12 @@ public class IRResolver {
 
         cr.delete(Uri.parse(URI_SPEND_CASH),where,args);
 
-        String date = spend.getDate();
-        int id_account = spendCash.getAccount();
+        date = spend.getDate();
+        id_account = spendCash.getAccount();
 
-        Info_IO io = getInfoIO(id_account,date);
-        int evaluation = calEvaluation(id_account, date);
-        int sum = getSpendsCashSum(date,id_account);
+        io = getInfoIO(id_account,date);
+        evaluation = calEvaluation(id_account, date);
+        sum = getSpendsCashSum(date,id_account);
 
         if(io != null) {
             io.setSpendCash(sum);
@@ -822,18 +834,21 @@ public class IRResolver {
         else insertInfoIO(id_account, date,0,0,0,sum,0,evaluation);
     }
     void deleteIncome(String where, String[] args) {
+        String date;
+        int id_account, evaluation, sum;
         Income income = getIncome(Integer.valueOf(args[0]));
+        Info_IO io;
 
         if(income == null) return;
 
-        String date = income.getDate();
-        int id_account = income.getAccount();
+        date = income.getDate();
+        id_account = income.getAccount();
 
         cr.delete(Uri.parse(URI_INCOME),where,args);
 
-        Info_IO io = getInfoIO(id_account, date);
-        int evaluation = calEvaluation(id_account, date);
-        int sum = getIncomeSum(date, id_account);
+        io = getInfoIO(id_account, date);
+        evaluation = calEvaluation(id_account, date);
+        sum = getIncomeSum(date, id_account);
 
         if(io != null) {
             io.setIncome(sum);
@@ -854,14 +869,16 @@ public class IRResolver {
 
     private void deleteInfoIO(String where, String[] args) {
         Info_IO io = getInfoIO(Integer.valueOf(args[0]));
+        int id_account;
+        String date;
 
         if(io == null) {
             Log.i(TAG,"The DB is not exist");
             return;
         }
 
-        int id_account = io.getAccount();
-        String date = io.getDate();
+        id_account = io.getAccount();
+        date = io.getDate();
 
         try {
             cr.delete(Uri.parse(URI_INFO_IO), where, args);
@@ -875,9 +892,10 @@ public class IRResolver {
     }
 
     void updateGroup(Group group) {
-        ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(group.getId())};
+
+        ContentValues cv = new ContentValues();
 
         cv.put("name",group.getName());
 
@@ -888,9 +906,10 @@ public class IRResolver {
         }
     }
     void updateAccount(int id, String institute, String account, String description) {
-        ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        ContentValues cv = new ContentValues();
 
         cv.put("institute",institute);
         cv.put("number",account);
@@ -903,9 +922,10 @@ public class IRResolver {
         }
     }
     void updateInfoIO(Info_IO io) {
-        ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(io.getId())};
+
+        ContentValues cv = new ContentValues();
 
         cv.put("id_account",io.getAccount());
         cv.put("date", io.getDate());
@@ -924,9 +944,10 @@ public class IRResolver {
         }
     }
     void updateCategoryMain(int id, String name) {
-        ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[]{String.valueOf(id)};
+
+        ContentValues cv = new ContentValues();
 
         cv.put("name", name);
 
@@ -937,9 +958,10 @@ public class IRResolver {
         }
     }
     void updateCategorySub(int id, String name, int main_id) {
-        ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        ContentValues cv = new ContentValues();
 
         cv.put("name",name);
         cv.put("main_id",main_id);
@@ -951,9 +973,10 @@ public class IRResolver {
         }
     }
     void updateCard(Card card) {
-        ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(card.getId())};
+
+        ContentValues cv = new ContentValues();
 
         cv.put("name",card.getName());
         cv.put("company",card.getCompany());
@@ -968,23 +991,26 @@ public class IRResolver {
         }
     }
     void updateSpendCard(int id, String code, int id_card) {
-
-        String where = "_id";
+        int evaluation, sum, id_account;
+        String date, where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
 
+        Spend spend;
+        Info_IO io;
         Card card = getCard(id_card);
+
+        ContentValues cv = new ContentValues();
+
         if(card == null) {
             Log.i(TAG,"No card");
             return;
         }
 
-        Spend spend = getSpend(code);
+        spend = getSpend(code);
         if(spend == null) {
             Log.i(TAG,"No spend");
             return;
         }
-
-        ContentValues cv = new ContentValues();
 
         cv.put("spend_code",code);
         cv.put("id_card",id_card);
@@ -995,12 +1021,12 @@ public class IRResolver {
             Log.e(TAG,"DB update error");
         }
 
-        String date = spend.getDate();
-        int id_account = card.getAccount();
+        date = spend.getDate();
+        id_account = card.getAccount();
 
-        Info_IO io = getInfoIO(id_account,date);
-        int evaluation = calEvaluation(id_account, date);
-        int sum = getSpendsCardSum(date, id_account);
+        io = getInfoIO(id_account,date);
+        evaluation = calEvaluation(id_account, date);
+        sum = getSpendsCardSum(date, id_account);
 
         if(io != null) {
             io.setSpendCard(sum);
@@ -1017,9 +1043,10 @@ public class IRResolver {
     }
     void updateSpendCash(int id, String code, int id_account) {
         ContentValues cv = new ContentValues();
-        String where = "_id";
+        String date = null, where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
-        String date = null;
+        Info_IO io;
+        int evaluation, sum;
 
         Spend spend = getSpend(code);
         if(spend != null) date = spend.getDate();
@@ -1033,9 +1060,9 @@ public class IRResolver {
             Log.e(TAG,"DB update error");
         }
 
-        Info_IO io = getInfoIO(id_account,date);
-        int evaluation = calEvaluation(id_account, date);
-        int sum = getSpendsCashSum(date, id_account);
+        io = getInfoIO(id_account,date);
+        evaluation = calEvaluation(id_account, date);
+        sum = getSpendsCashSum(date, id_account);
 
         if(io != null) {
             io.setSpendCash(sum);
@@ -1054,6 +1081,8 @@ public class IRResolver {
         ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
+        Info_IO io;
+        int evaluation, sum;
 
         cv.put("details",details);
         cv.put("date",date);
@@ -1067,9 +1096,9 @@ public class IRResolver {
             Log.e(TAG,"DB update error");
         }
 
-        Info_IO io = getInfoIO(id_account, date);
-        int evaluation = calEvaluation(id_account, date);
-        int sum = getIncomeSum(date, id_account);
+        io = getInfoIO(id_account, date);
+        evaluation = calEvaluation(id_account, date);
+        sum = getIncomeSum(date, id_account);
 
         if(io != null) {
             io.setIncome(sum);
@@ -1111,6 +1140,17 @@ public class IRResolver {
 
     private void getData(int code, String uri, String selection, String[] selectionArgs, String sortOrder) {
         Cursor cursor;
+        Group group;
+        Account account;
+        Info_IO io;
+        Info_Dairy dairy;
+        CategoryMain categoryMain;
+        CategorySub categorySub;
+        Card card;
+        Spend spend;
+        SpendCard spend_card;
+        SpendCash spend_cash;
+        Income income;
 
         cursor = cr.query(Uri.parse(uri),null, selection, selectionArgs, sortOrder);
 
@@ -1132,16 +1172,14 @@ public class IRResolver {
         while(cursor.moveToNext()) {
             switch (code) {
                 case CODE_GROUP:
-                    Group group = new Group();
-
+                    group = new Group();
                     group.setId(cursor.getInt(0));
                     group.setName(cursor.getString(1));
 
                     groups.add(group);
                     break;
                 case CODE_ACCOUNT:
-                    Account account = new Account();
-
+                    account = new Account();
                     account.setId(cursor.getInt(0));
                     account.setInstitute(cursor.getString(1));
                     account.setNumber(cursor.getString(2));
@@ -1151,8 +1189,7 @@ public class IRResolver {
                     accounts.add(account);
                     break;
                 case CODE_INFO_IO:
-                    Info_IO io = new Info_IO();
-
+                    io = new Info_IO();
                     io.setId(cursor.getInt(0));
                     io.setDate(cursor.getString(1));
                     io.setInput(cursor.getInt(2));
@@ -1166,8 +1203,7 @@ public class IRResolver {
                     IOs.add(io);
                     break;
                 case CODE_INFO_DAIRY:
-                    Info_Dairy dairy = new Info_Dairy();
-
+                    dairy = new Info_Dairy();
                     dairy.setId(cursor.getInt(0));
                     dairy.setDate(cursor.getString(1));
                     dairy.setPrincipal(cursor.getInt(2));
@@ -1177,16 +1213,14 @@ public class IRResolver {
                     dairies.add(dairy);
                     break;
                 case CODE_CATEGORY_MAIN:
-                    CategoryMain categoryMain = new CategoryMain();
-
+                    categoryMain = new CategoryMain();
                     categoryMain.setId(cursor.getInt(0));
                     categoryMain.setName(cursor.getString(1));
 
                     categoryMains.add(categoryMain);
                     break;
                 case CODE_CATEGORY_SUB:
-                    CategorySub categorySub = new CategorySub();
-
+                    categorySub = new CategorySub();
                     categorySub.setId(cursor.getInt(0));
                     categorySub.setName(cursor.getString(1));
                     categorySub.setCategoryMain(cursor.getInt(2));
@@ -1194,8 +1228,7 @@ public class IRResolver {
                     categorySubs.add(categorySub);
                     break;
                 case CODE_CARD:
-                    Card card = new Card();
-
+                    card = new Card();
                     card.setId(cursor.getInt(0));
                     card.setName(cursor.getString(1));
                     card.setNumber(cursor.getString(2));
@@ -1206,8 +1239,7 @@ public class IRResolver {
                     cards.add(card);
                     break;
                 case CODE_SPEND:
-                    Spend spend = new Spend();
-
+                    spend = new Spend();
                     spend.setId(cursor.getInt(0));
                     spend.setCode(cursor.getString(1));
                     spend.setDetails(cursor.getString(2));
@@ -1218,8 +1250,7 @@ public class IRResolver {
                     spends.add(spend);
                     break;
                 case CODE_SPEND_CARD:
-                    SpendCard spend_card = new SpendCard();
-
+                    spend_card = new SpendCard();
                     spend_card.setId(cursor.getInt(0));
                     spend_card.setCode(cursor.getString(1));
                     spend_card.setCard(cursor.getInt(2));
@@ -1227,8 +1258,7 @@ public class IRResolver {
                     spends_card.add(spend_card);
                     break;
                 case CODE_SPEND_CASH:
-                    SpendCash spend_cash = new SpendCash();
-
+                    spend_cash = new SpendCash();
                     spend_cash.setId(cursor.getInt(0));
                     spend_cash.setCode(cursor.getString(1));
                     spend_cash.setAccount(cursor.getInt(2));
@@ -1236,8 +1266,7 @@ public class IRResolver {
                     spends_cash.add(spend_cash);
                     break;
                 case CODE_INCOME:
-                    Income income = new Income();
-
+                    income = new Income();
                     income.setId(cursor.getInt(0));
                     income.setDate(cursor.getString(1));
                     income.setCategory(cursor.getInt(2));
@@ -1254,34 +1283,30 @@ public class IRResolver {
     }
 
     int getSpendsCashSum(String date, int id_account) {
-        Cursor c;
-
-        // table이 존재하지 않으면
-        if(checkDBTable("tbl_spend_cash") == 0) return 0;
-
+        int sum;
         String where = "A.date_use=? AND B.id_account=?";
         String[] selectionArgs = {date,String.valueOf(id_account)};
         String[] select = {"total(A.amount) "
                 + "FROM tbl_spend AS A "
                 + "LEFT JOIN tbl_spend_cash AS B "
                 + "ON A.spend_code=B.spend_code"};
+        Cursor c;
+
+        // table이 존재하지 않으면
+        if(checkDBTable("tbl_spend_cash") == 0) return 0;
 
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
 
         assert c != null;
         c.moveToNext();
 
-        int sum = c.getInt(0);
+        sum = c.getInt(0);
         c.close();
 
         return sum;
     }
     int getSpendsCardSum(String date, int id_account) {
-        Cursor c;
-
-        // table이 존재하지 않으면
-        if(checkDBTable("tbl_spend_card") == 0) return 0;
-
+        int sum;
         String where = "A.date_use=? AND C.id_account=?";
         String[] selectionArgs = {date,String.valueOf(id_account)};
         String[] select = {"total(A.amount) "
@@ -1291,98 +1316,107 @@ public class IRResolver {
                 + "JOIN tbl_card AS C "
                 + "ON B.id_card=C._id"};
 
+        Cursor c;
+
+        // table이 존재하지 않으면
+        if(checkDBTable("tbl_spend_card") == 0) return 0;
+
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
 
         assert c != null;
         c.moveToNext();
 
-        int sum = c.getInt(0);
+        sum = c.getInt(0);
         c.close();
 
         return sum;
     }
     int getIncomeSum(String date, int id_account) {
+        int sum;
+        String where = "date=? AND id_account=?";
+        String[] select = {"total(amount) AS SUM"};
+        String[] selectionArgs = {date,String.valueOf(id_account)};
+
         Cursor c;
 
         // table이 존재하지 않으면
         if(checkDBTable("tbl_income") == 0) return 0;
-
-        String where = "date=? AND id_account=?";
-        String[] select = {"total(amount) AS SUM"};
-        String[] selectionArgs = {date,String.valueOf(id_account)};
 
         c = cr.query(Uri.parse(URI_INCOME), select, where, selectionArgs, null);
 
         assert c != null;
         c.moveToNext();
 
-        int sum = c.getInt(0);
+        sum = c.getInt(0);
         c.close();
 
         return sum;
     }
     int getSpendMonth(String date) {
+        int sum;
+        String where = "date_use BETWEEN date('" + date + "','start of month') AND date('" + date + "','start of month','+1 month','-1 day')";
+        String[] select = {"total(amount) AS SUM"};
+
         Cursor c;
 
         // table이 존재하지 않으면
         if(checkDBTable("tbl_spend") == 0) return 0;
-
-        String where = "date_use BETWEEN date('" + date + "','start of month') AND date('" + date + "','start of month','+1 month','-1 day')";
-        String[] select = {"total(amount) AS SUM"};
 
         c = cr.query(Uri.parse(URI_SPEND), select, where, null, null);
 
         assert c != null;
         c.moveToNext();
 
-        int sum = c.getInt(0);
+        sum = c.getInt(0);
         c.close();
 
         return sum;
     }
     int getIncomeMonth(String date) {
+        int sum;
+        String where = "date BETWEEN date('" + date + "','start of month') AND date('" + date + "','start of month','+1 month','-1 day')";
+        String[] select = {"total(amount) AS SUM"};
         Cursor c;
 
         // table이 존재하지 않으면
         if(checkDBTable("tbl_income") == 0) return 0;
-
-        String where = "date BETWEEN date('" + date + "','start of month') AND date('" + date + "','start of month','+1 month','-1 day')";
-        String[] select = {"total(amount) AS SUM"};
 
         c = cr.query(Uri.parse(URI_INCOME), select, where, null, null);
 
         assert c != null;
         c.moveToNext();
 
-        int sum = c.getInt(0);
+        sum = c.getInt(0);
         c.close();
 
         return sum;
     }
 
     private int getSum(String uri, int id_account, String[] column, String selectedDate) {
-        Cursor c;
-
+        int sum;
         String[] select = {"total(" + column[0] + ") AS SUM"};
         String where = "date<=? AND id_account=?";
         String[] selectionArgs = new String[]{selectedDate,String.valueOf(id_account)};
+
+        Cursor c;
 
         c = cr.query(Uri.parse(uri), select, where, selectionArgs, null);
         assert c != null;
         c.moveToNext();
 
-        int sum = c.getInt(0);
+        sum = c.getInt(0);
         c.close();
 
         return sum;
     }
 
     private void modifyInfoDiary(int select, int id_account, String selectedDate) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        int evaluation = 0, index = 0;
         String txtDate;
-        int evaluation = 0;
-        int index = 0;
+        Date date;
         Info_IO io;
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        List<Info_Dairy> daires = getInfoDaires(id_account);
 
         if(select == 0) {
             io = getInfoIO(id_account, selectedDate);
@@ -1392,15 +1426,14 @@ public class IRResolver {
             select = 1;
         }
 
-        List<Info_Dairy> daires = getInfoDaires(id_account);
         if(daires.isEmpty()) {
             Log.i(TAG,"No dairy");
             return;
         }
 
         try {
-            @SuppressWarnings("UnusedAssignment")
-            Date date = df.parse(daires.get(index).getDate());
+            //noinspection UnusedAssignment
+            date = df.parse(daires.get(index).getDate());
 
             do {
                 txtDate = daires.get(index).getDate();
@@ -1442,7 +1475,8 @@ public class IRResolver {
         }
     }
     private int calEvaluation(int id_account, String txtDate) {
-        Info_IO io = getInfoIO(id_account, txtDate);
+        int evaluation = 0;
+        Info_IO io_latest, io = getInfoIO(id_account, txtDate);
 
         // 전날 데이터 가져오기
         String year = txtDate.substring(0,4);
@@ -1453,9 +1487,7 @@ public class IRResolver {
         before.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
         before.add(Calendar.DATE,-1);
 
-        Info_IO io_latest = getLastInfoIO(id_account, String.format(Locale.getDefault(), "%04d-%02d-%02d", before.get(Calendar.YEAR),before.get(Calendar.MONTH)+1,before.get(Calendar.DATE)));
-
-        int evaluation = 0;
+        io_latest = getLastInfoIO(id_account, String.format(Locale.getDefault(), "%04d-%02d-%02d", before.get(Calendar.YEAR),before.get(Calendar.MONTH)+1,before.get(Calendar.DATE)));
 
         // io_latest가 없으면 0
         if(io_latest != null) {

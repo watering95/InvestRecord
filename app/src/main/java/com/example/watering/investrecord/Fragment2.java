@@ -17,7 +17,6 @@ import android.widget.Toast;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -82,8 +81,6 @@ public class Fragment2 extends Fragment {
     }
 
     private void initLayout() {
-        DecimalFormat df = new DecimalFormat("#,###");
-
         Button buttonWeek = mView.findViewById(R.id.button_frag2_due_week_1);
         Button buttonMonth = mView.findViewById(R.id.button_frag2_due_month_1);
         Button buttonYear = mView.findViewById(R.id.button_frag2_due_year_1);
@@ -138,7 +135,7 @@ public class Fragment2 extends Fragment {
             double rate = 0;
             do {
                 // 특정일의 합계와 평가액 계산
-                for (int index = 0; index < accounts.size(); index++) {
+                for (int index = 0, n = accounts.size(); index < n; index++) {
                     dairy = ir.getLastInfoDairy(accounts.get(index).getId(), strDate);
                     io = ir.getLastInfoIO(accounts.get(index).getId(), strDate);
                     if(io != null) {

@@ -43,8 +43,8 @@ class DBHelper extends SQLiteOpenHelper {
 
         StringBuilder sql;
 
-        sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
-                + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT");
+        sql = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append(TABLE_NAME).append(" (")
+                .append(BaseColumns._ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT");
 
         for (String COLUMN : COLUMNS) {
             sql.append(", ").append(COLUMN);
@@ -54,8 +54,7 @@ class DBHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
-        db.execSQL(sql);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 
@@ -74,8 +73,7 @@ class DBHelper extends SQLiteOpenHelper {
         getWritableDatabase().delete(TABLE_NAME, selection, whereArgs);
     }
     void update(ContentValues values, String where, String[] selectionArgs) throws SQLiteException {
-        String selection = where + "=?";
-        getWritableDatabase().update(TABLE_NAME, values, selection, selectionArgs);
+        getWritableDatabase().update(TABLE_NAME, values, where + "=?", selectionArgs);
     }
     Cursor query(String[] columns, String selection, String[] selectionArgs, String orderBy) throws SQLiteException {
         return getReadableDatabase().query(TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);

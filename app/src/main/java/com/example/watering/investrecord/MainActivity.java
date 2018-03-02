@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        for(int i = 0; i < groups.size(); i++) {
+        for(int i = 0, n = groups.size(); i < n; i++) {
             grouplists.add(groups.get(i).getName());
         }
     }

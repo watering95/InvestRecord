@@ -119,7 +119,7 @@ public class Fragment6 extends Fragment {
             return;
         }
 
-        for(int i = 0; i < daires.size(); i++) {
+        for(int i = 0, n = daires.size(); i < n; i++) {
             Info_IO io;
             Info_Dairy dairy;
             Info_List6 list = new Info_List6();
@@ -138,13 +138,13 @@ public class Fragment6 extends Fragment {
     }
 
     private void makeHTMLFile() {
+        int id_account, size = lists.size();
+        String eval,rate, date, accountnumber = null;
+        Account account;
+        StringBuilder data = new StringBuilder();
+
         try{
             BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph_account.html",false));
-
-            StringBuilder data = new StringBuilder();
-            String date;
-            int size = lists.size();
-            String eval,rate;
 
             if(size != 0) {
                 // 그래프 표시를 30개로 제한
@@ -164,12 +164,10 @@ public class Fragment6 extends Fragment {
                 data = new StringBuilder("[0, 0, 0]\n");
             }
 
-            String accountnumber = null;
-
             if(lists.isEmpty()) accountnumber = "";
             else {
-                int id_account = lists.get(0).getDairy().getAccount();
-                Account account = ir.getAccount(id_account);
+                id_account = lists.get(0).getDairy().getAccount();
+                account = ir.getAccount(id_account);
                 if(account != null) accountnumber = account.getNumber();
             }
 

@@ -149,7 +149,10 @@ public class Fragment3 extends Fragment {
     }
 
     private void updateInfoLists() {
+        Info_List3 list;
+
         lists.clear();
+
         spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
 
         if(spends.isEmpty()) {
@@ -157,10 +160,10 @@ public class Fragment3 extends Fragment {
             return;
         }
 
-        for(int i = 0; i < spends.size(); i++) {
-            Info_List3 list = new Info_List3();
-
+        for(int i = 0, n = spends.size(); i < n; i++) {
+            list = new Info_List3();
             list.setSpend(spends.get(i));
+
             lists.add(list);
         }
     }

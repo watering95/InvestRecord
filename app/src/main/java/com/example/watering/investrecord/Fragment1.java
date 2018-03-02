@@ -111,35 +111,37 @@ public class Fragment1 extends Fragment {
     }
 
     private void updateInfoLists() {
+        int id_account;
+
         Info_Dairy dairy;
         Info_IO io;
+        Info_List1 list1;
+        Info_List6 list6;
+
+        List<Account> accounts = ir.getAccounts(ir.getCurrentGroup());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.getDefault());
 
         sum_evaluate = 0;
         sum_principal = 0;
         total_rate = 0;
 
         lists.clear();
-        List<Account> accounts = ir.getAccounts(ir.getCurrentGroup());
+
         if(accounts.isEmpty()) {
             Log.i(TAG, "No account");
             return;
         }
 
-        for(int i = 0; i < accounts.size(); i++) {
-            Info_List1 list1 = new Info_List1();
-            Info_List6 list6 = new Info_List6();
+        for(int i = 0, n = accounts.size(); i < n; i++) {
+            list1 = new Info_List1();
+            list6 = new Info_List6();
 
-            int id_account = accounts.get(i).getId();
+            id_account = accounts.get(i).getId();
 
             dairy = ir.getLastInfoDairy(id_account);
             if(dairy == null) {
                 dairy = new Info_Dairy();
-
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.getDefault());
-                long now = System.currentTimeMillis();
-                Date date = new Date(now);
-
-                dairy.setDate(dateFormat.format(date));
+                dairy.setDate(dateFormat.format(new Date(System.currentTimeMillis())));
                 dairy.setAccount(id_account);
                 dairy.setPrincipal(0);
                 dairy.setRate(0);

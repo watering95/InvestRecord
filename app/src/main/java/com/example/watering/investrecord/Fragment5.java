@@ -72,12 +72,15 @@ public class Fragment5 extends Fragment {
 
     @SuppressLint("DefaultLocale")
     private void updateInfoLists() {
-        lists.clear();
+        int income, spend;
+        String txtMonth, txtDate;
 
         Info_List5 list5;
+
         Calendar date = mActivity.strToCalendar(mActivity.getToday());
-        String txtMonth, txtDate = mActivity.calendarToStr(date);
-        int income, spend;
+        txtDate = mActivity.calendarToStr(date);
+
+        lists.clear();
 
         for(int i = 0; i < 12; i++) {
             list5 = new Info_List5();

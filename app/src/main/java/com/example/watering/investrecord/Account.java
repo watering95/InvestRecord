@@ -9,6 +9,7 @@ import java.io.Serializable;
 @SuppressWarnings("DefaultFileTemplate")
 public class Account implements Serializable {
     private int id_account = -1;
+    private int id_group = -1;
     private String institute = null;
     private String number = null;
     private String description = null;
@@ -26,10 +27,14 @@ public class Account implements Serializable {
         this.description = description;
     }
     public void setGroup(int id_group) {
+        this.id_group = id_group;
     }
 
     public int getId() {
         return this.id_account;
+    }
+    public int getGroup() {
+        return this.id_group;
     }
     public String getNumber() {
         return this.number;
