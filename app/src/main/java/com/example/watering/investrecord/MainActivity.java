@@ -22,6 +22,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.watering.investrecord.Data.Group;
+import com.example.watering.investrecord.Fragment.*;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_CREATOR = 2;
     private static final int REQUEST_CODE_OPENER = 3;
 
-    interface Callback {
+    public interface Callback {
         void update();
     }
 
