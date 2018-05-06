@@ -258,6 +258,8 @@ public class MainActivity extends AppCompatActivity {
     public Calendar strToCalendar(String date) {
         Calendar calendar = Calendar.getInstance();
 
+        if(date == null) return calendar;
+
         String year = date.substring(0,4);
         String month = date.substring(5,7);
         String day = date.substring(8,10);
