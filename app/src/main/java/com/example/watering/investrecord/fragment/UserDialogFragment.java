@@ -768,14 +768,14 @@ public class UserDialogFragment extends DialogFragment {
     }
     @SuppressLint("InflateParams")
     private void dialogInout() {
-        view = inflater.inflate(R.layout.dialog_inout, null);
+        view = inflater.inflate(R.layout.dialog_inout_krw, null);
 
-        final EditText txtInput = view.findViewById(R.id.editText_dlg_inout_input);
-        final EditText txtOutput = view.findViewById(R.id.editText_dlg_inout_output);
-        final EditText txtEvaluation = view.findViewById(R.id.editText_dlg_inout_evaluation);
-        final EditText txtIncome = view.findViewById(R.id.editText_dlg_inout_income);
-        final EditText txtSpend = view.findViewById(R.id.editText_dlg_inout_spend);
-        TextView txtDate = view.findViewById(R.id.textView_dlg_inout_date);
+        final EditText txtInput = view.findViewById(R.id.editText_dlg_inout_krw_input);
+        final EditText txtOutput = view.findViewById(R.id.editText_dlg_inout_krw_output);
+        final EditText txtEvaluation = view.findViewById(R.id.editText_dlg_inout_krw_evaluation);
+        final EditText txtIncome = view.findViewById(R.id.editText_dlg_inout_krw_income);
+        final EditText txtSpend = view.findViewById(R.id.editText_dlg_inout_krw_spend);
+        TextView txtDate = view.findViewById(R.id.textView_dlg_inout_krw_date);
 
         txtIncome.setEnabled(false);
         txtSpend.setEnabled(false);
