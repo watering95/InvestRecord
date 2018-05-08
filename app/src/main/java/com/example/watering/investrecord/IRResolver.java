@@ -6,9 +6,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.watering.investrecord.Data.*;
-import com.example.watering.investrecord.Info.Info_Dairy;
-import com.example.watering.investrecord.Info.Info_IO;
+import com.example.watering.investrecord.data.*;
+import com.example.watering.investrecord.info.Info_Dairy;
+import com.example.watering.investrecord.info.Info_IO;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
