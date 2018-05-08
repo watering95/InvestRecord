@@ -52,7 +52,8 @@
     <string name="setting">설정</string>
     <string name="statistic">통계</string>
     <string name="input_income">수입 입력</string>
-    <string name="input_inout">입출력 입력</string>
+    <string name="input_inout_krw">원화 입출력 입력</string>
+    <string name="input_inout_foreign">외화 입출력 입력</string>
     <string name="input_spend">지출 입력</string>
     <string name="transfer">계좌 이체</string>
     <string name="income">수입</string>

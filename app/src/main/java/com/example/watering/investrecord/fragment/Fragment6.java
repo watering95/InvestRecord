@@ -21,9 +21,9 @@ import android.widget.Toast;
 
 import com.example.watering.investrecord.data.Account;
 import com.example.watering.investrecord.IRResolver;
-import com.example.watering.investrecord.info.Info_Dairy;
-import com.example.watering.investrecord.info.Info_IO;
-import com.example.watering.investrecord.info.Info_List6;
+import com.example.watering.investrecord.info.InfoDairyKRW;
+import com.example.watering.investrecord.info.InfoIOKRW;
+import com.example.watering.investrecord.info.InfoList6;
 import com.example.watering.investrecord.adapter.*;
 import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
@@ -46,7 +46,7 @@ public class Fragment6 extends Fragment {
     private MainActivity mActivity;
     private IRResolver ir;
     private WebView mWeb;
-    private final ArrayList<Info_List6> lists = new ArrayList<>();
+    private final ArrayList<InfoList6> lists = new ArrayList<>();
     private static final String TAG = "InvestRecord";
 
     public Fragment6() {
@@ -103,7 +103,7 @@ public class Fragment6 extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mActivity.inoutDialog(lists.get(position).getDairy().getDate());
+                mActivity.inoutDialog(lists.get(position).getDairy_krw().getDate());
             }
         });
 
@@ -122,22 +122,22 @@ public class Fragment6 extends Fragment {
 
     private void updateInfoLists() {
         lists.clear();
-        ArrayList<Info_Dairy> daires = (ArrayList<Info_Dairy>) ir.getInfoDaires(ir.getCurrentAccount());
-        if(daires.isEmpty()) {
-            Log.i(TAG,"No dairy");
+        ArrayList<InfoDairyKRW> daires_krw = (ArrayList<InfoDairyKRW>) ir.getInfoDaires(ir.getCurrentAccount());
+        if(daires_krw.isEmpty()) {
+            Log.i(TAG,"No dairy_krw");
             return;
         }
 
-        for(int i = 0, n = daires.size(); i < n; i++) {
-            Info_IO io;
-            Info_Dairy dairy;
-            Info_List6 list = new Info_List6();
+        for(int i = 0, n = daires_krw.size(); i < n; i++) {
+            InfoIOKRW io_krw;
+            InfoDairyKRW dairy_krw;
+            InfoList6 list = new InfoList6();
 
-            dairy = daires.get(i);
+            dairy_krw = daires_krw.get(i);
 
-            io = ir.getInfoIO(dairy.getAccount(), dairy.getDate());
-            if(io != null) list.setEvaluation(io.getEvaluation());
-            list.setDairy(dairy);
+            io_krw = ir.getInfoIOKRW(dairy_krw.getAccount(), dairy_krw.getDate());
+            if(io_krw != null) list.setEvaluation(io_krw.getEvaluation());
+            list.setDairy_krw(dairy_krw);
             lists.add(list);
         }
     }
@@ -160,13 +160,13 @@ public class Fragment6 extends Fragment {
                 if(size > 30) size = 30;
                 for (int i = size - 1; i > 0; i--) {
                     eval = String.valueOf(lists.get(i).getEvaluation());
-                    rate = String.format(Locale.getDefault(),"%.2f",lists.get(i).getDairy().getRate());
-                    date = "new Date('" + lists.get(i).getDairy().getDate() + "')";
+                    rate = String.format(Locale.getDefault(),"%.2f",lists.get(i).getDairy_krw().getRate());
+                    date = "new Date('" + lists.get(i).getDairy_krw().getDate() + "')";
                     data.append("[").append(date).append(", ").append(eval).append(", ").append(rate).append("],\n");
                 }
                 eval = String.valueOf(lists.get(0).getEvaluation());
-                rate = String.format(Locale.getDefault(),"%.2f",lists.get(0).getDairy().getRate());
-                date = "new Date('" + lists.get(0).getDairy().getDate() + "')";
+                rate = String.format(Locale.getDefault(),"%.2f",lists.get(0).getDairy_krw().getRate());
+                date = "new Date('" + lists.get(0).getDairy_krw().getDate() + "')";
                 data.append("[").append(date).append(", ").append(eval).append(", ").append(rate).append("]\n");
             }
             else {
@@ -175,7 +175,7 @@ public class Fragment6 extends Fragment {
 
             if(lists.isEmpty()) accountnumber = "";
             else {
-                id_account = lists.get(0).getDairy().getAccount();
+                id_account = lists.get(0).getDairy_krw().getAccount();
                 account = ir.getAccount(id_account);
                 if(account != null) accountnumber = account.getNumber();
             }

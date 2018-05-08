@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import com.example.watering.investrecord.data.Account;
 import com.example.watering.investrecord.IRResolver;
-import com.example.watering.investrecord.info.Info_Dairy;
-import com.example.watering.investrecord.info.Info_IO;
+import com.example.watering.investrecord.info.InfoDairyKRW;
+import com.example.watering.investrecord.info.InfoIOKRW;
 import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
 
@@ -135,19 +135,19 @@ public class Fragment2 extends Fragment {
             String strToday = mActivity.getToday();
             String strDate = strToday;
             Calendar firstDate = mActivity.strToCalendar(ir.getFirstDate());
-            Info_IO io;
-            Info_Dairy dairy;
+            InfoIOKRW io_krw;
+            InfoDairyKRW dairy_krw;
 
             int i = 0, sumEvaluation = 0, sumPrincipal = 0;
             double rate = 0;
             do {
                 // 특정일의 합계와 평가액 계산
                 for (int index = 0, n = accounts.size(); index < n; index++) {
-                    dairy = ir.getLastInfoDairy(accounts.get(index).getId(), strDate);
-                    io = ir.getLastInfoIO(accounts.get(index).getId(), strDate);
-                    if(io != null) {
-                        sumEvaluation += io.getEvaluation();
-                        sumPrincipal += dairy.getPrincipal();
+                    dairy_krw = ir.getLastInfoDairyKRW(accounts.get(index).getId(), strDate);
+                    io_krw = ir.getLastInfoIO(accounts.get(index).getId(), strDate);
+                    if(io_krw != null) {
+                        sumEvaluation += io_krw.getEvaluation();
+                        sumPrincipal += dairy_krw.getPrincipal();
                     }
                 }
                 // 특정일의 수익율 계산

@@ -16,10 +16,10 @@ import android.widget.TextView;
 
 import com.example.watering.investrecord.data.Account;
 import com.example.watering.investrecord.IRResolver;
-import com.example.watering.investrecord.info.Info_Dairy;
-import com.example.watering.investrecord.info.Info_IO;
-import com.example.watering.investrecord.info.Info_List1;
-import com.example.watering.investrecord.info.Info_List6;
+import com.example.watering.investrecord.info.InfoDairyKRW;
+import com.example.watering.investrecord.info.InfoIOKRW;
+import com.example.watering.investrecord.info.InfoList1;
+import com.example.watering.investrecord.info.InfoList6;
 import com.example.watering.investrecord.adapter.List1Adapter;
 import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
@@ -45,7 +45,7 @@ public class Fragment1 extends Fragment {
     private TextView mTxtTotalRate;
     private List1Adapter listAdapter;
     private IRResolver ir;
-    private final ArrayList<Info_List1> lists = new ArrayList<>();
+    private final ArrayList<InfoList1> lists = new ArrayList<>();
     private int sum_principal;
     private int sum_evaluate;
     private double total_rate;
@@ -124,10 +124,10 @@ public class Fragment1 extends Fragment {
     private void updateInfoLists() {
         int id_account;
 
-        Info_Dairy dairy;
-        Info_IO io;
-        Info_List1 list1;
-        Info_List6 list6;
+        InfoDairyKRW dairy_krw;
+        InfoIOKRW io_krw;
+        InfoList1 list1;
+        InfoList6 list6;
 
         List<Account> accounts = ir.getAccounts(ir.getCurrentGroup());
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.getDefault());
@@ -144,32 +144,32 @@ public class Fragment1 extends Fragment {
         }
 
         for(int i = 0, n = accounts.size(); i < n; i++) {
-            list1 = new Info_List1();
-            list6 = new Info_List6();
+            list1 = new InfoList1();
+            list6 = new InfoList6();
 
             id_account = accounts.get(i).getId();
 
-            dairy = ir.getLastInfoDairy(id_account);
-            if(dairy == null) {
-                dairy = new Info_Dairy();
-                dairy.setDate(dateFormat.format(new Date(System.currentTimeMillis())));
-                dairy.setAccount(id_account);
-                dairy.setPrincipal(0);
-                dairy.setRate(0);
+            dairy_krw = ir.getLastInfoDairyKRW(id_account);
+            if(dairy_krw == null) {
+                dairy_krw = new InfoDairyKRW();
+                dairy_krw.setDate(dateFormat.format(new Date(System.currentTimeMillis())));
+                dairy_krw.setAccount(id_account);
+                dairy_krw.setPrincipal(0);
+                dairy_krw.setRate(0);
             }
-            io = ir.getInfoIO(id_account,dairy.getDate());
-            if(io == null) {
-                io = new Info_IO();
-                io.setEvaluation(0);
+            io_krw = ir.getInfoIOKRW(id_account,dairy_krw.getDate());
+            if(io_krw == null) {
+                io_krw = new InfoIOKRW();
+                io_krw.setEvaluation(0);
             }
 
-            list6.setDairy(dairy);
-            list6.setEvaluation(io.getEvaluation());
+            list6.setDairy_krw(dairy_krw);
+            list6.setEvaluation(io_krw.getEvaluation());
 
             list1.setAccount(accounts.get(i));
             list1.setInfoList6(list6);
             sum_evaluate += list1.getList6().getEvaluation();
-            sum_principal += dairy.getPrincipal();
+            sum_principal += dairy_krw.getPrincipal();
 
             lists.add(list1);
         }

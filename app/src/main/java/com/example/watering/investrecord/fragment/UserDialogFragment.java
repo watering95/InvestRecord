@@ -104,10 +104,13 @@ public class UserDialogFragment extends DialogFragment {
                 dialogSelect();
                 break;
             case 1:
-                dialogInout();
+                dialogInoutKRW();
                 break;
             case 2:
                 dialogTransfer();
+                break;
+            case 3:
+                dialogInoutForeign();
                 break;
             case R.id.menu_sub1_addGroup:
                 dialogGroupAdd();
@@ -721,7 +724,8 @@ public class UserDialogFragment extends DialogFragment {
         ListView listView = view.findViewById(R.id.listView_dlg_listView);
 
         lists_select.clear();
-        lists_select.add(getString(R.string.input_inout));
+        lists_select.add(getString(R.string.input_inout_krw));
+        lists_select.add(getString(R.string.input_inout_foreign));
         lists_select.add(getString(R.string.transfer));
 
         //noinspection ConstantConditions
@@ -744,6 +748,16 @@ public class UserDialogFragment extends DialogFragment {
                         dialog.show(getFragmentManager(), "dialog");
                         break;
                     case 1:
+                        dialog = UserDialogFragment.newInstance(3, new UserDialogFragment.UserListener() {
+                            @Override
+                            public void onWorkComplete(String date) {
+                            }
+                        });
+                        dialog.setSelectedDate(selectedDate);
+                        //noinspection ConstantConditions
+                        dialog.show(getFragmentManager(), "dialog");
+                        break;
+                    case 2:
                         dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
                             @Override
                             public void onWorkComplete(String date) {
@@ -767,7 +781,7 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     @SuppressLint("InflateParams")
-    private void dialogInout() {
+    private void dialogInoutKRW() {
         view = inflater.inflate(R.layout.dialog_inout_krw, null);
 
         final EditText txtInput = view.findViewById(R.id.editText_dlg_inout_krw_input);
@@ -784,14 +798,14 @@ public class UserDialogFragment extends DialogFragment {
             return;
         }
 
-        Info_IO io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
-        Info_IO io_latest = ir.getLastInfoIO(ir.getCurrentAccount(),selectedDate);
+        InfoIOKRW io_krw = ir.getInfoIOKRW(ir.getCurrentAccount(),selectedDate);
+        InfoIOKRW io_krw_latest = ir.getLastInfoIO(ir.getCurrentAccount(),selectedDate);
 
         int evaluation;
 
         //선택한 날짜의 값이 있으면 가져오고 없으면 최근값을 가져온다.
-        if(io != null) evaluation = io.getEvaluation();
-        else if(io_latest != null) evaluation = io_latest.getEvaluation();
+        if(io_krw != null) evaluation = io_krw.getEvaluation();
+        else if(io_krw_latest != null) evaluation = io_krw_latest.getEvaluation();
         else evaluation = 0;
 
         DecimalFormat df = new DecimalFormat("#,###");
@@ -799,7 +813,7 @@ public class UserDialogFragment extends DialogFragment {
         txtDate.setText(selectedDate);
 
         //선택한 날짜의 입력값이 없으면 평가액만 최근값으로 반영한다.
-        if(io == null) {
+        if(io_krw == null) {
             exist = false;
             txtInput.setText("0");
             txtOutput.setText("0");
@@ -809,14 +823,14 @@ public class UserDialogFragment extends DialogFragment {
         }
         else {
             exist = true;
-            txtInput.setText(df.format(io.getInput()));
-            txtOutput.setText(df.format(io.getOutput()));
+            txtInput.setText(df.format(io_krw.getInput()));
+            txtOutput.setText(df.format(io_krw.getOutput()));
             txtEvaluation.setText(df.format(evaluation));
-            txtIncome.setText(df.format(io.getIncome()));
-            txtSpend.setText(df.format(io.getSpendCard()+io.getSpendCash()));
+            txtIncome.setText(df.format(io_krw.getIncome()));
+            txtSpend.setText(df.format(io_krw.getSpendCard()+io_krw.getSpendCash()));
         }
 
-        builder.setView(view).setTitle(getString(R.string.input_inout));
+        builder.setView(view).setTitle(getString(R.string.input_inout_krw));
         builder.setPositiveButton(getString(R.string.regist), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -831,12 +845,12 @@ public class UserDialogFragment extends DialogFragment {
                 if(str_in.isEmpty()) str_in = "0";
                 if(str_out.isEmpty()) str_out = "0";
 
-                Info_IO io = new Info_IO();
+                InfoIOKRW io_krw = new InfoIOKRW();
 
                 if(exist) {
-                    io = ir.getInfoIO(ir.getCurrentAccount(),selectedDate);
-                    if(io == null) {
-                        Log.i(TAG, "No Info_IO");
+                    io_krw = ir.getInfoIOKRW(ir.getCurrentAccount(),selectedDate);
+                    if(io_krw == null) {
+                        Log.i(TAG, "No InfoIOKRW");
                         return;
                     }
                 }
@@ -854,17 +868,33 @@ public class UserDialogFragment extends DialogFragment {
                 } catch (ParseException e) {
                     Log.e(TAG,"Data Format Parse Error");
                 }
-                io.setDate(selectedDate);
-                io.setInput(in);
-                io.setOutput(out);
-                io.setEvaluation(evaluation);
-                io.setAccount(ir.getCurrentAccount());
+                io_krw.setDate(selectedDate);
+                io_krw.setInput(in);
+                io_krw.setOutput(out);
+                io_krw.setEvaluation(evaluation);
+                io_krw.setAccount(ir.getCurrentAccount());
 
-                if(!exist) ir.insertInfoIO(io);
-                else ir.updateInfoIO(io);
+                if(!exist) ir.insertInfoIO(io_krw);
+                else ir.updateInfoIO(io_krw);
 
                 mActivity.fragmentSub1.callUpdateFrag1();
                 mActivity.fragmentSub3.callUpdateFrag6();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+    }
+    @SuppressLint("InflateParams")
+    private void dialogInoutForeign() {
+        view = inflater.inflate(R.layout.dialog_inout_foreign, null);
+
+        builder.setView(view).setTitle(getString(R.string.input_inout_foreign));
+        builder.setPositiveButton(getString(R.string.regist), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -1017,8 +1047,8 @@ public class UserDialogFragment extends DialogFragment {
                 }
 
                 // 출금계좌
-                Info_IO io = ir.getInfoIO(selectedAccountIdFrom,selectedDate);
-                Info_IO io_latest = ir.getLastInfoIO(selectedAccountIdFrom,selectedDate);
+                InfoIOKRW io = ir.getInfoIOKRW(selectedAccountIdFrom,selectedDate);
+                InfoIOKRW io_latest = ir.getLastInfoIO(selectedAccountIdFrom,selectedDate);
 
                 int evaluation = 0;
 
@@ -1040,7 +1070,7 @@ public class UserDialogFragment extends DialogFragment {
                 else ir.insertInfoIO(selectedAccountIdFrom, selectedDate,0,amount,0,0,0,evaluation);
 
                 // 입금계좌
-                io = ir.getInfoIO(selectedAccountIdTo,selectedDate);
+                io = ir.getInfoIOKRW(selectedAccountIdTo,selectedDate);
                 io_latest = ir.getLastInfoIO(selectedAccountIdTo,selectedDate);
 
                 // io_latest가 없으면 0

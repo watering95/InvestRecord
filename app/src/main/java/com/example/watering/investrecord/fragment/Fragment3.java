@@ -37,7 +37,7 @@ public class Fragment3 extends Fragment {
     private List3Adapter list3Adapter;
     private EditText editText_date;
     private ArrayList<Spend> spends = new ArrayList<>();
-    private final ArrayList<Info_List3> lists = new ArrayList<>();
+    private final ArrayList<InfoList3> lists = new ArrayList<>();
     private static final String TAG = "InvestRecord";
 
     public Fragment3() {
@@ -156,7 +156,7 @@ public class Fragment3 extends Fragment {
     }
 
     private void updateInfoLists() {
-        Info_List3 list;
+        InfoList3 list;
 
         lists.clear();
 
@@ -168,7 +168,7 @@ public class Fragment3 extends Fragment {
         }
 
         for(int i = 0, n = spends.size(); i < n; i++) {
-            list = new Info_List3();
+            list = new InfoList3();
             list.setSpend(spends.get(i));
 
             lists.add(list);

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 
-import com.example.watering.investrecord.info.Info_List1
+import com.example.watering.investrecord.info.InfoList1
 import com.example.watering.investrecord.R
 
 import java.text.DecimalFormat
@@ -18,7 +18,7 @@ import java.util.Locale
  * Created by watering on 17. 11. 17.
  */
 
-class List1Adapter(context: Context, private val mData: ArrayList<Info_List1>) : BaseAdapter() {
+class List1Adapter(context: Context, private val mData: ArrayList<InfoList1>) : BaseAdapter() {
     private val inflater: LayoutInflater
 
     init {
@@ -55,8 +55,8 @@ class List1Adapter(context: Context, private val mData: ArrayList<Info_List1>) :
         val df = DecimalFormat("#,###")
 
         txtAccount.text = account!!.number.toString()
-        principal.text = df.format(list6!!.dairy!!.principal.toLong())
-        rate.text = String.format(Locale.getDefault(), "%.2f", list6.dairy!!.rate)
+        principal.text = df.format(list6!!.dairy_krw!!.principal.toLong())
+        rate.text = String.format(Locale.getDefault(), "%.2f", list6.dairy_krw!!.rate)
         evaluation.text = df.format(list6.evaluation.toLong())
         accountInfo.text = String.format(Locale.getDefault(), "%s %s", account.institute, account.description)
 

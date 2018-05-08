@@ -6,7 +6,7 @@ import android.content.Context
  * Created by watering on 17. 10. 21.
  */
 
-class Info_DairyDBHelper(context: Context) : DBHelper(context) {
+class InfoDairyKRWDBHelper(context: Context) : DBHelper(context) {
 
     init {
         TABLE_NAME = "tbl_Info_Dairy"
