@@ -941,7 +941,7 @@ public class UserDialogFragment extends DialogFragment {
 
             }
         });
-        
+
         InfoIOForeign io_foreign = ir.getInfoIOForeign(ir.getCurrentAccount(),selectedDate);
         InfoIOForeign io_foreign_latest = ir.getLastInfoIOForeign(ir.getCurrentAccount(),selectedDate);
 
