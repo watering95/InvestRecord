@@ -144,7 +144,7 @@ public class Fragment2 extends Fragment {
                 // 특정일의 합계와 평가액 계산
                 for (int index = 0, n = accounts.size(); index < n; index++) {
                     dairy_krw = ir.getLastInfoDairyKRW(accounts.get(index).getId(), strDate);
-                    io_krw = ir.getLastInfoIO(accounts.get(index).getId(), strDate);
+                    io_krw = ir.getLastInfoIOKRW(accounts.get(index).getId(), strDate);
                     if(io_krw != null) {
                         sumEvaluation += io_krw.getEvaluation();
                         sumPrincipal += dairy_krw.getPrincipal();

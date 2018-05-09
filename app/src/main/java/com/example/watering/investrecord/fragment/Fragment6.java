@@ -122,7 +122,7 @@ public class Fragment6 extends Fragment {
 
     private void updateInfoLists() {
         lists.clear();
-        ArrayList<InfoDairyKRW> daires_krw = (ArrayList<InfoDairyKRW>) ir.getInfoDaires(ir.getCurrentAccount());
+        ArrayList<InfoDairyKRW> daires_krw = (ArrayList<InfoDairyKRW>) ir.getInfoDairesKRW(ir.getCurrentAccount());
         if(daires_krw.isEmpty()) {
             Log.i(TAG,"No dairy_krw");
             return;

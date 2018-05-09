@@ -7,7 +7,9 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.example.watering.investrecord.data.*;
+import com.example.watering.investrecord.info.InfoDairyForeign;
 import com.example.watering.investrecord.info.InfoDairyKRW;
+import com.example.watering.investrecord.info.InfoIOForeign;
 import com.example.watering.investrecord.info.InfoIOKRW;
 
 import java.text.DateFormat;
@@ -33,7 +35,9 @@ public class IRResolver {
     private static final int CODE_GROUP = 0;
     private static final int CODE_ACCOUNT = 1;
     private static final int CODE_INFO_IO_KRW = 2;
+    private static final int CODE_INFO_IO_FOREIGN = 14;
     private static final int CODE_INFO_DAIRY_KRW = 3;
+    private static final int CODE_INFO_DAIRY_FOREIGN = 15;
     private static final int CODE_CARD = 4;
     private static final int CODE_CATEGORY_MAIN = 5;
     private static final int CODE_CATEGORY_SUB = 6;
@@ -47,7 +51,9 @@ public class IRResolver {
     private final List<Group> groups = new ArrayList<>();
     private final List<Account> accounts = new ArrayList<>();
     private final List<InfoIOKRW> IOs_krw = new ArrayList<>();
+    private final List<InfoIOForeign> IOs_foreign = new ArrayList<>();
     private final List<InfoDairyKRW> dairies_krw = new ArrayList<>();
+    private final List<InfoDairyForeign> dairies_foreign = new ArrayList<>();
     private final List<CategoryMain> categoryMains = new ArrayList<>();
     private final List<CategorySub> categorySubs = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
@@ -61,7 +67,9 @@ public class IRResolver {
     private static final String URI_GROUP = "content://watering.investrecord.provider/group";
     private static final String URI_ACCOUNT = "content://watering.investrecord.provider/account";
     private static final String URI_INFO_IO_KRW = "content://watering.investrecord.provider/info_io_krw";
+    private static final String URI_INFO_IO_FOREIGN = "content://watering.investrecord.provider/info_io_foreign";
     private static final String URI_INFO_DAIRY_KRW = "content://watering.investrecord.provider/info_dairy_krw";
+    private static final String URI_INFO_DAIRY_FOREIGN = "content://watering.investrecord.provider/info_dairy_foreign";
     private static final String URI_CARD = "content://watering.investrecord.provider/card";
     private static final String URI_CATEGORY_MAIN = "content://watering.investrecord.provider/category_main";
     private static final String URI_CATEGORY_SUB = "content://watering.investrecord.provider/category_sub";
@@ -88,7 +96,7 @@ public class IRResolver {
         getData(CODE_ACCOUNT,URI_ACCOUNT,"id_group=?",selectionArgs,null);
         return accounts;
     }
-    public List<InfoDairyKRW> getInfoDaires(int id_account) {
+    public List<InfoDairyKRW> getInfoDairesKRW(int id_account) {
         String[] selectionArgs = new String[] {String.valueOf(id_account)};
 
         dairies_krw.clear();
@@ -218,6 +226,34 @@ public class IRResolver {
 
         return io_krw;
     }
+    public InfoIOForeign getInfoIOForeign(int id_account, String date) {
+        Cursor c;
+        InfoIOForeign io_foreign = new InfoIOForeign();
+
+        String where = "id_account=? and date=?";
+        String[] selectionArgs = new String[]{String.valueOf(id_account),date};
+
+        c = cr.query(Uri.parse(URI_INFO_IO_FOREIGN), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        io_foreign.setId(c.getInt(c.getColumnIndex("_id")));
+        io_foreign.setInput(c.getInt(c.getColumnIndex("input")));
+        io_foreign.setOutput(c.getInt(c.getColumnIndex("output")));
+        io_foreign.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
+        io_foreign.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        io_foreign.setDate(c.getString(c.getColumnIndex("date")));
+        io_foreign.setInput_krw(c.getInt(c.getColumnIndex("input_krw")));
+        io_foreign.setOutput_krw(c.getInt(c.getColumnIndex("output_krw")));
+        io_foreign.setCurrency(c.getInt(c.getColumnIndex("id_currency")));
+
+        c.close();
+
+        return io_foreign;
+    }
     public CategoryMain getCategoryMain(int id_main) {
         Cursor c;
         CategoryMain categoryMain = new CategoryMain();
@@ -286,7 +322,6 @@ public class IRResolver {
         c.close();
 
         return card;
-
     }
     public Income getIncome(int id_income) {
         Cursor c;
@@ -430,7 +465,7 @@ public class IRResolver {
         if(dairies_krw.isEmpty()) return null;
         else return dairies_krw.get(0);
     }
-    public InfoIOKRW getLastInfoIO(int id_account, String date) {
+    public InfoIOKRW getLastInfoIOKRW(int id_account, String date) {
         String selection = "id_account=? and date<=?";
         String[] selectionArgs = new String[] {String.valueOf(id_account),date};
 
@@ -438,6 +473,15 @@ public class IRResolver {
         getData(CODE_INFO_IO_KRW, URI_INFO_IO_KRW, selection,selectionArgs,"date DESC");
         if(IOs_krw.isEmpty()) return null;
         else return IOs_krw.get(0);
+    }
+    public InfoIOForeign getLastInfoIOForeign(int id_account, String date) {
+        String selection = "id_account=? and date<=?";
+        String[] selectionArgs = new String[] {String.valueOf(id_account),date};
+
+        IOs_foreign.clear();
+        getData(CODE_INFO_IO_FOREIGN, URI_INFO_IO_FOREIGN, selection,selectionArgs,"date DESC");
+        if(IOs_foreign.isEmpty()) return null;
+        else return IOs_foreign.get(0);
     }
     public String getFirstDate() {
         IOs_krw.clear();
@@ -508,7 +552,7 @@ public class IRResolver {
             Log.e(TAG,"DB 추가 error");
         }
     }
-    public void insertInfoIO(int id_account, String date, int input, int output, int income, int spend_cash, int spend_card, int evaluation) {
+    public void insertInfoIOKRW(int id_account, String date, int input, int output, int income, int spend_cash, int spend_card, int evaluation) {
         ContentValues cv = new ContentValues();
 
         if(currentGroup == -1 || currentAccount == -1) return;
@@ -524,12 +568,12 @@ public class IRResolver {
 
         try {
             cr.insert(Uri.parse(URI_INFO_IO_KRW), cv);
-            modifyInfoDiary(0,id_account, date);
+            modifyInfoDiaryKRW(0,id_account, date);
         } catch (Exception e) {
             Log.e(TAG,"DB 추가 error");
         }
     }
-    public void insertInfoIO(InfoIOKRW io_krw) {
+    public void insertInfoIOKRW(InfoIOKRW io_krw) {
         ContentValues cv = new ContentValues();
 
         if(currentGroup == -1 || currentAccount == -1) return;
@@ -545,7 +589,7 @@ public class IRResolver {
 
         try {
             cr.insert(Uri.parse(URI_INFO_IO_KRW), cv);
-            modifyInfoDiary(0,io_krw.getAccount(),io_krw.getDate());
+            modifyInfoDiaryKRW(0,io_krw.getAccount(),io_krw.getDate());
         } catch (Exception e) {
             Log.e(TAG,"DB 추가 error");
         }
@@ -634,17 +678,17 @@ public class IRResolver {
         }
 
         io_krw = getInfoIOKRW(id_account,date);
-        evaluation = calEvaluation(id_account, date);
+        evaluation = calEvaluationKRW(id_account, date);
         sum = getSpendsCardSum(date, id_account);
 
         if(io_krw != null) {
             io_krw.setSpendCard(sum);
             io_krw.setEvaluation(evaluation);
-            updateInfoIO(io_krw);
+            updateInfoIOKRW(io_krw);
         }
         else {
             try {
-                insertInfoIO(id_account, date, 0, 0, 0, 0, sum, evaluation);
+                insertInfoIOKRW(id_account, date, 0, 0, 0, 0, sum, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -665,15 +709,15 @@ public class IRResolver {
         cr.insert(Uri.parse(URI_SPEND_CASH),cv);
 
         io_krw = getInfoIOKRW(id_account,date);
-        evaluation = calEvaluation(id_account, date);
+        evaluation = calEvaluationKRW(id_account, date);
         sum = getSpendsCashSum(date,id_account);
 
         if(io_krw != null) {
             io_krw.setSpendCash(sum);
             io_krw.setEvaluation(evaluation);
-            updateInfoIO(io_krw);
+            updateInfoIOKRW(io_krw);
         }
-        else insertInfoIO(id_account, date,0,0,0,sum,0,evaluation);
+        else insertInfoIOKRW(id_account, date,0,0,0,sum,0,evaluation);
     }
     public void insertIncome(String details, String date, int id_account, int id_category_sub, int amount) {
         int evaluation, sum;
@@ -693,17 +737,17 @@ public class IRResolver {
         }
 
         io_krw = getInfoIOKRW(id_account,date);
-        evaluation = calEvaluation(id_account, date);
+        evaluation = calEvaluationKRW(id_account, date);
         sum = getIncomeSum(date, id_account);
 
         if(io_krw != null) {
             io_krw.setIncome(sum);
             io_krw.setEvaluation(evaluation);
-            updateInfoIO(io_krw);
+            updateInfoIOKRW(io_krw);
         }
         else {
             try {
-                insertInfoIO(id_account, date, 0, 0, sum, 0, 0, evaluation);
+                insertInfoIOKRW(id_account, date, 0, 0, sum, 0, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -730,7 +774,7 @@ public class IRResolver {
     void deleteAll() {
         deleteGroup(null,null);
         deleteAccount(null, null);
-        deleteInfoIO(null, null);
+        deleteInfoIOKRW(null, null);
         deleteCategoryMain(null,null);
         deleteCategorySub(null,null);
         deleteCard(null,null);
@@ -738,7 +782,7 @@ public class IRResolver {
         deleteSpendCash(null,null);
         deleteSpendCard(null,null);
         deleteIncome(null,null);
-        deleteInfoDairy();
+        deleteInfoDairyKRW();
     }
     public void deleteGroup(String where, String[] args) {
         cr.delete(Uri.parse(URI_GROUP),where,args);
@@ -786,17 +830,17 @@ public class IRResolver {
         id_account = card.getAccount();
 
         io_krw = getInfoIOKRW(id_account,date);
-        evaluation = calEvaluation(id_account, date);
+        evaluation = calEvaluationKRW(id_account, date);
         sum = getSpendsCardSum(date, id_account);
 
         if(io_krw != null) {
             io_krw.setSpendCard(sum);
             io_krw.setEvaluation(evaluation);
-            updateInfoIO(io_krw);
+            updateInfoIOKRW(io_krw);
         }
         else {
             try {
-                insertInfoIO(id_account, date, 0, 0, 0, 0, sum, evaluation);
+                insertInfoIOKRW(id_account, date, 0, 0, 0, 0, sum, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -827,15 +871,15 @@ public class IRResolver {
         id_account = spendCash.getAccount();
 
         io_krw = getInfoIOKRW(id_account,date);
-        evaluation = calEvaluation(id_account, date);
+        evaluation = calEvaluationKRW(id_account, date);
         sum = getSpendsCashSum(date,id_account);
 
         if(io_krw != null) {
             io_krw.setSpendCash(sum);
             io_krw.setEvaluation(evaluation);
-            updateInfoIO(io_krw);
+            updateInfoIOKRW(io_krw);
         }
-        else insertInfoIO(id_account, date,0,0,0,sum,0,evaluation);
+        else insertInfoIOKRW(id_account, date,0,0,0,sum,0,evaluation);
     }
     public void deleteIncome(String where, String[] args) {
         String date;
@@ -851,17 +895,17 @@ public class IRResolver {
         cr.delete(Uri.parse(URI_INCOME),where,args);
 
         io_krw = getInfoIOKRW(id_account, date);
-        evaluation = calEvaluation(id_account, date);
+        evaluation = calEvaluationKRW(id_account, date);
         sum = getIncomeSum(date, id_account);
 
         if(io_krw != null) {
             io_krw.setIncome(sum);
             io_krw.setEvaluation(evaluation);
-            updateInfoIO(io_krw);
+            updateInfoIOKRW(io_krw);
         }
         else {
             try {
-                insertInfoIO(id_account, date, 0, 0, sum, 0, 0, evaluation);
+                insertInfoIOKRW(id_account, date, 0, 0, sum, 0, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
@@ -871,7 +915,7 @@ public class IRResolver {
         cr.delete(Uri.parse(URI_SPEND),where,args);
     }
 
-    private void deleteInfoIO(String where, String[] args) {
+    private void deleteInfoIOKRW(String where, String[] args) {
         InfoIOKRW io_krw = getInfoIOKRW(Integer.valueOf(args[0]));
         int id_account;
         String date;
@@ -886,12 +930,12 @@ public class IRResolver {
 
         try {
             cr.delete(Uri.parse(URI_INFO_IO_KRW), where, args);
-            modifyInfoDiary(1, id_account, date);
+            modifyInfoDiaryKRW(1, id_account, date);
         } catch (Exception e) {
             Log.e(TAG, "DB delete Error");
         }
     }
-    private void deleteInfoDairy() {
+    private void deleteInfoDairyKRW() {
         cr.delete(Uri.parse(URI_INFO_DAIRY_KRW), null, null);
     }
 
@@ -925,24 +969,24 @@ public class IRResolver {
             Log.e(TAG,"DB update error");
         }
     }
-    public void updateInfoIO(InfoIOKRW io) {
+    public void updateInfoIOKRW(InfoIOKRW io_krw) {
         String where = "_id";
-        String[] selectionArgs = new String[] {String.valueOf(io.getId())};
+        String[] selectionArgs = new String[] {String.valueOf(io_krw.getId())};
 
         ContentValues cv = new ContentValues();
 
-        cv.put("id_account",io.getAccount());
-        cv.put("date", io.getDate());
-        cv.put("input",io.getInput());
-        cv.put("output",io.getOutput());
-        cv.put("income",io.getIncome());
-        cv.put("spend_cash",io.getSpendCash());
-        cv.put("spend_card",io.getSpendCard());
-        cv.put("evaluation",io.getEvaluation());
+        cv.put("id_account",io_krw.getAccount());
+        cv.put("date", io_krw.getDate());
+        cv.put("input",io_krw.getInput());
+        cv.put("output",io_krw.getOutput());
+        cv.put("income",io_krw.getIncome());
+        cv.put("spend_cash",io_krw.getSpendCash());
+        cv.put("spend_card",io_krw.getSpendCard());
+        cv.put("evaluation",io_krw.getEvaluation());
 
         try {
             cr.update(Uri.parse(URI_INFO_IO_KRW), cv, where, selectionArgs);
-            modifyInfoDiary(1, io.getAccount(), io.getDate());
+            modifyInfoDiaryKRW(1, io_krw.getAccount(), io_krw.getDate());
         } catch (Exception e) {
             Log.e(TAG,"DB update error");
         }
@@ -1029,17 +1073,17 @@ public class IRResolver {
         id_account = card.getAccount();
 
         io_krw = getInfoIOKRW(id_account,date);
-        evaluation = calEvaluation(id_account, date);
+        evaluation = calEvaluationKRW(id_account, date);
         sum = getSpendsCardSum(date, id_account);
 
         if(io_krw != null) {
             io_krw.setSpendCard(sum);
             io_krw.setEvaluation(evaluation);
-            updateInfoIO(io_krw);
+            updateInfoIOKRW(io_krw);
         }
         else {
             try {
-                insertInfoIO(id_account, date, 0, 0, 0, 0, sum, evaluation);
+                insertInfoIOKRW(id_account, date, 0, 0, 0, 0, sum, evaluation);
             } catch (Exception e) {
                 Log.e(TAG, "DB update error");
             }
@@ -1065,17 +1109,17 @@ public class IRResolver {
         }
 
         io_krw = getInfoIOKRW(id_account,date);
-        evaluation = calEvaluation(id_account, date);
+        evaluation = calEvaluationKRW(id_account, date);
         sum = getSpendsCashSum(date, id_account);
 
         if(io_krw != null) {
             io_krw.setSpendCash(sum);
             io_krw.setEvaluation(evaluation);
-            updateInfoIO(io_krw);
+            updateInfoIOKRW(io_krw);
         }
         else {
             try {
-                insertInfoIO(id_account, date, 0, 0, 0, sum, 0, evaluation);
+                insertInfoIOKRW(id_account, date, 0, 0, 0, sum, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG, "DB update error");
             }
@@ -1101,24 +1145,24 @@ public class IRResolver {
         }
 
         io_krw = getInfoIOKRW(id_account, date);
-        evaluation = calEvaluation(id_account, date);
+        evaluation = calEvaluationKRW(id_account, date);
         sum = getIncomeSum(date, id_account);
 
         if(io_krw != null) {
             io_krw.setIncome(sum);
             io_krw.setEvaluation(evaluation);
-            updateInfoIO(io_krw);
+            updateInfoIOKRW(io_krw);
         }
         else {
             try {
-                insertInfoIO(id_account, date, 0, 0, sum, 0, 0, evaluation);
+                insertInfoIOKRW(id_account, date, 0, 0, sum, 0, 0, evaluation);
             } catch (Exception e) {
                 Log.e(TAG,"DB insert error");
             }
         }
     }
 
-    private void updateInfoDairy(int id, int id_account, String date, int principal, double rate) {
+    private void updateInfoDairyKRW(int id, int id_account, String date, int principal, double rate) {
         ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
@@ -1147,7 +1191,9 @@ public class IRResolver {
         Group group;
         Account account;
         InfoIOKRW io_krw;
+        InfoIOForeign io_foreign;
         InfoDairyKRW dairy_krw;
+        InfoDairyForeign dairy_foreign;
         CategoryMain categoryMain;
         CategorySub categorySub;
         Card card;
@@ -1206,6 +1252,20 @@ public class IRResolver {
 
                     IOs_krw.add(io_krw);
                     break;
+                case CODE_INFO_IO_FOREIGN:
+                    io_foreign = new InfoIOForeign();
+                    io_foreign.setId(cursor.getInt(0));
+                    io_foreign.setDate(cursor.getString(1));
+                    io_foreign.setInput(cursor.getInt(2));
+                    io_foreign.setInput_krw(cursor.getInt(3));
+                    io_foreign.setOutput(cursor.getInt(4));
+                    io_foreign.setOutput_krw(cursor.getInt(5));
+                    io_foreign.setAccount(cursor.getInt(6));
+                    io_foreign.setEvaluation(cursor.getInt(7));
+                    io_foreign.setCurrency(cursor.getInt(8));
+
+                    IOs_foreign.add(io_foreign);
+                    break;
                 case CODE_INFO_DAIRY_KRW:
                     dairy_krw = new InfoDairyKRW();
                     dairy_krw.setId(cursor.getInt(0));
@@ -1215,6 +1275,17 @@ public class IRResolver {
                     dairy_krw.setAccount(cursor.getInt(4));
 
                     dairies_krw.add(dairy_krw);
+                    break;
+                case CODE_INFO_DAIRY_FOREIGN:
+                    dairy_foreign = new InfoDairyForeign();
+                    dairy_foreign.setId(cursor.getInt(0));
+                    dairy_foreign.setDate(cursor.getString(1));
+                    dairy_foreign.setPrincipal(cursor.getInt(2));
+                    dairy_foreign.setRate(cursor.getDouble(3));
+                    dairy_foreign.setAccount(cursor.getInt(4));
+                    dairy_foreign.setCurrency(cursor.getInt(5));
+
+                    dairies_foreign.add(dairy_foreign);
                     break;
                 case CODE_CATEGORY_MAIN:
                     categoryMain = new CategoryMain();
@@ -1414,19 +1485,19 @@ public class IRResolver {
         return sum;
     }
 
-    private void modifyInfoDiary(int select, int id_account, String selectedDate) {
+    private void modifyInfoDiaryKRW(int select, int id_account, String selectedDate) {
         int evaluation = 0, index = 0;
         String txtDate;
         Date date;
         InfoIOKRW io_krw;
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        List<InfoDairyKRW> daires_krw = getInfoDaires(id_account);
+        List<InfoDairyKRW> daires_krw = getInfoDairesKRW(id_account);
 
         if(select == 0) {
             io_krw = getInfoIOKRW(id_account, selectedDate);
 
             if(io_krw != null) evaluation = io_krw.getEvaluation();
-            calInfoDairy(select,0,id_account,selectedDate,evaluation);
+            calInfoDairyKRW(select,0,id_account,selectedDate,evaluation);
             select = 1;
         }
 
@@ -1447,7 +1518,7 @@ public class IRResolver {
 
                 if(io_krw != null) evaluation = io_krw.getEvaluation();
 
-                calInfoDairy(select,daires_krw.get(index).getId(),id_account,txtDate,evaluation);
+                calInfoDairyKRW(select,daires_krw.get(index).getId(),id_account,txtDate,evaluation);
                 index++;
 
             } while(df.parse(selectedDate).compareTo(date) < 0);
@@ -1455,7 +1526,7 @@ public class IRResolver {
             e.printStackTrace();
         }
     }
-    private void calInfoDairy(int select, int id, int id_account, String date, int evaluation) {
+    private void calInfoDairyKRW(int select, int id, int id_account, String date, int evaluation) {
         int sum_in, sum_out, sum_spend_card, sum_spend_cash, sum_income, principal;
         double rate = 0;
 
@@ -1474,11 +1545,11 @@ public class IRResolver {
                 insertInfoDairy(id_account, date, principal, rate);
                 break;
             case 1:
-                updateInfoDairy(id, id_account, date, principal, rate);
+                updateInfoDairyKRW(id, id_account, date, principal, rate);
                 break;
         }
     }
-    private int calEvaluation(int id_account, String txtDate) {
+    private int calEvaluationKRW(int id_account, String txtDate) {
         int evaluation = 0;
         InfoIOKRW io_krw_latest, io_krw = getInfoIOKRW(id_account, txtDate);
 
@@ -1491,7 +1562,7 @@ public class IRResolver {
         before.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
         before.add(Calendar.DATE,-1);
 
-        io_krw_latest = getLastInfoIO(id_account, String.format(Locale.getDefault(), "%04d-%02d-%02d", before.get(Calendar.YEAR),before.get(Calendar.MONTH)+1,before.get(Calendar.DATE)));
+        io_krw_latest = getLastInfoIOKRW(id_account, String.format(Locale.getDefault(), "%04d-%02d-%02d", before.get(Calendar.YEAR),before.get(Calendar.MONTH)+1,before.get(Calendar.DATE)));
 
         // io_latest가 없으면 0
         if(io_krw_latest != null) {

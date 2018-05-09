@@ -14,12 +14,14 @@
     <string name="input">입금액</string>
     <string name="output">출금액</string>
     <string name="evaluate">평가금액</string>
+    <string name="krw">원화</string>
     <string name="delete_all">전부삭제</string>
     <string name="DB_delete">DB 파일 삭제</string>
     <string name="DB_backup">DB 파일 백업</string>
     <string name="DB_restore">DB 파일 복원</string>
     <string name="total_principal">총자산</string>
     <string name="total_evaluate">총평가액</string>
+    <string name="exchange_rate">환율</string>
     <string name="total_rate">총수익율</string>
     <string name="principal">원금</string>
     <string name="rate">수익율</string>
