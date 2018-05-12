@@ -18,11 +18,7 @@ import java.util.ArrayList
  */
 
 class List4Adapter(context: Context, private val mData: ArrayList<InfoList4>) : BaseAdapter() {
-    private val inflater: LayoutInflater
-
-    init {
-        inflater = LayoutInflater.from(context)
-    }
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getCount(): Int {
         return mData.size

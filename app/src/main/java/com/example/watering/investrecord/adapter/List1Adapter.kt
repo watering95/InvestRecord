@@ -19,11 +19,7 @@ import java.util.Locale
  */
 
 class List1Adapter(context: Context, private val mData: ArrayList<InfoList1>) : BaseAdapter() {
-    private val inflater: LayoutInflater
-
-    init {
-        inflater = LayoutInflater.from(context)
-    }
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getCount(): Int {
         return mData.size
@@ -50,14 +46,15 @@ class List1Adapter(context: Context, private val mData: ArrayList<InfoList1>) : 
         val rate = convertView.findViewById<TextView>(R.id.textView_layout_list1_4)
         val accountInfo = convertView.findViewById<TextView>(R.id.textView_layout_list1_5)
 
-        val list6 = mData[position].list6
+        val list6 = mData[position].infoList6
+        val dairy_total = list6!!.dairy_total
         val account = mData[position].account
         val df = DecimalFormat("#,###")
 
         txtAccount.text = account!!.number.toString()
-        principal.text = df.format(list6!!.dairy_krw!!.principal.toLong())
-        rate.text = String.format(Locale.getDefault(), "%.2f", list6.dairy_krw!!.rate)
-        evaluation.text = df.format(list6.evaluation.toLong())
+        principal.text = df.format(dairy_total!!.principal.toLong())
+        rate.text = String.format(Locale.getDefault(), "%.2f", dairy_total.rate)
+        evaluation.text = df.format(dairy_total.evaluation.toLong())
         accountInfo.text = String.format(Locale.getDefault(), "%s %s", account.institute, account.description)
 
         return convertView

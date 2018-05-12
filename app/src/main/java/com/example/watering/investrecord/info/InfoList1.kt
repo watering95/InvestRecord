@@ -8,10 +8,5 @@ import com.example.watering.investrecord.data.Account
 
 class InfoList1 {
     var account: Account? = null
-    var list6: InfoList6? = null
-        private set
-
-    fun setInfoList6(list6: InfoList6) {
-        this.list6 = list6
-    }
+    var infoList6: InfoList6? = null
 }

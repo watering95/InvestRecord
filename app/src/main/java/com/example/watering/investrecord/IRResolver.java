@@ -9,6 +9,7 @@ import android.util.Log;
 import com.example.watering.investrecord.data.*;
 import com.example.watering.investrecord.info.InfoDairyForeign;
 import com.example.watering.investrecord.info.InfoDairyKRW;
+import com.example.watering.investrecord.info.InfoDairyTotal;
 import com.example.watering.investrecord.info.InfoIOForeign;
 import com.example.watering.investrecord.info.InfoIOKRW;
 
@@ -28,8 +29,8 @@ import java.util.Locale;
 public class IRResolver {
 
     private ContentResolver cr;
-    private static int currentGroup=-1;
-    private static int currentAccount=-1;
+    private static int currentGroup = -1;
+    private static int currentAccount = -1;
     private static final String TAG = "InvestRecord";
 
     private static final int CODE_GROUP = 0;
@@ -38,6 +39,7 @@ public class IRResolver {
     private static final int CODE_INFO_IO_FOREIGN = 14;
     private static final int CODE_INFO_DAIRY_KRW = 3;
     private static final int CODE_INFO_DAIRY_FOREIGN = 15;
+    private static final int CODE_INFO_DAIRY_TOTAL = 16;
     private static final int CODE_CARD = 4;
     private static final int CODE_CATEGORY_MAIN = 5;
     private static final int CODE_CATEGORY_SUB = 6;
@@ -54,6 +56,7 @@ public class IRResolver {
     private final List<InfoIOForeign> IOs_foreign = new ArrayList<>();
     private final List<InfoDairyKRW> dairies_krw = new ArrayList<>();
     private final List<InfoDairyForeign> dairies_foreign = new ArrayList<>();
+    private final List<InfoDairyTotal> dairies_total = new ArrayList<>();
     private final List<CategoryMain> categoryMains = new ArrayList<>();
     private final List<CategorySub> categorySubs = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
@@ -70,6 +73,7 @@ public class IRResolver {
     private static final String URI_INFO_IO_FOREIGN = "content://watering.investrecord.provider/info_io_foreign";
     private static final String URI_INFO_DAIRY_KRW = "content://watering.investrecord.provider/info_dairy_krw";
     private static final String URI_INFO_DAIRY_FOREIGN = "content://watering.investrecord.provider/info_dairy_foreign";
+    private static final String URI_INFO_DAIRY_TOTAL = "content://watering.investrecord.provider/info_dairy_total";
     private static final String URI_CARD = "content://watering.investrecord.provider/card";
     private static final String URI_CATEGORY_MAIN = "content://watering.investrecord.provider/category_main";
     private static final String URI_CATEGORY_SUB = "content://watering.investrecord.provider/category_sub";
@@ -102,6 +106,20 @@ public class IRResolver {
         dairies_krw.clear();
         getData(CODE_INFO_DAIRY_KRW, URI_INFO_DAIRY_KRW,"id_account=?",selectionArgs,"date DESC");
         return dairies_krw;
+    }
+    public List<InfoDairyForeign> getInfoDairesForeign(int id_account) {
+        String[] selectionArgs = new String[] {String.valueOf(id_account)};
+
+        dairies_krw.clear();
+        getData(CODE_INFO_DAIRY_FOREIGN, URI_INFO_DAIRY_FOREIGN,"id_account=?",selectionArgs,"date DESC");
+        return dairies_foreign;
+    }
+    public List<InfoDairyTotal> getInfoDairesTotal(int id_account) {
+        String[] selectionArgs = new String[] {String.valueOf(id_account)};
+
+        dairies_total.clear();
+        getData(CODE_INFO_DAIRY_TOTAL, URI_INFO_DAIRY_TOTAL,"id_account=?",selectionArgs,"date DESC");
+        return dairies_total;
     }
     public List<CategoryMain> getCategoryMains(int kind) {
         String selection = null;
@@ -226,12 +244,12 @@ public class IRResolver {
 
         return io_krw;
     }
-    public InfoIOForeign getInfoIOForeign(int id_account, String date) {
+    public InfoIOForeign getInfoIOForeign(int id_account, int id_currency, String date) {
         Cursor c;
         InfoIOForeign io_foreign = new InfoIOForeign();
 
-        String where = "id_account=? and date=?";
-        String[] selectionArgs = new String[]{String.valueOf(id_account),date};
+        String where = "id_account=? and id_currency=? and date=?";
+        String[] selectionArgs = new String[]{String.valueOf(id_account),String.valueOf(id_currency),date};
 
         c = cr.query(Uri.parse(URI_INFO_IO_FOREIGN), null, where, selectionArgs, null);
 
@@ -253,6 +271,81 @@ public class IRResolver {
         c.close();
 
         return io_foreign;
+    }
+    public InfoDairyKRW getInfoDairyKRW(int id_account, String date) {
+        Cursor c;
+        InfoDairyKRW dairy_krw = new InfoDairyKRW();
+
+        String where = "id_account=? and date=?";
+        String[] selectionArgs = new String[]{String.valueOf(id_account),date};
+
+        c = cr.query(Uri.parse(URI_INFO_DAIRY_KRW), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        dairy_krw.setId(c.getInt(c.getColumnIndex("_id")));
+        dairy_krw.setPrincipal(c.getInt(c.getColumnIndex("principal")));
+        dairy_krw.setRate(c.getFloat(c.getColumnIndex("rate")));
+        dairy_krw.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        dairy_krw.setDate(c.getString(c.getColumnIndex("date")));
+
+        c.close();
+
+        return dairy_krw;
+    }
+    public InfoDairyForeign getInfoDairyForeign(int id_account, int id_currency, String date) {
+        Cursor c;
+        InfoDairyForeign dairy_foreign = new InfoDairyForeign();
+
+        String where = "id_account=? and id_currency=? and date=?";
+        String[] selectionArgs = new String[]{String.valueOf(id_account),String.valueOf(id_currency),date};
+
+        c = cr.query(Uri.parse(URI_INFO_DAIRY_FOREIGN), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        dairy_foreign.setId(c.getInt(c.getColumnIndex("_id")));
+        dairy_foreign.setPrincipal(c.getInt(c.getColumnIndex("principal")));
+        dairy_foreign.setRate(c.getFloat(c.getColumnIndex("rate")));
+        dairy_foreign.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        dairy_foreign.setDate(c.getString(c.getColumnIndex("date")));
+        dairy_foreign.setPrincipal_krw(c.getInt(c.getColumnIndex("principal_krw")));
+        dairy_foreign.setCurrency(c.getInt(c.getColumnIndex("id_currency")));
+
+        c.close();
+
+        return dairy_foreign;
+    }
+    public InfoDairyTotal getInfoDairyTotal(int id_account, String date) {
+        Cursor c;
+        InfoDairyTotal dairy_total = new InfoDairyTotal();
+
+        String where = "id_account=? and date=?";
+        String[] selectionArgs = new String[]{String.valueOf(id_account),date};
+
+        c = cr.query(Uri.parse(URI_INFO_DAIRY_TOTAL), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        dairy_total.setId(c.getInt(c.getColumnIndex("_id")));
+        dairy_total.setPrincipal(c.getInt(c.getColumnIndex("principal")));
+        dairy_total.setRate(c.getFloat(c.getColumnIndex("rate")));
+        dairy_total.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        dairy_total.setDate(c.getString(c.getColumnIndex("date")));
+        dairy_total.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
+
+        c.close();
+
+        return dairy_total;
     }
     public CategoryMain getCategoryMain(int id_main) {
         Cursor c;
@@ -447,6 +540,34 @@ public class IRResolver {
 
         return io_krw;
     }
+    private InfoIOForeign getInfoIOForeign(int id) {
+        Cursor c;
+        InfoIOForeign io_foreign = new InfoIOForeign();
+
+        String where = "_id=?";
+        String[] selectionArgs = new String[]{String.valueOf(id)};
+
+        c = cr.query(Uri.parse(URI_INFO_IO_FOREIGN), null, where, selectionArgs, null);
+
+        assert c != null;
+        if(c.getCount() == 0) return null;
+
+        c.moveToNext();
+
+        io_foreign.setId(c.getInt(c.getColumnIndex("_id")));
+        io_foreign.setInput(c.getInt(c.getColumnIndex("input")));
+        io_foreign.setOutput(c.getInt(c.getColumnIndex("output")));
+        io_foreign.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
+        io_foreign.setAccount(c.getInt(c.getColumnIndex("id_account")));
+        io_foreign.setDate(c.getString(c.getColumnIndex("date")));
+        io_foreign.setOutput_krw(c.getInt(c.getColumnIndex("output_krw")));
+        io_foreign.setInput_krw(c.getInt(c.getColumnIndex("input_krw")));
+        io_foreign.setCurrency(c.getInt(c.getColumnIndex("id_currency")));
+
+        c.close();
+
+        return io_foreign;
+    }
 
     public InfoDairyKRW getLastInfoDairyKRW(int id_account) {
         String[] selectionArgs = new String[] {String.valueOf(id_account)};
@@ -465,6 +586,24 @@ public class IRResolver {
         if(dairies_krw.isEmpty()) return null;
         else return dairies_krw.get(0);
     }
+    public InfoDairyForeign getLastInfoDairyForeign(int id_account, int id_currency) {
+        String selection = "id_account=? and id_currency=?";
+        String[] selectionArgs = new String[] {String.valueOf(id_account), String.valueOf(id_currency)};
+
+        dairies_foreign.clear();
+        getData(CODE_INFO_DAIRY_FOREIGN, URI_INFO_DAIRY_FOREIGN, selection, selectionArgs,"date DESC");
+        if(dairies_foreign.isEmpty()) return null;
+        else return dairies_foreign.get(0);
+    }
+    public InfoDairyTotal getLastInfoDairyTotal(int id_account) {
+        String selection = "id_account=?";
+        String[] selectionArgs = new String[] {String.valueOf(id_account)};
+
+        dairies_total.clear();
+        getData(CODE_INFO_DAIRY_TOTAL, URI_INFO_DAIRY_TOTAL, selection, selectionArgs,"date DESC");
+        if(dairies_total.isEmpty()) return null;
+        else return dairies_total.get(0);
+    }
     public InfoIOKRW getLastInfoIOKRW(int id_account, String date) {
         String selection = "id_account=? and date<=?";
         String[] selectionArgs = new String[] {String.valueOf(id_account),date};
@@ -474,15 +613,16 @@ public class IRResolver {
         if(IOs_krw.isEmpty()) return null;
         else return IOs_krw.get(0);
     }
-    public InfoIOForeign getLastInfoIOForeign(int id_account, String date) {
-        String selection = "id_account=? and date<=?";
-        String[] selectionArgs = new String[] {String.valueOf(id_account),date};
+    public InfoIOForeign getLastInfoIOForeign(int id_account, int id_currency, String date) {
+        String selection = "id_account=? and id_currency=? and date<=?";
+        String[] selectionArgs = new String[] {String.valueOf(id_account),String.valueOf(id_currency),date};
 
         IOs_foreign.clear();
         getData(CODE_INFO_IO_FOREIGN, URI_INFO_IO_FOREIGN, selection,selectionArgs,"date DESC");
         if(IOs_foreign.isEmpty()) return null;
         else return IOs_foreign.get(0);
     }
+
     public String getFirstDate() {
         IOs_krw.clear();
         getData(CODE_INFO_IO_KRW, URI_INFO_IO_KRW, null, null, "date ASC");
@@ -590,6 +730,27 @@ public class IRResolver {
         try {
             cr.insert(Uri.parse(URI_INFO_IO_KRW), cv);
             modifyInfoDiaryKRW(0,io_krw.getAccount(),io_krw.getDate());
+        } catch (Exception e) {
+            Log.e(TAG,"DB 추가 error");
+        }
+    }
+    public void insertInfoIOForeign(InfoIOForeign io_foreign) {
+        ContentValues cv = new ContentValues();
+
+        if(currentGroup == -1 || currentAccount == -1) return;
+
+        cv.put("id_account",io_foreign.getAccount());
+        cv.put("date",io_foreign.getDate());
+        cv.put("input",io_foreign.getInput());
+        cv.put("input_krw",io_foreign.getInput_krw());
+        cv.put("output",io_foreign.getOutput());
+        cv.put("output_krw",io_foreign.getOutput_krw());
+        cv.put("evaluation",io_foreign.getEvaluation());
+        cv.put("id_currency",io_foreign.getCurrency());
+
+        try {
+            cr.insert(Uri.parse(URI_INFO_IO_FOREIGN), cv);
+            modifyInfoDiaryForeign(0,io_foreign.getAccount(),io_foreign.getCurrency(),io_foreign.getDate());
         } catch (Exception e) {
             Log.e(TAG,"DB 추가 error");
         }
@@ -754,7 +915,7 @@ public class IRResolver {
         }
     }
 
-    private void insertInfoDairy(int id_account, String date, int principal, double rate) {
+    private void insertInfoDairyKRW(int id_account, String date, int principal, double rate) {
         ContentValues cv = new ContentValues();
 
         if(currentGroup == -1 || currentAccount == -1) return;
@@ -766,6 +927,41 @@ public class IRResolver {
 
         try {
             cr.insert(Uri.parse(URI_INFO_DAIRY_KRW), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB insert error");
+        }
+    }
+    private void insertInfoDairyForeign(int id_account, int id_currency, String date, int principal, int principal_krw, double rate) {
+        ContentValues cv = new ContentValues();
+
+        if(currentGroup == -1 || currentAccount == -1) return;
+
+        cv.put("id_account", id_account);
+        cv.put("date", date);
+        cv.put("principal", principal);
+        cv.put("principal_krw", principal_krw);
+        cv.put("rate",rate);
+        cv.put("id_currency", id_currency);
+
+        try {
+            cr.insert(Uri.parse(URI_INFO_DAIRY_FOREIGN), cv);
+        } catch (Exception e) {
+            Log.e(TAG,"DB insert error");
+        }
+    }
+    private void insertInfoDairyTotal(int id_account, int evaluation, String date, int principal, double rate) {
+        ContentValues cv = new ContentValues();
+
+        if(currentGroup == -1 || currentAccount == -1) return;
+
+        cv.put("id_account", id_account);
+        cv.put("date", date);
+        cv.put("principal", principal);
+        cv.put("rate",rate);
+        cv.put("evaluation",evaluation);
+
+        try {
+            cr.insert(Uri.parse(URI_INFO_DAIRY_TOTAL), cv);
         } catch (Exception e) {
             Log.e(TAG,"DB insert error");
         }
@@ -935,8 +1131,36 @@ public class IRResolver {
             Log.e(TAG, "DB delete Error");
         }
     }
+    private void deleteInfoIOForeign(String where, String[] args) {
+        InfoIOForeign io_foreign = getInfoIOForeign(Integer.valueOf(args[0]));
+        int id_account, id_currency;
+        String date;
+
+        if(io_foreign == null) {
+            Log.i(TAG,"The DB is not exist");
+            return;
+        }
+
+        id_account = io_foreign.getAccount();
+        date = io_foreign.getDate();
+        id_currency = io_foreign.getCurrency();
+
+        try {
+            cr.delete(Uri.parse(URI_INFO_IO_FOREIGN), where, args);
+            modifyInfoDiaryForeign(1, id_account, id_currency, date);
+        } catch (Exception e) {
+            Log.e(TAG, "DB delete Error");
+        }
+    }
+
     private void deleteInfoDairyKRW() {
         cr.delete(Uri.parse(URI_INFO_DAIRY_KRW), null, null);
+    }
+    private void deleteInfoDairyForeign() {
+        cr.delete(Uri.parse(URI_INFO_DAIRY_FOREIGN), null, null);
+    }
+    private void deleteInfoDairyTotal() {
+        cr.delete(Uri.parse(URI_INFO_DAIRY_TOTAL), null, null);
     }
 
     public void updateGroup(Group group) {
@@ -987,6 +1211,28 @@ public class IRResolver {
         try {
             cr.update(Uri.parse(URI_INFO_IO_KRW), cv, where, selectionArgs);
             modifyInfoDiaryKRW(1, io_krw.getAccount(), io_krw.getDate());
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
+    }
+    public void updateInfoIOForeign(InfoIOForeign io_foreign) {
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(io_foreign.getId())};
+
+        ContentValues cv = new ContentValues();
+
+        cv.put("id_account",io_foreign.getAccount());
+        cv.put("date", io_foreign.getDate());
+        cv.put("input",io_foreign.getInput());
+        cv.put("input_krw",io_foreign.getInput_krw());
+        cv.put("output",io_foreign.getOutput());
+        cv.put("output_krw",io_foreign.getOutput_krw());
+        cv.put("id_currency",io_foreign.getCurrency());
+        cv.put("evaluation",io_foreign.getEvaluation());
+
+        try {
+            cr.update(Uri.parse(URI_INFO_IO_FOREIGN), cv, where, selectionArgs);
+            modifyInfoDiaryForeign(1, io_foreign.getAccount(), io_foreign.getCurrency(), io_foreign.getDate());
         } catch (Exception e) {
             Log.e(TAG,"DB update error");
         }
@@ -1178,6 +1424,41 @@ public class IRResolver {
             Log.e(TAG,"DB update error");
         }
     }
+    private void updateInfoDairyForeign(int id, int id_account, int id_currency, String date, int principal, int principal_krw, double rate) {
+        ContentValues cv = new ContentValues();
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        cv.put("id_account", id_account);
+        cv.put("date", date);
+        cv.put("principal",principal);
+        cv.put("principal_krw",principal_krw);
+        cv.put("rate",String.format(Locale.getDefault(),"%.2f",rate));
+        cv.put("id_currency",id_currency);
+
+        try {
+            cr.update(Uri.parse(URI_INFO_DAIRY_FOREIGN), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
+    }
+    private void updateInfoDairyTotal(int id, int id_account, int evaluation, String date, int principal, double rate) {
+        ContentValues cv = new ContentValues();
+        String where = "_id";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+
+        cv.put("id_account", id_account);
+        cv.put("date", date);
+        cv.put("principal",principal);
+        cv.put("evaluation",evaluation);
+        cv.put("rate",String.format(Locale.getDefault(),"%.2f",rate));
+
+        try {
+            cr.update(Uri.parse(URI_INFO_DAIRY_TOTAL), cv, where, selectionArgs);
+        } catch (Exception e) {
+            Log.e(TAG,"DB update error");
+        }
+    }
 
     public void setCurrentGroup(int group) {
         currentGroup = group;
@@ -1194,6 +1475,7 @@ public class IRResolver {
         InfoIOForeign io_foreign;
         InfoDairyKRW dairy_krw;
         InfoDairyForeign dairy_foreign;
+        InfoDairyTotal dairy_total;
         CategoryMain categoryMain;
         CategorySub categorySub;
         Card card;
@@ -1281,11 +1563,23 @@ public class IRResolver {
                     dairy_foreign.setId(cursor.getInt(0));
                     dairy_foreign.setDate(cursor.getString(1));
                     dairy_foreign.setPrincipal(cursor.getInt(2));
-                    dairy_foreign.setRate(cursor.getDouble(3));
-                    dairy_foreign.setAccount(cursor.getInt(4));
-                    dairy_foreign.setCurrency(cursor.getInt(5));
+                    dairy_foreign.setPrincipal_krw(cursor.getInt(3));
+                    dairy_foreign.setRate(cursor.getDouble(4));
+                    dairy_foreign.setAccount(cursor.getInt(5));
+                    dairy_foreign.setCurrency(cursor.getInt(6));
 
                     dairies_foreign.add(dairy_foreign);
+                    break;
+                case CODE_INFO_DAIRY_TOTAL:
+                    dairy_total = new InfoDairyTotal();
+                    dairy_total.setId(cursor.getInt(0));
+                    dairy_total.setDate(cursor.getString(1));
+                    dairy_total.setPrincipal(cursor.getInt(2));
+                    dairy_total.setEvaluation(cursor.getInt(3));
+                    dairy_total.setRate(cursor.getDouble(4));
+                    dairy_total.setAccount(cursor.getInt(5));
+
+                    dairies_total.add(dairy_total);
                     break;
                 case CODE_CATEGORY_MAIN:
                     categoryMain = new CategoryMain();
@@ -1484,6 +1778,23 @@ public class IRResolver {
 
         return sum;
     }
+    private int getSum(String uri, int id_account, int id_currency, String[] column, String selectedDate) {
+        int sum;
+        String[] select = {"total(" + column[0] + ") AS SUM"};
+        String where = "date<=? AND id_account=? AND id_currency=?";
+        String[] selectionArgs = new String[]{selectedDate,String.valueOf(id_account),String.valueOf(id_currency)};
+
+        Cursor c;
+
+        c = cr.query(Uri.parse(uri), select, where, selectionArgs, null);
+        assert c != null;
+        c.moveToNext();
+
+        sum = c.getInt(0);
+        c.close();
+
+        return sum;
+    }
 
     private void modifyInfoDiaryKRW(int select, int id_account, String selectedDate) {
         int evaluation = 0, index = 0;
@@ -1498,6 +1809,7 @@ public class IRResolver {
 
             if(io_krw != null) evaluation = io_krw.getEvaluation();
             calInfoDairyKRW(select,0,id_account,selectedDate,evaluation);
+            calInfoDairyTotal(select, id_account, selectedDate);
             select = 1;
         }
 
@@ -1519,9 +1831,57 @@ public class IRResolver {
                 if(io_krw != null) evaluation = io_krw.getEvaluation();
 
                 calInfoDairyKRW(select,daires_krw.get(index).getId(),id_account,txtDate,evaluation);
+                calInfoDairyTotal(select, id_account, selectedDate);
                 index++;
 
             } while(df.parse(selectedDate).compareTo(date) < 0);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void modifyInfoDiaryForeign(int select, int id_account, int id_currency, String selectedDate) {
+        int evaluation = 0, index = 0;
+        String txtDate;
+        Date date;
+        InfoIOForeign io_foreign;
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        List<InfoDairyForeign> daires_foreign = getInfoDairesForeign(id_account);
+
+        if(select == 0) {
+            io_foreign = getInfoIOForeign(id_account, id_currency, selectedDate);
+
+            if(io_foreign != null) evaluation = io_foreign.getEvaluation();
+            calInfoDairyForeign(select,0,id_account,io_foreign.getCurrency(),selectedDate,evaluation);
+            calInfoDairyTotal(select, id_account, selectedDate);
+            select = 1;
+        }
+
+        if(daires_foreign.isEmpty()) {
+            Log.i(TAG,"No dairy_krw");
+            return;
+        }
+
+        try {
+            //noinspection UnusedAssignment
+            date = df.parse(daires_foreign.get(index).getDate());
+
+            do {
+                txtDate = daires_foreign.get(index).getDate();
+                date = df.parse(txtDate);
+
+                io_foreign = getInfoIOForeign(id_account,id_currency,txtDate);
+
+                if(io_foreign != null) evaluation = io_foreign.getEvaluation();
+
+                calInfoDairyForeign(select,daires_foreign.get(index).getId(),id_account,id_currency,txtDate,evaluation);
+                calInfoDairyTotal(select, id_account, selectedDate);
+                index++;
+
+            } while(df.parse(selectedDate).compareTo(date) < 0);
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1542,13 +1902,78 @@ public class IRResolver {
 
         switch(select) {
             case 0:
-                insertInfoDairy(id_account, date, principal, rate);
+                insertInfoDairyKRW(id_account, date, principal, rate);
                 break;
             case 1:
                 updateInfoDairyKRW(id, id_account, date, principal, rate);
                 break;
         }
     }
+    private void calInfoDairyForeign(int select, int id, int id_account, int id_currency, String date, int evaluation) {
+        int sum_in, sum_out, principal_foreign;
+        int sum_in_krw, sum_out_krw, principal_krw;
+        double rate = 0;
+
+        sum_in = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"input"},date);
+        sum_out = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"output"},date);
+
+        sum_in_krw = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"input_krw"},date);
+        sum_out_krw = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"output_krw"},date);
+
+        principal_foreign = sum_in - sum_out;
+        principal_krw = sum_in_krw - sum_out_krw;
+
+        if(principal_krw != 0 && evaluation != 0) rate = (double)evaluation / (double)principal_krw * 100 - 100;
+
+        switch(select) {
+            case 0:
+                insertInfoDairyForeign(id_account, id_currency, date, principal_foreign, principal_krw, rate);
+                break;
+            case 1:
+                updateInfoDairyForeign(id, id_account, id_currency, date, principal_foreign, principal_krw, rate);
+                break;
+        }
+    }
+    private void calInfoDairyTotal(int select, int id_account, String date) {
+        InfoDairyKRW dairy_krw = getLastInfoDairyKRW(id_account, date);
+        InfoIOKRW io_krw = getLastInfoIOKRW(id_account, date);
+
+        InfoDairyForeign[] dairy_foreign = new InfoDairyForeign[3];
+        InfoIOForeign[] io_foreign = new InfoIOForeign[3];
+
+        int principal = 0, evaluation = 0;
+        if (dairy_krw != null) {
+            principal = dairy_krw.getPrincipal();
+        }
+        if (io_krw != null) {
+            evaluation = io_krw.getEvaluation();
+        }
+
+        for (int i = 0, limit = 3; i < limit; i++) {
+            dairy_foreign[i] = getInfoDairyForeign(id_account, i, date);
+            io_foreign[i] = getInfoIOForeign(id_account, i, date);
+            if (dairy_foreign[i] != null) principal += dairy_foreign[i].getPrincipal_krw();
+            if (io_foreign[i] != null) evaluation += io_foreign[i].getEvaluation();
+        }
+
+        double rate = 0f;
+        if (principal != 0 && evaluation != 0)
+            rate = (double) evaluation / (double) principal * 100 - 100;
+
+        int id = -1;
+        InfoDairyTotal dairy_total = getInfoDairyTotal(id_account, date);
+        if(dairy_total != null) id = dairy_total.getId();
+
+        switch(select) {
+            case 0:
+                insertInfoDairyTotal(id_account, evaluation, date, principal, rate);
+                break;
+            case 1:
+                updateInfoDairyTotal(id, id_account, evaluation, date, principal, rate);
+                break;
+        }
+    }
+
     private int calEvaluationKRW(int id_account, String txtDate) {
         int evaluation = 0;
         InfoIOKRW io_krw_latest, io_krw = getInfoIOKRW(id_account, txtDate);

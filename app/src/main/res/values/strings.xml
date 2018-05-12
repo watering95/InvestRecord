@@ -14,6 +14,8 @@
     <string name="input">입금액</string>
     <string name="output">출금액</string>
     <string name="evaluate">평가금액</string>
+    <string name="evaluate_krw">원화 평가금액</string>
+    <string name="currency">통화</string>
     <string name="krw">원화</string>
     <string name="delete_all">전부삭제</string>
     <string name="DB_delete">DB 파일 삭제</string>
@@ -24,6 +26,7 @@
     <string name="exchange_rate">환율</string>
     <string name="total_rate">총수익율</string>
     <string name="principal">원금</string>
+    <string name="principal_foreign">외화 원금</string>
     <string name="rate">수익율</string>
     <string name="date">날짜</string>
     <string name="select_date">날짜 선택</string>

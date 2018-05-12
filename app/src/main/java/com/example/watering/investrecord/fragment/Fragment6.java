@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.watering.investrecord.data.Account;
 import com.example.watering.investrecord.IRResolver;
 import com.example.watering.investrecord.info.InfoDairyKRW;
+import com.example.watering.investrecord.info.InfoDairyTotal;
 import com.example.watering.investrecord.info.InfoIOKRW;
 import com.example.watering.investrecord.info.InfoList6;
 import com.example.watering.investrecord.adapter.*;
@@ -103,7 +104,7 @@ public class Fragment6 extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mActivity.inoutDialog(lists.get(position).getDairy_krw().getDate());
+                mActivity.inoutDialog(lists.get(position).getDairy_total().getDate());
             }
         });
 
@@ -115,30 +116,48 @@ public class Fragment6 extends Fragment {
 
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.frame_main, mActivity.fragmentSub1).commit();
-
             }
         });
     }
 
     private void updateInfoLists() {
         lists.clear();
-        ArrayList<InfoDairyKRW> daires_krw = (ArrayList<InfoDairyKRW>) ir.getInfoDairesKRW(ir.getCurrentAccount());
-        if(daires_krw.isEmpty()) {
-            Log.i(TAG,"No dairy_krw");
-            return;
+        int id_account = ir.getCurrentAccount();
+
+        ArrayList<InfoDairyTotal> daires_total = (ArrayList<InfoDairyTotal>) ir.getInfoDairesTotal(id_account);
+
+        if(daires_total.isEmpty()) {
+            ArrayList<InfoDairyKRW> daires_krw = (ArrayList<InfoDairyKRW>) ir.getInfoDairesKRW(id_account);
+
+            if(daires_krw.isEmpty()) {
+                Log.i(TAG, "No dairy_total");
+                return;
+            }
+
+            for(int i = 0, n = daires_krw.size(); i < n; i++) {
+                InfoDairyTotal dairy_total = new InfoDairyTotal();
+                InfoDairyKRW dairy_krw = daires_krw.get(i);
+                InfoIOKRW io_krw = ir.getInfoIOKRW(id_account, dairy_krw.getDate());
+
+                dairy_total.setDate(dairy_krw.getDate());
+                dairy_total.setPrincipal(dairy_krw.getPrincipal());
+                dairy_total.setRate(dairy_krw.getRate());
+                dairy_total.setEvaluation(io_krw.getEvaluation());
+
+                InfoList6 list = new InfoList6();
+
+                list.setDairy_total(dairy_total);
+                lists.add(list);
+            }
         }
+        else {
+            for (int i = 0, n = daires_total.size(); i < n; i++) {
+                InfoDairyTotal dairy_total = ir.getInfoDairyTotal(id_account, daires_total.get(i).getDate());
+                InfoList6 list = new InfoList6();
 
-        for(int i = 0, n = daires_krw.size(); i < n; i++) {
-            InfoIOKRW io_krw;
-            InfoDairyKRW dairy_krw;
-            InfoList6 list = new InfoList6();
-
-            dairy_krw = daires_krw.get(i);
-
-            io_krw = ir.getInfoIOKRW(dairy_krw.getAccount(), dairy_krw.getDate());
-            if(io_krw != null) list.setEvaluation(io_krw.getEvaluation());
-            list.setDairy_krw(dairy_krw);
-            lists.add(list);
+                list.setDairy_total(dairy_total);
+                lists.add(list);
+            }
         }
     }
     private void updateListView() {
@@ -159,14 +178,15 @@ public class Fragment6 extends Fragment {
                 // 그래프 표시를 30개로 제한
                 if(size > 30) size = 30;
                 for (int i = size - 1; i > 0; i--) {
-                    eval = String.valueOf(lists.get(i).getEvaluation());
-                    rate = String.format(Locale.getDefault(),"%.2f",lists.get(i).getDairy_krw().getRate());
-                    date = "new Date('" + lists.get(i).getDairy_krw().getDate() + "')";
+                    InfoDairyTotal dairy_total = lists.get(i).getDairy_total();
+                    eval = String.valueOf(dairy_total.getEvaluation());
+                    rate = String.format(Locale.getDefault(),"%.2f",dairy_total.getRate());
+                    date = "new Date('" + dairy_total.getDate() + "')";
                     data.append("[").append(date).append(", ").append(eval).append(", ").append(rate).append("],\n");
                 }
-                eval = String.valueOf(lists.get(0).getEvaluation());
-                rate = String.format(Locale.getDefault(),"%.2f",lists.get(0).getDairy_krw().getRate());
-                date = "new Date('" + lists.get(0).getDairy_krw().getDate() + "')";
+                eval = String.valueOf(lists.get(0).getDairy_total().getEvaluation());
+                rate = String.format(Locale.getDefault(),"%.2f",lists.get(0).getDairy_total().getRate());
+                date = "new Date('" + lists.get(0).getDairy_total().getDate() + "')";
                 data.append("[").append(date).append(", ").append(eval).append(", ").append(rate).append("]\n");
             }
             else {
@@ -175,7 +195,7 @@ public class Fragment6 extends Fragment {
 
             if(lists.isEmpty()) accountnumber = "";
             else {
-                id_account = lists.get(0).getDairy_krw().getAccount();
+                id_account = ir.getCurrentAccount();
                 account = ir.getAccount(id_account);
                 if(account != null) accountnumber = account.getNumber();
             }

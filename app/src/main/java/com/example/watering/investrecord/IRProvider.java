@@ -25,6 +25,7 @@ public class IRProvider extends ContentProvider {
     private static final String PATH_INFO_IO_FOREIGN = "info_io_foreign";
     private static final String PATH_INFO_DAIRY_KRW = "info_dairy_krw";
     private static final String PATH_INFO_DAIRY_FOREIGN = "info_dairy_foreign";
+    private static final String PATH_INFO_DAIRY_TOTAL = "info_dairy_total";
     private static final String PATH_CARD = "card";
     private static final String PATH_CATEGORY_MAIN = "category_main";
     private static final String PATH_CATEGORY_SUB = "category_sub";
@@ -42,6 +43,7 @@ public class IRProvider extends ContentProvider {
     private static final int CODE_INFO_IO_FOREIGN = 14;
     private static final int CODE_INFO_DAIRY_KRW = 3;
     private static final int CODE_INFO_DAIRY_FOREIGN = 15;
+    private static final int CODE_INFO_DAIRY_TOTAL = 16;
     private static final int CODE_CARD = 4;
     private static final int CODE_CATEGORY_MAIN = 5;
     private static final int CODE_CATEGORY_SUB = 6;
@@ -57,6 +59,7 @@ public class IRProvider extends ContentProvider {
     private AccountDBHelper DB_account;
     private InfoDairyKRWDBHelper DB_info_dairy_krw;
     private InfoDairyForeignDBHelper DB_info_dairy_foreign;
+    private InfoDairyTotalDBHelper DB_info_dairy_total;
     private InfoIOKRWDBHelper DB_info_IO_krw;
     private InfoIOForeignDBHelper DB_info_IO_foreign;
     private CardDBHelper DB_card;
@@ -75,6 +78,7 @@ public class IRProvider extends ContentProvider {
         Matcher.addURI(AUTHORITY, PATH_INFO_IO_FOREIGN, CODE_INFO_IO_FOREIGN);
         Matcher.addURI(AUTHORITY, PATH_INFO_DAIRY_KRW, CODE_INFO_DAIRY_KRW);
         Matcher.addURI(AUTHORITY, PATH_INFO_DAIRY_FOREIGN, CODE_INFO_DAIRY_FOREIGN);
+        Matcher.addURI(AUTHORITY, PATH_INFO_DAIRY_TOTAL, CODE_INFO_DAIRY_TOTAL);
         Matcher.addURI(AUTHORITY,PATH_CARD,CODE_CARD);
         Matcher.addURI(AUTHORITY,PATH_CATEGORY_MAIN,CODE_CATEGORY_MAIN);
         Matcher.addURI(AUTHORITY,PATH_CATEGORY_SUB,CODE_CATEGORY_SUB);
@@ -92,6 +96,7 @@ public class IRProvider extends ContentProvider {
         DB_account = new AccountDBHelper(getContext());
         DB_info_dairy_krw = new InfoDairyKRWDBHelper(getContext());
         DB_info_dairy_foreign = new InfoDairyForeignDBHelper(getContext());
+        DB_info_dairy_total = new InfoDairyTotalDBHelper(getContext());
         DB_info_IO_krw = new InfoIOKRWDBHelper(getContext());
         DB_info_IO_foreign = new InfoIOForeignDBHelper(getContext());
         DB_card = new CardDBHelper(getContext());
@@ -129,6 +134,9 @@ public class IRProvider extends ContentProvider {
                 break;
             case CODE_INFO_DAIRY_FOREIGN:
                 cursor = DB_info_dairy_foreign.query(projection, selection, selectionArgs, sortOrder);
+                break;
+            case CODE_INFO_DAIRY_TOTAL:
+                cursor = DB_info_dairy_total.query(projection, selection, selectionArgs, sortOrder);
                 break;
             case CODE_CARD:
                 cursor = DB_card.query(projection, selection, selectionArgs, sortOrder);
@@ -181,6 +189,8 @@ public class IRProvider extends ContentProvider {
                 return "vnd.android.cursor.dir/vnd.investrecord.info_dairy_krw";
             case CODE_INFO_DAIRY_FOREIGN:
                 return "vnd.android.cursor.dir/vnd.investrecord.info_dairy_foreign";
+            case CODE_INFO_DAIRY_TOTAL:
+                return "vnd.android.cursor.dir/vnd.investrecord.info_dairy_total";
             case CODE_CARD:
                 return "vnd.android.cursor.dir/vnd.investrecord.card";
             case CODE_CATEGORY_MAIN:
@@ -224,6 +234,9 @@ public class IRProvider extends ContentProvider {
                 break;
             case CODE_INFO_DAIRY_FOREIGN:
                 DB_info_dairy_foreign.insert(values);
+                break;
+            case CODE_INFO_DAIRY_TOTAL:
+                DB_info_dairy_total.insert(values);
                 break;
             case CODE_CARD:
                 DB_card.insert(values);
@@ -274,6 +287,9 @@ public class IRProvider extends ContentProvider {
             case CODE_INFO_DAIRY_FOREIGN:
                 DB_info_dairy_foreign.delete(selection, selectionArgs);
                 break;
+            case CODE_INFO_DAIRY_TOTAL:
+                DB_info_dairy_total.delete(selection, selectionArgs);
+                break;
             case CODE_CARD:
                 DB_card.delete(selection, selectionArgs);
                 break;
@@ -321,6 +337,9 @@ public class IRProvider extends ContentProvider {
                 break;
             case CODE_INFO_DAIRY_FOREIGN:
                 DB_info_dairy_foreign.update(values, selection, selectionArgs);
+                break;
+            case CODE_INFO_DAIRY_TOTAL:
+                DB_info_dairy_total.update(values, selection, selectionArgs);
                 break;
             case CODE_CARD:
                 DB_card.update(values, selection, selectionArgs);

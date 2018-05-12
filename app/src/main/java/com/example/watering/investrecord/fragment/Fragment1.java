@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.watering.investrecord.data.Account;
 import com.example.watering.investrecord.IRResolver;
 import com.example.watering.investrecord.info.InfoDairyKRW;
+import com.example.watering.investrecord.info.InfoDairyTotal;
 import com.example.watering.investrecord.info.InfoIOKRW;
 import com.example.watering.investrecord.info.InfoList1;
 import com.example.watering.investrecord.info.InfoList6;
@@ -25,9 +26,7 @@ import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -124,13 +123,11 @@ public class Fragment1 extends Fragment {
     private void updateInfoLists() {
         int id_account;
 
-        InfoDairyKRW dairy_krw;
-        InfoIOKRW io_krw;
+        InfoDairyTotal dairy_total;
         InfoList1 list1;
         InfoList6 list6;
 
         List<Account> accounts = ir.getAccounts(ir.getCurrentGroup());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd",java.util.Locale.getDefault());
 
         sum_evaluate = 0;
         sum_principal = 0;
@@ -149,27 +146,35 @@ public class Fragment1 extends Fragment {
 
             id_account = accounts.get(i).getId();
 
-            dairy_krw = ir.getLastInfoDairyKRW(id_account);
-            if(dairy_krw == null) {
-                dairy_krw = new InfoDairyKRW();
-                dairy_krw.setDate(dateFormat.format(new Date(System.currentTimeMillis())));
-                dairy_krw.setAccount(id_account);
-                dairy_krw.setPrincipal(0);
-                dairy_krw.setRate(0);
-            }
-            io_krw = ir.getInfoIOKRW(id_account,dairy_krw.getDate());
-            if(io_krw == null) {
-                io_krw = new InfoIOKRW();
-                io_krw.setEvaluation(0);
+            dairy_total = ir.getLastInfoDairyTotal(id_account);
+            if(dairy_total == null) {
+                InfoDairyKRW dairy_krw = ir.getLastInfoDairyKRW(id_account);
+                InfoIOKRW io_krw;
+                if(dairy_krw == null) {
+                    dairy_krw = new InfoDairyKRW();
+                    io_krw = new InfoIOKRW();
+
+                    dairy_krw.setRate(0);
+                    dairy_krw.setPrincipal(0);
+                    io_krw.setEvaluation(0);
+                }
+                else {
+                    io_krw = ir.getLastInfoIOKRW(id_account, dairy_krw.getDate());
+                }
+
+                dairy_total = new InfoDairyTotal();
+
+                dairy_total.setEvaluation(io_krw.getEvaluation());
+                dairy_total.setRate(dairy_krw.getRate());
+                dairy_total.setPrincipal(dairy_krw.getPrincipal());
             }
 
-            list6.setDairy_krw(dairy_krw);
-            list6.setEvaluation(io_krw.getEvaluation());
+            list6.setDairy_total(dairy_total);
 
             list1.setAccount(accounts.get(i));
             list1.setInfoList6(list6);
-            sum_evaluate += list1.getList6().getEvaluation();
-            sum_principal += dairy_krw.getPrincipal();
+            sum_evaluate += dairy_total.getEvaluation();
+            sum_principal += dairy_total.getPrincipal();
 
             lists.add(list1);
         }

@@ -10,7 +10,21 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView_dlg_inout_foreign_date"
         android:textSize="17sp"/>
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/currency"
+            android:layout_weight="1"/>
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner_dlg_inout_foreign_currency"
+            android:layout_weight="1"/>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,12 +38,6 @@
             android:layout_height="wrap_content"
             android:text="@string/input"
             android:layout_weight="1"/>
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinner_dlg_inout_foreign_input_currency"
-            android:layout_weight="1">
-        </Spinner>
         <EditText
             android:id="@+id/editText_dlg_inout_foreign_input"
             android:layout_width="match_parent"
@@ -37,7 +45,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:layout_weight="1"/>
-    </LinearLayout>
+       </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,7 +67,7 @@
                 android:text="@string/krw"
                 android:layout_weight="1"/>
             <EditText
-                android:id="@+id/editText_dlg_inout_foreign_input_evaluate_krw"
+                android:id="@+id/editText_dlg_inout_foreign_input_krw"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -80,12 +88,6 @@
             android:layout_height="wrap_content"
             android:text="@string/output"
             android:layout_weight="1"/>
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinner_dlg_inout_foreign_output_currency"
-            android:layout_weight="1">
-        </Spinner>
         <EditText
             android:id="@+id/editText_dlg_inout_foreign_output"
             android:layout_width="match_parent"
@@ -93,7 +95,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:layout_weight="1"/>
-    </LinearLayout>
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -115,7 +117,7 @@
                 android:text="@string/krw"
                 android:layout_weight="1"/>
             <EditText
-                android:id="@+id/editText_dlg_inout_foreign_output_evaluate_krw"
+                android:id="@+id/editText_dlg_inout_foreign_output_krw"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -130,7 +132,24 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/evaluate"
+            android:text="@string/principal_foreign"
+            android:layout_weight="3"/>
+        <EditText
+            android:id="@+id/editText_dlg_inout_foreign_principal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="numberSigned"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/evaluate_krw"
             android:layout_weight="3"/>
         <EditText
             android:id="@+id/editText_dlg_inout_foreign_evaluation"
