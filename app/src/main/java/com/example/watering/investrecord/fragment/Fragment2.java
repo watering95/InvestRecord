@@ -1,5 +1,6 @@
 package com.example.watering.investrecord.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -205,6 +206,7 @@ public class Fragment2 extends Fragment {
             e.printStackTrace();
         }
     }
+    @SuppressLint("SetJavaScriptEnabled")
     private void openWebView() {
         mWeb = mView.findViewById(R.id.webView_frag2);
         mWeb.setWebViewClient(new WebViewClient());

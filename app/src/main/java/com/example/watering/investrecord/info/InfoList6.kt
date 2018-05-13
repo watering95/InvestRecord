@@ -5,5 +5,5 @@ package com.example.watering.investrecord.info
  */
 
 class InfoList6 {
-    var dairy_total: InfoDairyTotal? = null
+    var dairyTotal: InfoDairyTotal? = null
 }

@@ -39,12 +39,12 @@ class List3Adapter(context: Context, private val mData: ArrayList<InfoList3>) : 
         }
 
         val df = DecimalFormat("#,###")
-        val textView_1 = convertView!!.findViewById<TextView>(R.id.textView_layout_list3_1)
-        val textView_2 = convertView.findViewById<TextView>(R.id.textView_layout_list3_2)
-        val textView_3 = convertView.findViewById<TextView>(R.id.textView_layout_list3_3)
+        val textView1 = convertView!!.findViewById<TextView>(R.id.textView_layout_list3_1)
+        val textView2 = convertView.findViewById<TextView>(R.id.textView_layout_list3_2)
+        val textView3 = convertView.findViewById<TextView>(R.id.textView_layout_list3_3)
 
-        textView_1.text = mData[position].spend!!.details
-        textView_3.text = df.format(mData[position].spend!!.amount.toLong())
+        textView1.text = mData[position].spend!!.details
+        textView3.text = df.format(mData[position].spend!!.amount.toLong())
 
         return convertView
     }

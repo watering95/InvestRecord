@@ -47,14 +47,14 @@ class List1Adapter(context: Context, private val mData: ArrayList<InfoList1>) : 
         val accountInfo = convertView.findViewById<TextView>(R.id.textView_layout_list1_5)
 
         val list6 = mData[position].infoList6
-        val dairy_total = list6!!.dairy_total
+        val dairyTotal = list6!!.dairyTotal
         val account = mData[position].account
         val df = DecimalFormat("#,###")
 
         txtAccount.text = account!!.number.toString()
-        principal.text = df.format(dairy_total!!.principal.toLong())
-        rate.text = String.format(Locale.getDefault(), "%.2f", dairy_total.rate)
-        evaluation.text = df.format(dairy_total.evaluation.toLong())
+        principal.text = df.format(dairyTotal!!.principal.toLong())
+        rate.text = String.format(Locale.getDefault(), "%.2f", dairyTotal.rate)
+        evaluation.text = df.format(dairyTotal.evaluation.toLong())
         accountInfo.text = String.format(Locale.getDefault(), "%s %s", account.institute, account.description)
 
         return convertView

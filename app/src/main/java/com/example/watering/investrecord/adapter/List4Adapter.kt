@@ -40,12 +40,12 @@ class List4Adapter(context: Context, private val mData: ArrayList<InfoList4>) : 
         }
 
         val df = DecimalFormat("#,###")
-        val textView_1 = convertView!!.findViewById<TextView>(R.id.textView_layout_list6_1)
-        val textView_2 = convertView.findViewById<TextView>(R.id.textView_layout_list6_2)
-        val textView_3 = convertView.findViewById<TextView>(R.id.textView_layout_list6_3)
+        val textView1 = convertView!!.findViewById<TextView>(R.id.textView_layout_list6_1)
+        val textView2 = convertView.findViewById<TextView>(R.id.textView_layout_list6_2)
+        val textView3 = convertView.findViewById<TextView>(R.id.textView_layout_list6_3)
 
-        textView_1.text = mData[position].income!!.details
-        textView_3.text = df.format(mData[position].income!!.amount.toLong())
+        textView1.text = mData[position].income!!.details
+        textView3.text = df.format(mData[position].income!!.amount.toLong())
 
         return convertView
     }

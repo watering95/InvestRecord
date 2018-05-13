@@ -41,17 +41,17 @@ class List6Adapter(context: Context, private val mData: ArrayList<InfoList6>) : 
             convertView = inflater.inflate(R.layout.layout_list6, parent, false)
         }
 
-        val dairy_total: InfoDairyTotal? = mData[position].dairy_total
+        val dairyTotal: InfoDairyTotal? = mData[position].dairyTotal
         val date = convertView!!.findViewById<TextView>(R.id.textView_layout_list2_1)
         val principal = convertView.findViewById<TextView>(R.id.textView_layout_list2_2)
         val evaluation = convertView.findViewById<TextView>(R.id.textView_layout_list2_3)
         val rate = convertView.findViewById<TextView>(R.id.textView_layout_list2_4)
         val df = DecimalFormat("#,###")
 
-        date.text = dairy_total!!.date.toString()
-        principal.text = df.format(dairy_total.principal.toLong())
-        rate.text = String.format(Locale.getDefault(), "%.2f", dairy_total.rate)
-        evaluation.text = df.format(dairy_total.evaluation.toLong())
+        date.text = dairyTotal!!.date.toString()
+        principal.text = df.format(dairyTotal.principal.toLong())
+        rate.text = String.format(Locale.getDefault(), "%.2f", dairyTotal.rate)
+        evaluation.text = df.format(dairyTotal.evaluation.toLong())
 
         return convertView
     }

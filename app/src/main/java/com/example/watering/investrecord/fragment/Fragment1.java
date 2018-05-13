@@ -169,7 +169,7 @@ public class Fragment1 extends Fragment {
                 dairy_total.setPrincipal(dairy_krw.getPrincipal());
             }
 
-            list6.setDairy_total(dairy_total);
+            list6.setDairyTotal(dairy_total);
 
             list1.setAccount(accounts.get(i));
             list1.setInfoList6(list6);

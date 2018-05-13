@@ -59,8 +59,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/editText_dlg_inout_foreign_input_exchange_rate"
-                android:layout_weight="1">
-            </EditText>
+                android:layout_weight="1"
+                android:inputType="number" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,12 +105,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/exchange_rate"
                 android:layout_weight="1"/>
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/editText_dlg_inout_foreign_output_exchange_rate"
-                android:layout_weight="1">
-            </EditText>
+                android:layout_weight="1"
+                android:inputType="number" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
