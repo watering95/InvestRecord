@@ -909,6 +909,7 @@ public class UserDialogFragment extends DialogFragment {
         final EditText txtOutputKRW = view.findViewById(R.id.editText_dlg_inout_foreign_output_krw);
         final EditText txtEvaluation = view.findViewById(R.id.editText_dlg_inout_foreign_evaluation);
         final EditText txtPrincipal = view.findViewById(R.id.editText_dlg_inout_foreign_principal);
+        final EditText txtExchangeRate = view.findViewById(R.id.editText_dlg_inout_foreign_evaluation_rate);
 
         if(ir.getCurrentAccount() < 0) {
             Toast.makeText(mActivity.getApplicationContext(),R.string.toast_no_account,Toast.LENGTH_SHORT).show();
@@ -922,6 +923,7 @@ public class UserDialogFragment extends DialogFragment {
         txtInputExchangeRate.setEnabled(false);
         txtOutputExchangeRate.setEnabled(false);
         txtPrincipal.setEnabled(false);
+        txtExchangeRate.setEnabled(false);
 
         adapter_currency = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item, lists_currency);
         spinnerCurrency.setAdapter(adapter_currency);
