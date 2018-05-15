@@ -2,6 +2,7 @@ package com.example.watering.investrecord;
 
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -43,13 +44,23 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -85,8 +96,12 @@ public class MainActivity extends AppCompatActivity {
     public interface Callback {
         void update();
     }
+    public interface ExchangeTask {
+        void finish(float exchange);
+    }
 
     private Callback m_callbackSub3;
+    private static ExchangeTask exchangeTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -283,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.setSelectedDate(selectedDate);
         dialog.show(fragmentManager, "dialog");
     }
+
     private void settingDialog() {
         UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.navigation_item_setting, new UserDialogFragment.UserListener() {
             @Override
@@ -310,7 +326,6 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.show(fragmentManager, "dialog");
     }
-
     private void deleteDBFile() {
         String file = getFilesDir().toString();
         file = file.substring(0,file.length()-5) + "databases/InvestRecord.db";
@@ -549,5 +564,78 @@ public class MainActivity extends AppCompatActivity {
 
     public void setCallbackSub3(Callback callback) {
         this.m_callbackSub3 = callback;
+    }
+
+    public void setExchangeTask(ExchangeTask exchangeTask) {
+        this.exchangeTask = exchangeTask;
+    }
+
+    public void runExchangeTask(int currency, String date) {
+        String authKey = "GJxPHU7IZSycH27FubZt3wvxIqKlnue1";
+        String dataType = "AP01";
+        String apiURL = "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=" + authKey + "&searchdate=" + date + "&data=" + dataType;
+        String findCode = "";
+
+        switch(currency) {
+            case 0:
+                findCode = "USD";
+                break;
+            case 1:
+                findCode = "JPY(100)";
+                break;
+            case 2:
+                findCode = "CNH";
+                break;
+        }
+
+        new GetExchangeTask().execute(findCode, apiURL);
+    }
+
+    static class GetExchangeTask extends AsyncTask<String, Void, Float> {
+
+        @Override
+        protected Float doInBackground(String... strings) {
+            try {
+                String findCode = strings[0];
+                URL url = new URL(strings[1]);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuilder res = new StringBuilder();
+
+                while ((inputLine = br.readLine()) != null) {
+                    res.append(inputLine);
+                }
+                br.close();
+
+                JSONArray jsonArray = new JSONArray(res.toString());
+
+                for (int i = 0, limit = jsonArray.length(); i < limit; i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    if (jsonObject.getString("cur_unit").compareTo(findCode) == 0) {
+                        DecimalFormat df = new DecimalFormat("#,###.#");
+
+                        con.disconnect();
+                        return Float.valueOf(df.parse(jsonObject.getString("deal_bas_r")).floatValue());
+                    }
+                }
+
+                con.disconnect();
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            return 0f;
+        }
+
+        @Override
+        protected void onPostExecute(Float aFloat) {
+            super.onPostExecute(aFloat);
+            exchangeTask.finish(aFloat);
+        }
     }
 }

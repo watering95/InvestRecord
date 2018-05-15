@@ -911,6 +911,19 @@ public class UserDialogFragment extends DialogFragment {
         final EditText txtPrincipal = view.findViewById(R.id.editText_dlg_inout_foreign_principal);
         final EditText txtExchangeRate = view.findViewById(R.id.editText_dlg_inout_foreign_evaluation_rate);
 
+        final float[] exchangeRate = new float[1];
+
+        MainActivity.ExchangeTask exchangeTask = new MainActivity.ExchangeTask() {
+            @Override
+            public void finish(float exchange) {
+                exchangeRate[0] = exchange;
+                txtExchangeRate.setText(df.format(exchangeRate[0]));
+            }
+        };
+
+        mActivity.setExchangeTask(exchangeTask);
+        mActivity.runExchangeTask(current_currency[0], selectedDate);
+
         if(ir.getCurrentAccount() < 0) {
             Toast.makeText(mActivity.getApplicationContext(),R.string.toast_no_account,Toast.LENGTH_SHORT).show();
             return;
@@ -932,6 +945,8 @@ public class UserDialogFragment extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 current_currency[0] = position;
+
+                mActivity.runExchangeTask(current_currency[0], selectedDate);
 
                 int input_krw, output_krw, input_foreign, output_foreign, evaluation;
                 float exchangeRate_input = 0f, exchangeRate_output = 0f;
@@ -994,12 +1009,11 @@ public class UserDialogFragment extends DialogFragment {
 
         int id_account = ir.getCurrentAccount();
         final InfoIOForeign io_foreign = ir.getInfoIOForeign(id_account,current_currency[0],selectedDate);
-        InfoIOForeign io_foreign_latest = ir.getLastInfoIOForeign(id_account,current_currency[0],selectedDate);
         InfoDairyForeign dairy_foreign_latest = ir.getLastInfoDairyForeign(id_account, current_currency[0], selectedDate);
 
         //선택한 날짜의 값이 있으면 가져오고 없으면 최근값을 가져온다.
         if(io_foreign != null) evaluation = io_foreign.getEvaluation();
-        else if(io_foreign_latest != null) evaluation = io_foreign_latest.getEvaluation();
+        else if(dairy_foreign_latest != null) evaluation = (int) (dairy_foreign_latest.getPrincipal() * exchangeRate[0]);
         else evaluation = 0;
 
         txtDate.setText(selectedDate);
