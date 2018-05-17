@@ -23,8 +23,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.watering.investrecord.data.Account;
 import com.example.watering.investrecord.data.Group;
 import com.example.watering.investrecord.fragment.*;
+import com.example.watering.investrecord.info.InfoDairyForeign;
+import com.example.watering.investrecord.info.InfoIOForeign;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -97,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         void update();
     }
     public interface ExchangeTask {
-        void finish(float exchange);
+        void finish(Double[] exchange);
     }
 
     private Callback m_callbackSub3;
@@ -112,15 +115,14 @@ public class MainActivity extends AppCompatActivity {
         initLayout();
         initGroupSpinner();
         initDataBase();
+        initExchangeRate();
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_toolbar_main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -139,6 +141,132 @@ public class MainActivity extends AppCompatActivity {
                 dialog.show(getSupportFragmentManager(), "dialog");
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setCallbackSub3(Callback callback) {
+        this.m_callbackSub3 = callback;
+    }
+    public void inoutDialog(String selectedDate) {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+
+            }
+        });
+
+        dialog.setSelectedDate(selectedDate);
+        dialog.show(fragmentManager, "dialog");
+    }
+    public String getToday() {
+        Calendar today = Calendar.getInstance();
+
+        return String.format(Locale.getDefault(), "%04d-%02d-%02d", today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DATE));
+    }
+    public String monthChange(String date, int amount) {
+        Calendar calendar = strToCalendar(date);
+
+        calendar.add(Calendar.MONTH, amount);
+
+        if (Calendar.getInstance().before(calendar)) {
+            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
+            return date;
+        }
+
+        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
+    }
+    public String dateChange(String date, int amount) {
+        Calendar calendar = strToCalendar(date);
+
+        calendar.add(Calendar.DATE,amount);
+
+        if (Calendar.getInstance().before(calendar)) {
+            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
+            return date;
+        }
+
+        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
+    }
+    public String calendarToStr(Calendar calendar) {
+        return String.format(Locale.getDefault(), "%04d-%02d-%02d", calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
+    }
+    public Calendar strToCalendar(String date) {
+        Calendar calendar = Calendar.getInstance();
+
+        if(date == null) return calendar;
+
+        String year = date.substring(0,4);
+        String month = date.substring(5,7);
+        String day = date.substring(8,10);
+
+        calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
+
+        return calendar;
+    }
+
+    public void setExchangeTask(ExchangeTask exchangeTask) {
+        MainActivity.exchangeTask = exchangeTask;
+    }
+    public void runExchangeTask(String date) {
+        String authKey = "GJxPHU7IZSycH27FubZt3wvxIqKlnue1";
+        String dataType = "AP01";
+        String apiURL = "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=" + authKey + "&searchdate=" + date + "&data=" + dataType;
+
+        new GetExchangeTask().execute(apiURL);
+    }
+
+    static class GetExchangeTask extends AsyncTask<String, Void, Double[]> {
+
+        @Override
+        protected Double[] doInBackground(String... strings) {
+            try {
+                URL url = new URL(strings[0]);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+                Double[] currency = new Double[4];
+
+                DecimalFormat df = new DecimalFormat("#,###.##");
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuilder res = new StringBuilder();
+
+                while ((inputLine = br.readLine()) != null) {
+                    res.append(inputLine);
+                }
+                br.close();
+
+                JSONArray jsonArray = new JSONArray(res.toString());
+
+                for (int i = 0, limit = jsonArray.length(); i < limit; i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String cur_unit = jsonObject.getString("cur_unit");
+                    if (cur_unit.compareTo("USD") == 0) {
+                        currency[0] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                    else if (cur_unit.compareTo("CNH") == 0) {
+                        currency[1] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                    else if (cur_unit.compareTo("EUR") == 0) {
+                        currency[2] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                    else if (cur_unit.compareTo("JPY(100)") == 0) {
+                        currency[3] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                }
+                con.disconnect();
+                return currency;
+            } catch (IOException | JSONException | ParseException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Double[] aDouble) {
+            super.onPostExecute(aDouble);
+            exchangeTask.finish(aDouble);
+        }
     }
 
     private void initLayout() {
@@ -221,7 +349,69 @@ public class MainActivity extends AppCompatActivity {
     private void initDataBase() {
         updateGroupSpinner();
     }
+    private void initExchangeRate() {
+        final String today = getToday();
 
+        // table이 존재하지 않으면
+        if(ir.checkDBTable("tbl_Info_Dairy_Foreign") == 0) {
+            return;
+        }
+
+        ExchangeTask mainExchangeTask = new ExchangeTask() {
+            @Override
+            public void finish(Double[] exchangeRate) {
+
+                if(exchangeRate == null) {
+                    Toast.makeText(getApplicationContext(),R.string.toast_exchange_error,Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                InfoIOForeign[] info_io_foreign_today = new InfoIOForeign[4];
+
+                for(int i_group = 0, limit_i = groups.size(); i_group < limit_i; i_group++) {
+
+                    List<Account> accounts = ir.getAccounts(groups.get(i_group).getId());
+
+                    for(int i_account = 0, limit_j = accounts.size(); i_account < limit_j; i_account++) {
+
+                        int id_account = accounts.get(i_account).getId();
+
+                        for(int i_currency = 0, limit_k = 4; i_currency < limit_k; i_currency++) {
+                            InfoDairyForeign info_dairy_foreign_last = ir.getLastInfoDairyForeign(id_account, i_currency, today);
+                            info_io_foreign_today[i_currency] = ir.getInfoIOForeign(id_account, i_currency, today);
+                            int evaluation;
+
+                            if(info_dairy_foreign_last != null) {
+                                Double principal = info_dairy_foreign_last.getPrincipal();
+
+                                if(principal >= 0) evaluation = (int) (principal * exchangeRate[i_currency]);
+                                else continue;
+                            }
+                            else {
+                                continue;
+                            }
+
+                            if(info_io_foreign_today[i_currency] == null) {
+                                info_io_foreign_today[i_currency] = new InfoIOForeign();
+
+                                info_io_foreign_today[i_currency].setCurrency(i_currency);
+                                info_io_foreign_today[i_currency].setAccount(id_account);
+                                info_io_foreign_today[i_currency].setDate(today);
+                                info_io_foreign_today[i_currency].setEvaluation(evaluation);
+                                ir.insertInfoIOForeign(info_io_foreign_today[i_currency]);
+                            }
+                            else {
+                                info_io_foreign_today[i_currency].setEvaluation(evaluation);
+                                ir.updateInfoIOForeign(info_io_foreign_today[i_currency]);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        setExchangeTask(mainExchangeTask);
+        runExchangeTask(today);
+    }
     private void updateGroupSpinner() {
         updateGroupList();
         groupAdapter.notifyDataSetChanged();
@@ -240,65 +430,6 @@ public class MainActivity extends AppCompatActivity {
             grouplists.add(groups.get(i).getName());
         }
     }
-
-    public String getToday() {
-        Calendar today = Calendar.getInstance();
-
-        return String.format(Locale.getDefault(), "%04d-%02d-%02d", today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DATE));
-    }
-    public String monthChange(String date, int amount) {
-        Calendar calendar = strToCalendar(date);
-
-        calendar.add(Calendar.MONTH, amount);
-
-        if (Calendar.getInstance().before(calendar)) {
-            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
-            return date;
-        }
-
-        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
-    }
-    public String dateChange(String date, int amount) {
-        Calendar calendar = strToCalendar(date);
-
-        calendar.add(Calendar.DATE,amount);
-
-        if (Calendar.getInstance().before(calendar)) {
-            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
-            return date;
-        }
-
-        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
-    }
-    public Calendar strToCalendar(String date) {
-        Calendar calendar = Calendar.getInstance();
-
-        if(date == null) return calendar;
-
-        String year = date.substring(0,4);
-        String month = date.substring(5,7);
-        String day = date.substring(8,10);
-
-        calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
-
-        return calendar;
-    }
-    public String calendarToStr(Calendar calendar) {
-        return String.format(Locale.getDefault(), "%04d-%02d-%02d", calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
-    }
-
-    public void inoutDialog(String selectedDate) {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-
-            }
-        });
-
-        dialog.setSelectedDate(selectedDate);
-        dialog.show(fragmentManager, "dialog");
-    }
-
     private void settingDialog() {
         UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.navigation_item_setting, new UserDialogFragment.UserListener() {
             @Override
@@ -464,7 +595,11 @@ public class MainActivity extends AppCompatActivity {
 
         Toast.makeText(this,R.string.toast_db_restore_ok,Toast.LENGTH_SHORT).show();
     }
-
+    private void callUpdateFragSub3() {
+        if(m_callbackSub3 != null) {
+            m_callbackSub3.update();
+        }
+    }
     private void signIn(int code) {
         Log.i(TAG, "Start sign in");
         GoogleSignInClient mGoogleSignInClient = buildGoogleSignInClient();
@@ -553,89 +688,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:
                 super.onActivityResult(requestCode,resultCode,data);
-        }
-    }
-
-    private void callUpdateFragSub3() {
-        if(m_callbackSub3 != null) {
-            m_callbackSub3.update();
-        }
-    }
-
-    public void setCallbackSub3(Callback callback) {
-        this.m_callbackSub3 = callback;
-    }
-
-    public void setExchangeTask(ExchangeTask exchangeTask) {
-        this.exchangeTask = exchangeTask;
-    }
-
-    public void runExchangeTask(int currency, String date) {
-        String authKey = "GJxPHU7IZSycH27FubZt3wvxIqKlnue1";
-        String dataType = "AP01";
-        String apiURL = "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=" + authKey + "&searchdate=" + date + "&data=" + dataType;
-        String findCode = "";
-
-        switch(currency) {
-            case 0:
-                findCode = "USD";
-                break;
-            case 1:
-                findCode = "JPY(100)";
-                break;
-            case 2:
-                findCode = "CNH";
-                break;
-        }
-
-        new GetExchangeTask().execute(findCode, apiURL);
-    }
-
-    static class GetExchangeTask extends AsyncTask<String, Void, Float> {
-
-        @Override
-        protected Float doInBackground(String... strings) {
-            try {
-                String findCode = strings[0];
-                URL url = new URL(strings[1]);
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("GET");
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                StringBuilder res = new StringBuilder();
-
-                while ((inputLine = br.readLine()) != null) {
-                    res.append(inputLine);
-                }
-                br.close();
-
-                JSONArray jsonArray = new JSONArray(res.toString());
-
-                for (int i = 0, limit = jsonArray.length(); i < limit; i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    if (jsonObject.getString("cur_unit").compareTo(findCode) == 0) {
-                        DecimalFormat df = new DecimalFormat("#,###.#");
-
-                        con.disconnect();
-                        return Float.valueOf(df.parse(jsonObject.getString("deal_bas_r")).floatValue());
-                    }
-                }
-
-                con.disconnect();
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            return 0f;
-        }
-
-        @Override
-        protected void onPostExecute(Float aFloat) {
-            super.onPostExecute(aFloat);
-            exchangeTask.finish(aFloat);
         }
     }
 }

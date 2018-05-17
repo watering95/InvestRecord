@@ -258,8 +258,8 @@ public class IRResolver {
         c.moveToNext();
 
         io_foreign.setId(c.getInt(c.getColumnIndex("_id")));
-        io_foreign.setInput(c.getInt(c.getColumnIndex("input")));
-        io_foreign.setOutput(c.getInt(c.getColumnIndex("output")));
+        io_foreign.setInput(c.getDouble(c.getColumnIndex("input")));
+        io_foreign.setOutput(c.getDouble(c.getColumnIndex("output")));
         io_foreign.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
         io_foreign.setAccount(c.getInt(c.getColumnIndex("id_account")));
         io_foreign.setDate(c.getString(c.getColumnIndex("date")));
@@ -479,8 +479,8 @@ public class IRResolver {
         c.moveToNext();
 
         io_foreign.setId(c.getInt(c.getColumnIndex("_id")));
-        io_foreign.setInput(c.getInt(c.getColumnIndex("input")));
-        io_foreign.setOutput(c.getInt(c.getColumnIndex("output")));
+        io_foreign.setInput(c.getDouble(c.getColumnIndex("input")));
+        io_foreign.setOutput(c.getDouble(c.getColumnIndex("output")));
         io_foreign.setEvaluation(c.getInt(c.getColumnIndex("evaluation")));
         io_foreign.setAccount(c.getInt(c.getColumnIndex("id_account")));
         io_foreign.setDate(c.getString(c.getColumnIndex("date")));
@@ -507,8 +507,8 @@ public class IRResolver {
         c.moveToNext();
 
         dairy_foreign.setId(c.getInt(c.getColumnIndex("_id")));
-        dairy_foreign.setPrincipal(c.getInt(c.getColumnIndex("principal")));
-        dairy_foreign.setRate(c.getFloat(c.getColumnIndex("rate")));
+        dairy_foreign.setPrincipal(c.getDouble(c.getColumnIndex("principal")));
+        dairy_foreign.setRate(c.getDouble(c.getColumnIndex("rate")));
         dairy_foreign.setAccount(c.getInt(c.getColumnIndex("id_account")));
         dairy_foreign.setDate(c.getString(c.getColumnIndex("date")));
         dairy_foreign.setPrincipal_krw(c.getInt(c.getColumnIndex("principal_krw")));
@@ -548,7 +548,7 @@ public class IRResolver {
         String[] selectionArgs = new String[] {String.valueOf(id_account)};
 
         dairies_krw.clear();
-        getData(CODE_INFO_DAIRY_KRW, URI_INFO_DAIRY_KRW, "id_account=?",selectionArgs,"date DESC");
+        getData(CODE_INFO_DAIRY_KRW, URI_INFO_DAIRY_KRW, "id_account=?",selectionArgs,"date DESC LIMIT 1");
         if(dairies_krw.isEmpty()) return null;
         else return dairies_krw.get(0);
     }
@@ -557,7 +557,7 @@ public class IRResolver {
         String[] selectionArgs = new String[] {String.valueOf(id_account),date};
 
         dairies_krw.clear();
-        getData(CODE_INFO_DAIRY_KRW, URI_INFO_DAIRY_KRW, selection,selectionArgs,"date DESC");
+        getData(CODE_INFO_DAIRY_KRW, URI_INFO_DAIRY_KRW, selection,selectionArgs,"date DESC LIMIT 1");
         if(dairies_krw.isEmpty()) return null;
         else return dairies_krw.get(0);
     }
@@ -566,7 +566,7 @@ public class IRResolver {
         String[] selectionArgs = new String[] {String.valueOf(id_account), String.valueOf(id_currency), date};
 
         dairies_foreign.clear();
-        getData(CODE_INFO_DAIRY_FOREIGN, URI_INFO_DAIRY_FOREIGN, selection, selectionArgs,"date DESC");
+        getData(CODE_INFO_DAIRY_FOREIGN, URI_INFO_DAIRY_FOREIGN, selection, selectionArgs,"date DESC LIMIT 1");
         if(dairies_foreign.isEmpty()) return null;
         else return dairies_foreign.get(0);
     }
@@ -575,7 +575,7 @@ public class IRResolver {
         String[] selectionArgs = new String[] {String.valueOf(id_account)};
 
         dairies_total.clear();
-        getData(CODE_INFO_DAIRY_TOTAL, URI_INFO_DAIRY_TOTAL, selection, selectionArgs,"date DESC");
+        getData(CODE_INFO_DAIRY_TOTAL, URI_INFO_DAIRY_TOTAL, selection, selectionArgs,"date DESC LIMIT 1");
         if(dairies_total.isEmpty()) return null;
         else return dairies_total.get(0);
     }
@@ -584,7 +584,7 @@ public class IRResolver {
         String[] selectionArgs = new String[] {String.valueOf(id_account),date};
 
         IOs_krw.clear();
-        getData(CODE_INFO_IO_KRW, URI_INFO_IO_KRW, selection,selectionArgs,"date DESC");
+        getData(CODE_INFO_IO_KRW, URI_INFO_IO_KRW, selection,selectionArgs,"date DESC LIMIT 1");
         if(IOs_krw.isEmpty()) return null;
         else return IOs_krw.get(0);
     }
@@ -593,14 +593,14 @@ public class IRResolver {
         String[] selectionArgs = new String[] {String.valueOf(id_account),String.valueOf(id_currency),date};
 
         IOs_foreign.clear();
-        getData(CODE_INFO_IO_FOREIGN, URI_INFO_IO_FOREIGN, selection,selectionArgs,"date DESC");
+        getData(CODE_INFO_IO_FOREIGN, URI_INFO_IO_FOREIGN, selection,selectionArgs,"date DESC LIMIT 1");
         if(IOs_foreign.isEmpty()) return null;
         else return IOs_foreign.get(0);
     }
 
     public String getFirstDate() {
         IOs_krw.clear();
-        getData(CODE_INFO_IO_KRW, URI_INFO_IO_KRW, null, null, "date ASC");
+        getData(CODE_INFO_IO_KRW, URI_INFO_IO_KRW, null, null, "date ASC LIMIT 1");
         if(IOs_krw.isEmpty()) return null;
         else return IOs_krw.get(0).getDate();
     }
@@ -609,7 +609,7 @@ public class IRResolver {
         String[] selectionArgs = new String[] {date};
 
         spends.clear();
-        getData(CODE_SPEND, URI_SPEND, selection,selectionArgs,"_id DESC");
+        getData(CODE_SPEND, URI_SPEND, selection,selectionArgs,"_id DESC LIMIT 1");
         if(spends.isEmpty()) return null;
         else return spends.get(0).getCode();
     }
@@ -716,9 +716,9 @@ public class IRResolver {
 
         cv.put("id_account",io_foreign.getAccount());
         cv.put("date",io_foreign.getDate());
-        cv.put("input",io_foreign.getInput());
+        cv.put("input",String.format(Locale.getDefault(),"%.2f", io_foreign.getInput()));
         cv.put("input_krw",io_foreign.getInput_krw());
-        cv.put("output",io_foreign.getOutput());
+        cv.put("output",String.format(Locale.getDefault(),"%.2f", io_foreign.getOutput()));
         cv.put("output_krw",io_foreign.getOutput_krw());
         cv.put("evaluation",io_foreign.getEvaluation());
         cv.put("id_currency",io_foreign.getCurrency());
@@ -898,7 +898,7 @@ public class IRResolver {
         cv.put("id_account", id_account);
         cv.put("date", date);
         cv.put("principal", principal);
-        cv.put("rate",rate);
+        cv.put("rate",String.format(Locale.getDefault(),"%.2f", rate));
 
         try {
             cr.insert(Uri.parse(URI_INFO_DAIRY_KRW), cv);
@@ -906,16 +906,16 @@ public class IRResolver {
             Log.e(TAG,"DB insert error");
         }
     }
-    private void insertInfoDairyForeign(int id_account, int id_currency, String date, int principal, int principal_krw, double rate) {
+    private void insertInfoDairyForeign(int id_account, int id_currency, String date, double principal, int principal_krw, double rate) {
         ContentValues cv = new ContentValues();
 
         if(currentGroup == -1 || currentAccount == -1) return;
 
         cv.put("id_account", id_account);
         cv.put("date", date);
-        cv.put("principal", principal);
+        cv.put("principal", String.format(Locale.getDefault(),"%.2f", principal));
         cv.put("principal_krw", principal_krw);
-        cv.put("rate",rate);
+        cv.put("rate",String.format(Locale.getDefault(),"%.2f", rate));
         cv.put("id_currency", id_currency);
 
         try {
@@ -932,7 +932,7 @@ public class IRResolver {
         cv.put("id_account", id_account);
         cv.put("date", date);
         cv.put("principal", principal);
-        cv.put("rate",rate);
+        cv.put("rate",String.format(Locale.getDefault(), "%.2f",rate));
         cv.put("evaluation",evaluation);
 
         try {
@@ -1201,9 +1201,9 @@ public class IRResolver {
 
         cv.put("id_account",io_foreign.getAccount());
         cv.put("date", io_foreign.getDate());
-        cv.put("input",io_foreign.getInput());
+        cv.put("input", String.format(Locale.getDefault(),"%.2f", io_foreign.getInput()));
         cv.put("input_krw",io_foreign.getInput_krw());
-        cv.put("output",io_foreign.getOutput());
+        cv.put("output",String.format(Locale.getDefault(),"%.2f", io_foreign.getOutput()));
         cv.put("output_krw",io_foreign.getOutput_krw());
         cv.put("id_currency",io_foreign.getCurrency());
         cv.put("evaluation",io_foreign.getEvaluation());
@@ -1402,14 +1402,14 @@ public class IRResolver {
             Log.e(TAG,"DB update error");
         }
     }
-    private void updateInfoDairyForeign(int id, int id_account, int id_currency, String date, int principal, int principal_krw, double rate) {
+    private void updateInfoDairyForeign(int id, int id_account, int id_currency, String date, double principal, int principal_krw, double rate) {
         ContentValues cv = new ContentValues();
         String where = "_id";
         String[] selectionArgs = new String[] {String.valueOf(id)};
 
         cv.put("id_account", id_account);
         cv.put("date", date);
-        cv.put("principal",principal);
+        cv.put("principal",String.format(Locale.getDefault(),"%.2f",principal));
         cv.put("principal_krw",principal_krw);
         cv.put("rate",String.format(Locale.getDefault(),"%.2f",rate));
         cv.put("id_currency",id_currency);
@@ -1499,9 +1499,9 @@ public class IRResolver {
                     InfoIOForeign io_foreign = new InfoIOForeign();
                     io_foreign.setId(cursor.getInt(0));
                     io_foreign.setDate(cursor.getString(1));
-                    io_foreign.setInput(cursor.getInt(2));
+                    io_foreign.setInput(cursor.getDouble(2));
                     io_foreign.setInput_krw(cursor.getInt(3));
-                    io_foreign.setOutput(cursor.getInt(4));
+                    io_foreign.setOutput(cursor.getDouble(4));
                     io_foreign.setOutput_krw(cursor.getInt(5));
                     io_foreign.setAccount(cursor.getInt(6));
                     io_foreign.setEvaluation(cursor.getInt(7));
@@ -1523,7 +1523,7 @@ public class IRResolver {
                     InfoDairyForeign dairy_foreign = new InfoDairyForeign();
                     dairy_foreign.setId(cursor.getInt(0));
                     dairy_foreign.setDate(cursor.getString(1));
-                    dairy_foreign.setPrincipal(cursor.getInt(2));
+                    dairy_foreign.setPrincipal(cursor.getDouble(2));
                     dairy_foreign.setPrincipal_krw(cursor.getInt(3));
                     dairy_foreign.setRate(cursor.getDouble(4));
                     dairy_foreign.setAccount(cursor.getInt(5));
@@ -1721,6 +1721,23 @@ public class IRResolver {
 
         return sum;
     }
+    public int checkDBTable(String name) {
+        Cursor c;
+
+        String where = "Name=?";
+        String[] selectionArgs = new String[]{name};
+        String[] select = {"count(*) FROM sqlite_master"};
+
+        c = cr.query(Uri.parse(URI_TABLE), select, where, selectionArgs, null);
+
+        assert c != null;
+        c.moveToNext();
+
+        int result = c.getInt(0);
+        c.close();
+
+        return result;
+    }
 
     private int getSum(String uri, int id_account, String[] column, String selectedDate) {
         int sum;
@@ -1770,7 +1787,7 @@ public class IRResolver {
 
             if(io_krw != null) evaluation = io_krw.getEvaluation();
             calInfoDairyKRW(select,0,id_account,selectedDate,evaluation);
-            calInfoDairyTotal(select, id_account, selectedDate);
+            calInfoDairyTotal(id_account, selectedDate);
             select = 1;
         }
 
@@ -1792,7 +1809,7 @@ public class IRResolver {
                 if(io_krw != null) evaluation = io_krw.getEvaluation();
 
                 calInfoDairyKRW(select,daires_krw.get(index).getId(),id_account,txtDate,evaluation);
-                calInfoDairyTotal(select, id_account, selectedDate);
+                calInfoDairyTotal(id_account, selectedDate);
                 index++;
 
             } while(df.parse(selectedDate).compareTo(date) < 0);
@@ -1801,7 +1818,8 @@ public class IRResolver {
         }
     }
     private void modifyInfoDiaryForeign(int select, int id_account, int id_currency, String selectedDate) {
-        int evaluation = 0, index = 0;
+        int index = 0;
+        int evaluation = 0;
         String txtDate;
         Date date;
         InfoIOForeign io_foreign;
@@ -1811,9 +1829,11 @@ public class IRResolver {
         if(select == 0) {
             io_foreign = getInfoIOForeign(id_account, id_currency, selectedDate);
 
-            if(io_foreign != null) evaluation = io_foreign.getEvaluation();
-            calInfoDairyForeign(select,0,id_account,io_foreign.getCurrency(),selectedDate,evaluation);
-            calInfoDairyTotal(select, id_account, selectedDate);
+            if(io_foreign != null) {
+                evaluation = io_foreign.getEvaluation();
+            }
+            calInfoDairyForeign(select,0,id_account,id_currency,selectedDate,evaluation);
+            calInfoDairyTotal(id_account, selectedDate);
             select = 1;
         }
 
@@ -1835,7 +1855,7 @@ public class IRResolver {
                 if(io_foreign != null) evaluation = io_foreign.getEvaluation();
 
                 calInfoDairyForeign(select,daires_foreign.get(index).getId(),id_account,id_currency,txtDate,evaluation);
-                calInfoDairyTotal(select, id_account, selectedDate);
+                calInfoDairyTotal(id_account, selectedDate);
                 index++;
 
             } while(df.parse(selectedDate).compareTo(date) < 0);
@@ -1866,10 +1886,9 @@ public class IRResolver {
                 break;
         }
     }
-    private void calInfoDairyForeign(int select, int id, int id_account, int id_currency, String date, int evaluation) {
-        int sum_in, sum_out, principal_foreign;
+    private void calInfoDairyForeign(int select, int id, int id_account, int id_currency, String date, float evaluation) {
+        double sum_in, sum_out, principal_foreign, rate = 0f;
         int sum_in_krw, sum_out_krw, principal_krw;
-        double rate = 0;
 
         sum_in = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"input"},date);
         sum_out = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"output"},date);
@@ -1891,12 +1910,12 @@ public class IRResolver {
                 break;
         }
     }
-    private void calInfoDairyTotal(int select, int id_account, String date) {
+    private void calInfoDairyTotal(int id_account, String date) {
         InfoDairyKRW dairy_krw = getLastInfoDairyKRW(id_account, date);
         InfoIOKRW io_krw = getLastInfoIOKRW(id_account, date);
 
-        InfoDairyForeign[] dairy_foreign = new InfoDairyForeign[3];
-        InfoIOForeign[] io_foreign = new InfoIOForeign[3];
+        InfoDairyForeign[] dairy_foreign = new InfoDairyForeign[4];
+        InfoIOForeign[] io_foreign = new InfoIOForeign[4];
 
         int principal = 0, evaluation = 0;
         if (dairy_krw != null) {
@@ -1906,7 +1925,7 @@ public class IRResolver {
             evaluation = io_krw.getEvaluation();
         }
 
-        for (int i = 0, limit = 3; i < limit; i++) {
+        for (int i = 0, limit = 4; i < limit; i++) {
             dairy_foreign[i] = getInfoDairyForeign(id_account, i, date);
             io_foreign[i] = getInfoIOForeign(id_account, i, date);
             if (dairy_foreign[i] != null) principal += dairy_foreign[i].getPrincipal_krw();
@@ -1917,17 +1936,13 @@ public class IRResolver {
         if (principal != 0 && evaluation != 0)
             rate = (double) evaluation / (double) principal * 100 - 100;
 
-        int id = -1;
         InfoDairyTotal dairy_total = getInfoDairyTotal(id_account, date);
-        if(dairy_total != null) id = dairy_total.getId();
 
-        switch(select) {
-            case 0:
-                insertInfoDairyTotal(id_account, evaluation, date, principal, rate);
-                break;
-            case 1:
-                updateInfoDairyTotal(id, id_account, evaluation, date, principal, rate);
-                break;
+        if(dairy_total == null) {
+            insertInfoDairyTotal(id_account, evaluation, date, principal, rate);
+        }
+        else {
+            updateInfoDairyTotal(dairy_total.getId(), id_account, evaluation, date, principal, rate);
         }
     }
 
@@ -1955,21 +1970,5 @@ public class IRResolver {
         // evaluation에 해당일 spendcash, spendcard, income 반영
         return evaluation - getSpendsCashSum(txtDate,id_account) - getSpendsCardSum(txtDate,id_account) + getIncomeSum(txtDate,id_account);
     }
-    private int checkDBTable(String name) {
-        Cursor c;
 
-        String where = "Name=?";
-        String[] selectionArgs = new String[]{name};
-        String[] select = {"count(*) FROM sqlite_master"};
-
-        c = cr.query(Uri.parse(URI_TABLE), select, where, selectionArgs, null);
-
-        assert c != null;
-        c.moveToNext();
-
-        int result = c.getInt(0);
-        c.close();
-
-        return result;
-    }
 }

@@ -789,17 +789,21 @@ public class UserDialogFragment extends DialogFragment {
         final EditText txtEvaluation = view.findViewById(R.id.editText_dlg_inout_krw_evaluation);
         final EditText txtIncome = view.findViewById(R.id.editText_dlg_inout_krw_income);
         final EditText txtSpend = view.findViewById(R.id.editText_dlg_inout_krw_spend);
+        final EditText txtPrincipal = view.findViewById(R.id.editText_dlg_inout_krw_principal);
         TextView txtDate = view.findViewById(R.id.textView_dlg_inout_krw_date);
+
+        final int id_account = ir.getCurrentAccount();
 
         txtIncome.setEnabled(false);
         txtSpend.setEnabled(false);
+        txtPrincipal.setEnabled(false);
         if(ir.getCurrentAccount() < 0) {
             Toast.makeText(mActivity.getApplicationContext(),R.string.toast_no_account,Toast.LENGTH_SHORT).show();
             return;
         }
 
-        InfoIOKRW io_krw = ir.getInfoIOKRW(ir.getCurrentAccount(),selectedDate);
-        InfoIOKRW io_krw_latest = ir.getLastInfoIOKRW(ir.getCurrentAccount(),selectedDate);
+        InfoIOKRW io_krw = ir.getInfoIOKRW(id_account,selectedDate);
+        InfoIOKRW io_krw_latest = ir.getLastInfoIOKRW(id_account,selectedDate);
 
         int evaluation;
 
@@ -830,6 +834,14 @@ public class UserDialogFragment extends DialogFragment {
             txtSpend.setText(df.format(io_krw.getSpendCard()+io_krw.getSpendCash()));
         }
 
+        InfoDairyKRW dairy_krw = ir.getLastInfoDairyKRW(id_account, selectedDate);
+        if(dairy_krw != null) {
+            txtPrincipal.setText(df.format(dairy_krw.getPrincipal()));
+        }
+        else {
+            txtPrincipal.setText("0");
+        }
+
         builder.setView(view).setTitle(getString(R.string.input_inout_krw));
         builder.setPositiveButton(getString(R.string.regist), new DialogInterface.OnClickListener() {
             @Override
@@ -848,7 +860,7 @@ public class UserDialogFragment extends DialogFragment {
                 InfoIOKRW io_krw = new InfoIOKRW();
 
                 if(exist) {
-                    io_krw = ir.getInfoIOKRW(ir.getCurrentAccount(),selectedDate);
+                    io_krw = ir.getInfoIOKRW(id_account,selectedDate);
                     if(io_krw == null) {
                         Log.i(TAG, "No InfoIOKRW");
                         return;
@@ -872,7 +884,7 @@ public class UserDialogFragment extends DialogFragment {
                 io_krw.setInput(in);
                 io_krw.setOutput(out);
                 io_krw.setEvaluation(evaluation);
-                io_krw.setAccount(ir.getCurrentAccount());
+                io_krw.setAccount(id_account);
 
                 if(!exist) ir.insertInfoIOKRW(io_krw);
                 else ir.updateInfoIOKRW(io_krw);
@@ -889,11 +901,13 @@ public class UserDialogFragment extends DialogFragment {
     }
     @SuppressLint("InflateParams")
     private void dialogInoutForeign() {
-        int input_krw, output_krw, input_foreign, output_foreign, evaluation;
+        int input_krw, output_krw;
+        double input_foreign, output_foreign, evaluation;
         final int[] current_currency = {0};
-        float exchangeRate_input = 0f, exchangeRate_output = 0f;
+        double exchangeRate_input = 0f;
+        double exchangeRate_output = 0f;
 
-        final DecimalFormat df = new DecimalFormat("#,###");
+        final DecimalFormat df = new DecimalFormat("#,###.##");
         ArrayList<String> lists_currency = new ArrayList<>();
         ArrayAdapter<String> adapter_currency;
 
@@ -911,18 +925,29 @@ public class UserDialogFragment extends DialogFragment {
         final EditText txtPrincipal = view.findViewById(R.id.editText_dlg_inout_foreign_principal);
         final EditText txtExchangeRate = view.findViewById(R.id.editText_dlg_inout_foreign_evaluation_rate);
 
-        final float[] exchangeRate = new float[1];
+        final Double[] exchangeRate = new Double[1];
 
         MainActivity.ExchangeTask exchangeTask = new MainActivity.ExchangeTask() {
             @Override
-            public void finish(float exchange) {
-                exchangeRate[0] = exchange;
+            public void finish(Double[] exchange) {
+                if(exchange == null) {
+                    Toast.makeText(getContext(),R.string.toast_exchange_error,Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                exchangeRate[0] = exchange[current_currency[0]];
+
+                if(exchangeRate[0] == null) {
+                    Toast.makeText(getContext(),R.string.toast_exchange_error,Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 txtExchangeRate.setText(df.format(exchangeRate[0]));
             }
         };
 
         mActivity.setExchangeTask(exchangeTask);
-        mActivity.runExchangeTask(current_currency[0], selectedDate);
+        mActivity.runExchangeTask(selectedDate);
 
         if(ir.getCurrentAccount() < 0) {
             Toast.makeText(mActivity.getApplicationContext(),R.string.toast_no_account,Toast.LENGTH_SHORT).show();
@@ -930,8 +955,9 @@ public class UserDialogFragment extends DialogFragment {
         }
 
         lists_currency.add("USD");
-        lists_currency.add("JPY");
         lists_currency.add("CNY");
+        lists_currency.add("EUR");
+        lists_currency.add("JPY");
 
         txtInputExchangeRate.setEnabled(false);
         txtOutputExchangeRate.setEnabled(false);
@@ -946,10 +972,11 @@ public class UserDialogFragment extends DialogFragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 current_currency[0] = position;
 
-                mActivity.runExchangeTask(current_currency[0], selectedDate);
+                mActivity.runExchangeTask(selectedDate);
 
-                int input_krw, output_krw, input_foreign, output_foreign, evaluation;
-                float exchangeRate_input = 0f, exchangeRate_output = 0f;
+                int input_krw, output_krw;
+                double input_foreign, output_foreign, evaluation;
+                double exchangeRate_input = 0f, exchangeRate_output = 0f;
 
                 int id_account = ir.getCurrentAccount();
                 InfoIOForeign io_foreign = ir.getInfoIOForeign(id_account,current_currency[0],selectedDate);
@@ -988,7 +1015,7 @@ public class UserDialogFragment extends DialogFragment {
                     txtEvaluation.setText(df.format(evaluation));
 
                     if(input_foreign != 0) exchangeRate_input = input_krw / input_foreign;
-                    if(output_foreign != 0)exchangeRate_output = output_krw / output_foreign;
+                    if(output_foreign != 0) exchangeRate_output = output_krw / output_foreign;
                     txtInputExchangeRate.setText(df.format(exchangeRate_input));
                     txtOutputExchangeRate.setText(df.format(exchangeRate_output));
                 }
@@ -1013,7 +1040,20 @@ public class UserDialogFragment extends DialogFragment {
 
         //선택한 날짜의 값이 있으면 가져오고 없으면 최근값을 가져온다.
         if(io_foreign != null) evaluation = io_foreign.getEvaluation();
-        else if(dairy_foreign_latest != null) evaluation = (int) (dairy_foreign_latest.getPrincipal() * exchangeRate[0]);
+        else if(dairy_foreign_latest != null) {
+            if(exchangeRate[0] != null){
+                evaluation = (int) (dairy_foreign_latest.getPrincipal() * exchangeRate[0]);
+            }
+            else {
+                InfoIOForeign io_foreign_latest = ir.getLastInfoIOForeign(id_account, current_currency[0],selectedDate);
+                if(io_foreign_latest != null) {
+                    evaluation = io_foreign_latest.getEvaluation();
+                }
+                else {
+                    evaluation = 0;
+                }
+            }
+        }
         else evaluation = 0;
 
         txtDate.setText(selectedDate);
@@ -1064,7 +1104,7 @@ public class UserDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 String str_in, str_out, str_in_krw, str_out_krw, str_eval;
 
-                DecimalFormat df = new DecimalFormat("#,###");
+                DecimalFormat df = new DecimalFormat("#,###.##");
 
                 str_in = txtInput.getText().toString();
                 str_out = txtOutput.getText().toString();
@@ -1072,35 +1112,36 @@ public class UserDialogFragment extends DialogFragment {
                 str_in_krw = txtInputKRW.getText().toString();
                 str_out_krw = txtOutputKRW.getText().toString();
 
-                if(str_in.isEmpty()) str_in = "0";
-                if(str_out.isEmpty()) str_out = "0";
-                if(str_in_krw.isEmpty()) str_in_krw = "0";
-                if(str_out_krw.isEmpty()) str_out_krw = "0";
+                if (str_in.isEmpty()) str_in = "0";
+                if (str_out.isEmpty()) str_out = "0";
+                if (str_in_krw.isEmpty()) str_in_krw = "0";
+                if (str_out_krw.isEmpty()) str_out_krw = "0";
 
                 InfoIOForeign io_foreign = new InfoIOForeign();
 
-                if(exist) {
-                    io_foreign = ir.getInfoIOForeign(ir.getCurrentAccount(),current_currency[0],selectedDate);
-                    if(io_foreign == null) {
+                if (exist) {
+                    io_foreign = ir.getInfoIOForeign(ir.getCurrentAccount(), current_currency[0], selectedDate);
+                    if (io_foreign == null) {
                         Log.i(TAG, "No InfoIO Foreign");
                         return;
                     }
                 }
 
-                int in = 0, out = 0, in_krw = 0, out_krw = 0, evaluation = 0;
+                double in = 0f, out = 0f;
+                int in_krw = 0, out_krw = 0, evaluation = 0;
+
                 try {
-                    in = df.parse(str_in).intValue();
-                    out = df.parse(str_out).intValue();
+                    in = df.parse(str_in).floatValue();
+                    out = df.parse(str_out).floatValue();
                     in_krw = df.parse(str_in_krw).intValue();
                     out_krw = df.parse(str_out_krw).intValue();
-                    if(str_eval.isEmpty()) {
-                        evaluation = in - out;
-                    }
-                    else {
+                    if (str_eval.isEmpty()) {
+                        evaluation = (int) ((in - out) * exchangeRate[0]);
+                    } else {
                         evaluation = df.parse(str_eval).intValue();
                     }
                 } catch (ParseException e) {
-                    Log.e(TAG,"Data Format Parse Error");
+                    Log.e(TAG, "Data Format Parse Error");
                 }
 
                 io_foreign.setDate(selectedDate);
@@ -1112,11 +1153,13 @@ public class UserDialogFragment extends DialogFragment {
                 io_foreign.setAccount(ir.getCurrentAccount());
                 io_foreign.setCurrency(current_currency[0]);
 
-                if(!exist) ir.insertInfoIOForeign(io_foreign);
+                if (!exist) ir.insertInfoIOForeign(io_foreign);
                 else ir.updateInfoIOForeign(io_foreign);
+
+                mActivity.fragmentSub1.callUpdateFrag1();
+                mActivity.fragmentSub3.callUpdateFrag6();
             }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }

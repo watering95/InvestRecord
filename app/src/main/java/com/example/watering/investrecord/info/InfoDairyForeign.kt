@@ -9,7 +9,7 @@ import java.io.Serializable
 class InfoDairyForeign : Serializable {
     var date: String? = null
     var account = -1
-    var principal = 0
+    var principal = 0.0
     var principal_krw = 0
     var rate = 0.0
     var id = -1

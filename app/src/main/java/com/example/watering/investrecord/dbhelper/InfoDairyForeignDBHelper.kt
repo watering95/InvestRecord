@@ -10,6 +10,6 @@ class InfoDairyForeignDBHelper(context: Context) : DBHelper(context) {
 
     init {
         TABLE_NAME = "tbl_Info_Dairy_Foreign"
-        COLUMNS = arrayOf("date TEXT", "principal INTEGER", "principal_krw INTEGER", "rate REAL", "id_account INTEGER", "id_currency INTEGER")
+        COLUMNS = arrayOf("date TEXT", "principal REAL", "principal_krw INTEGER", "rate REAL", "id_account INTEGER", "id_currency INTEGER")
     }
 }
