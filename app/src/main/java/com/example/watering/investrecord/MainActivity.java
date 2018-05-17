@@ -361,9 +361,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void finish(Double[] exchangeRate) {
 
-                if(exchangeRate == null) {
-                    Toast.makeText(getApplicationContext(),R.string.toast_exchange_error,Toast.LENGTH_SHORT).show();
-                    return;
+                for(int i = 0, limit = 4; i < limit; i++) {
+                    if(exchangeRate[i] == null) {
+                        Toast.makeText(getApplicationContext(),R.string.toast_exchange_error,Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 }
 
                 InfoIOForeign[] info_io_foreign_today = new InfoIOForeign[4];
