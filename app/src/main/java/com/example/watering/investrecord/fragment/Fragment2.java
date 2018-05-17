@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.watering.investrecord.data.Account;
 import com.example.watering.investrecord.IRResolver;
 import com.example.watering.investrecord.info.InfoDairyKRW;
+import com.example.watering.investrecord.info.InfoDairyTotal;
 import com.example.watering.investrecord.info.InfoIOKRW;
 import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
@@ -136,20 +137,42 @@ public class Fragment2 extends Fragment {
             String strToday = mActivity.getToday();
             String strDate = strToday;
             Calendar firstDate = mActivity.strToCalendar(ir.getFirstDate());
-            InfoIOKRW io_krw;
-            InfoDairyKRW dairy_krw;
+            InfoDairyTotal dairy_total;
+            int id_account;
 
             int i = 0, sumEvaluation = 0, sumPrincipal = 0;
             double rate = 0;
             do {
                 // 특정일의 합계와 평가액 계산
                 for (int index = 0, n = accounts.size(); index < n; index++) {
-                    dairy_krw = ir.getLastInfoDairyKRW(accounts.get(index).getId(), strDate);
-                    io_krw = ir.getLastInfoIOKRW(accounts.get(index).getId(), strDate);
-                    if(io_krw != null) {
-                        sumEvaluation += io_krw.getEvaluation();
-                        sumPrincipal += dairy_krw.getPrincipal();
+                    id_account = accounts.get(index).getId();
+
+                    dairy_total = ir.getLastInfoDairyTotal(id_account, strDate);
+                    if(dairy_total == null) {
+                        InfoDairyKRW dairy_krw = ir.getLastInfoDairyKRW(id_account, strDate);
+                        InfoIOKRW io_krw;
+                        if(dairy_krw == null) {
+                            dairy_krw = new InfoDairyKRW();
+                            io_krw = new InfoIOKRW();
+
+                            dairy_krw.setRate(0);
+                            dairy_krw.setPrincipal(0);
+                            io_krw.setEvaluation(0);
+                        }
+                        else {
+                            io_krw = ir.getLastInfoIOKRW(id_account, dairy_krw.getDate());
+                        }
+
+                        dairy_total = new InfoDairyTotal();
+
+                        dairy_total.setEvaluation(io_krw.getEvaluation());
+                        dairy_total.setRate(dairy_krw.getRate());
+                        dairy_total.setPrincipal(dairy_krw.getPrincipal());
                     }
+
+                    sumEvaluation += dairy_total.getEvaluation();
+                    sumPrincipal += dairy_total.getPrincipal();
+
                 }
                 // 특정일의 수익율 계산
                 if(sumPrincipal != 0 && sumEvaluation != 0) rate = (double)sumEvaluation / (double)sumPrincipal * 100 - 100;

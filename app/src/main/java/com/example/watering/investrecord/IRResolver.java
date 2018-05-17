@@ -579,6 +579,15 @@ public class IRResolver {
         if(dairies_total.isEmpty()) return null;
         else return dairies_total.get(0);
     }
+    public InfoDairyTotal getLastInfoDairyTotal(int id_account, String date) {
+        String selection = "id_account=? and date<=?";
+        String[] selectionArgs = new String[] {String.valueOf(id_account),date};
+
+        dairies_total.clear();
+        getData(CODE_INFO_DAIRY_TOTAL, URI_INFO_DAIRY_TOTAL, selection,selectionArgs,"date DESC LIMIT 1");
+        if(dairies_total.isEmpty()) return null;
+        else return dairies_total.get(0);
+    }
     public InfoIOKRW getLastInfoIOKRW(int id_account, String date) {
         String selection = "id_account=? and date<=?";
         String[] selectionArgs = new String[] {String.valueOf(id_account),date};
@@ -1756,8 +1765,8 @@ public class IRResolver {
 
         return sum;
     }
-    private int getSum(String uri, int id_account, int id_currency, String[] column, String selectedDate) {
-        int sum;
+    private double getSum(String uri, int id_account, int id_currency, String[] column, String selectedDate) {
+        double sum;
         String[] select = {"total(" + column[0] + ") AS SUM"};
         String where = "date<=? AND id_account=? AND id_currency=?";
         String[] selectionArgs = new String[]{selectedDate,String.valueOf(id_account),String.valueOf(id_currency)};
@@ -1768,7 +1777,7 @@ public class IRResolver {
         assert c != null;
         c.moveToNext();
 
-        sum = c.getInt(0);
+        sum = c.getDouble(0);
         c.close();
 
         return sum;
@@ -1893,8 +1902,8 @@ public class IRResolver {
         sum_in = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"input"},date);
         sum_out = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"output"},date);
 
-        sum_in_krw = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"input_krw"},date);
-        sum_out_krw = getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"output_krw"},date);
+        sum_in_krw = (int) getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"input_krw"},date);
+        sum_out_krw = (int) getSum(URI_INFO_IO_FOREIGN,id_account,id_currency,new String[]{"output_krw"},date);
 
         principal_foreign = sum_in - sum_out;
         principal_krw = sum_in_krw - sum_out_krw;
@@ -1970,5 +1979,4 @@ public class IRResolver {
         // evaluation에 해당일 spendcash, spendcard, income 반영
         return evaluation - getSpendsCashSum(txtDate,id_account) - getSpendsCardSum(txtDate,id_account) + getIncomeSum(txtDate,id_account);
     }
-
 }
