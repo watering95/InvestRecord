@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 URL url = new URL(strings[0]);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
-                Double[] currency = new Double[4];
+                Double[] currency = new Double[5];
 
                 DecimalFormat df = new DecimalFormat("#,###.##");
 
@@ -251,6 +251,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else if (cur_unit.compareTo("JPY(100)") == 0) {
                         currency[3] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                    else if (cur_unit.compareTo("HKD") == 0) {
+                        currency[4] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
                     }
                 }
                 con.disconnect();
@@ -361,14 +364,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void finish(Double[] exchangeRate) {
 
-                for(int i = 0, limit = 4; i < limit; i++) {
+                for(int i = 0, limit = 5; i < limit; i++) {
                     if(exchangeRate[i] == null) {
                         Toast.makeText(getApplicationContext(),R.string.toast_exchange_error,Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
 
-                InfoIOForeign[] info_io_foreign_today = new InfoIOForeign[4];
+                InfoIOForeign[] info_io_foreign_today = new InfoIOForeign[5];
 
                 for(int i_group = 0, limit_i = groups.size(); i_group < limit_i; i_group++) {
 
@@ -378,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
 
                         int id_account = accounts.get(i_account).getId();
 
-                        for(int i_currency = 0, limit_k = 4; i_currency < limit_k; i_currency++) {
+                        for(int i_currency = 0, limit_k = 5; i_currency < limit_k; i_currency++) {
                             InfoDairyForeign info_dairy_foreign_last = ir.getLastInfoDairyForeign(id_account, i_currency, today);
                             info_io_foreign_today[i_currency] = ir.getInfoIOForeign(id_account, i_currency, today);
                             int evaluation;

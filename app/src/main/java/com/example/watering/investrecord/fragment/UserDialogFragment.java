@@ -958,6 +958,7 @@ public class UserDialogFragment extends DialogFragment {
         lists_currency.add("CNY");
         lists_currency.add("EUR");
         lists_currency.add("JPY");
+        lists_currency.add("HKD");
 
         txtInputExchangeRate.setEnabled(false);
         txtOutputExchangeRate.setEnabled(false);
