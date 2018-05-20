@@ -21,6 +21,8 @@
     <string name="DB_delete">DB 파일 삭제</string>
     <string name="DB_backup">DB 파일 백업</string>
     <string name="DB_restore">DB 파일 복원</string>
+    <string name="DB_save">DB 로컬 저장</string>
+    <string name="DB_manage">DB 관리</string>
     <string name="total_principal">총자산</string>
     <string name="total_evaluate">총평가액</string>
     <string name="exchange_rate">환율</string>
@@ -100,4 +102,6 @@
     <string name="toast_no_account">선택된 계좌가 없습니다.</string>
     <string name="toast_no_amount">이체금액이 없습니다.</string>
     <string name="toast_same_name">같은 이름이 있습니다.</string>
+    <string name="toast_save_ok">로컬에 저장 완료.</string>
+    <string name="toast_save_error">로컬에 저장 실패.</string>
 </resources>

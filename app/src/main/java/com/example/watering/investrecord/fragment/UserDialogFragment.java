@@ -121,8 +121,8 @@ public class UserDialogFragment extends DialogFragment {
             case R.id.menu_sub1_delGroup:
                 dialogGroupDel();
                 break;
-            case R.id.navigation_item_setting:
-                dialogSetting();
+            case R.id.navigation_item_DB_manage:
+                dialogDBManage();
                 break;
             case R.id.editText_frag3_date:
             case R.id.editText_frag4_date:
@@ -671,7 +671,7 @@ public class UserDialogFragment extends DialogFragment {
     }
 
     @SuppressLint("InflateParams")
-    private void dialogSetting() {
+    private void dialogDBManage() {
         view = inflater.inflate(R.layout.dialog_listview, null);
 
         ListView listView = view.findViewById(R.id.listView_dlg_listView);
@@ -681,6 +681,7 @@ public class UserDialogFragment extends DialogFragment {
         lists_select.add(getString(R.string.DB_delete));
         lists_select.add(getString(R.string.DB_backup));
         lists_select.add(getString(R.string.DB_restore));
+        lists_select.add(getString(R.string.DB_save));
 
         //noinspection ConstantConditions
         adapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, lists_select);
@@ -703,6 +704,9 @@ public class UserDialogFragment extends DialogFragment {
                         break;
                     case 3:
                         str = "restore";
+                        break;
+                    case 4:
+                        str = "save";
                         break;
                 }
                 listener.onWorkComplete(str);
