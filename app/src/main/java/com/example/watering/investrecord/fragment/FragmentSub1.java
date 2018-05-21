@@ -10,10 +10,13 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.watering.investrecord.IRResolver;
 import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
+
+import java.text.DecimalFormat;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -23,6 +26,12 @@ import com.example.watering.investrecord.R;
 public class FragmentSub1 extends Fragment {
 
     private ViewPager mFragSub1ViewPager;
+
+    private MainActivity mActivity;
+    private IRResolver ir;
+
+    private TextView textView_spend_month;
+    private TextView textView_income_month;
 
     private View mView;
     private static final String TAG = "InvestRecord";
@@ -40,9 +49,9 @@ public class FragmentSub1 extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MainActivity mActivity = (MainActivity) getActivity();
+        mActivity = (MainActivity) getActivity();
         assert mActivity != null;
-        IRResolver ir = mActivity.ir;
+        ir = mActivity.ir;
     }
 
     @Nullable
@@ -81,6 +90,10 @@ public class FragmentSub1 extends Fragment {
         mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText(R.string.analysis));
         mFragSub1TabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
+        textView_spend_month = mView.findViewById(R.id.textView_frag_sub1_spend_month);
+        textView_income_month = mView.findViewById(R.id.textView_frag_sub1_income_month);
+        updateFragSub1();
+
         mFragSub1ViewPager = mView.findViewById(R.id.viewpager_frag_sub1);
         FragSub1TabPagerAdapter mFragSub1PagerAdapter = new FragSub1TabPagerAdapter(getChildFragmentManager());
         mFragSub1ViewPager.setAdapter(mFragSub1PagerAdapter);
@@ -103,5 +116,15 @@ public class FragmentSub1 extends Fragment {
 
             }
         });
+    }
+
+    public void updateFragSub1() {
+
+        DecimalFormat df = new DecimalFormat("#,###");
+
+        int spend_month = ir.getSpendMonth(mActivity.getToday());
+        int income_month = ir.getIncomeMonth(mActivity.getToday());
+        textView_income_month.setText(df.format(income_month));
+        textView_spend_month.setText(df.format(spend_month));
     }
 }

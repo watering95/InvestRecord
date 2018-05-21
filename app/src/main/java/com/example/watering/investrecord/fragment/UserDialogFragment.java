@@ -470,6 +470,7 @@ public class UserDialogFragment extends DialogFragment {
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
                 mActivity.fragmentSub1.callUpdateFrag1();
                 mActivity.fragmentSub1.callUpdateFrag2();
+                mActivity.fragmentSub1.updateFragSub1();
                 mActivity.fragmentSub2.updateFragSub2();
                 mActivity.fragmentSub2.callUpdateFrag3();
                 mActivity.fragmentSub2.callUpdateFrag5();
@@ -489,6 +490,7 @@ public class UserDialogFragment extends DialogFragment {
                 ir.deleteSpend("_id",new String[] {String.valueOf(id_spend)});
                 mActivity.fragmentSub1.callUpdateFrag1();
                 mActivity.fragmentSub1.callUpdateFrag2();
+                mActivity.fragmentSub1.updateFragSub1();
                 mActivity.fragmentSub2.updateFragSub2();
                 mActivity.fragmentSub2.callUpdateFrag3();
                 mActivity.fragmentSub2.callUpdateFrag5();
@@ -645,6 +647,7 @@ public class UserDialogFragment extends DialogFragment {
                 else ir.updateIncome(id_income,details,selectedDate,selectedAccountId,selectedSubId,amount);
                 mActivity.fragmentSub1.callUpdateFrag1();
                 mActivity.fragmentSub1.callUpdateFrag2();
+                mActivity.fragmentSub1.updateFragSub1();
                 mActivity.fragmentSub2.updateFragSub2();
                 mActivity.fragmentSub2.callUpdateFrag4();
                 mActivity.fragmentSub2.callUpdateFrag5();
@@ -657,6 +660,7 @@ public class UserDialogFragment extends DialogFragment {
                 ir.deleteIncome("_id",new String[] {String.valueOf(id_income)});
                 mActivity.fragmentSub1.callUpdateFrag1();
                 mActivity.fragmentSub1.callUpdateFrag2();
+                mActivity.fragmentSub1.updateFragSub1();
                 mActivity.fragmentSub2.updateFragSub2();
                 mActivity.fragmentSub2.callUpdateFrag4();
                 mActivity.fragmentSub2.callUpdateFrag5();
