@@ -14,7 +14,7 @@
             android:title="@string/title3"
             android:checked="true"/>
         <item
-            android:id="@+id/navigation_item_setting"
-            android:title="@string/setting"/>
+            android:id="@+id/navigation_item_DB_manage"
+            android:title="@string/DB_manage"/>
     </group>
 </menu>

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 
-import com.example.watering.investrecord.info.Info_List3
+import com.example.watering.investrecord.info.InfoList3
 import com.example.watering.investrecord.R
 
 import java.text.DecimalFormat
@@ -17,12 +17,8 @@ import java.util.ArrayList
  * Created by watering on 17. 11. 17.
  */
 
-class List3Adapter(context: Context, private val mData: ArrayList<Info_List3>) : BaseAdapter() {
-    private val inflater: LayoutInflater
-
-    init {
-        inflater = LayoutInflater.from(context)
-    }
+class List3Adapter(context: Context, private val mData: ArrayList<InfoList3>) : BaseAdapter() {
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getCount(): Int {
         return mData.size
@@ -43,12 +39,12 @@ class List3Adapter(context: Context, private val mData: ArrayList<Info_List3>) :
         }
 
         val df = DecimalFormat("#,###")
-        val textView_1 = convertView!!.findViewById<TextView>(R.id.textView_layout_list3_1)
-        val textView_2 = convertView.findViewById<TextView>(R.id.textView_layout_list3_2)
-        val textView_3 = convertView.findViewById<TextView>(R.id.textView_layout_list3_3)
+        val textView1 = convertView!!.findViewById<TextView>(R.id.textView_layout_list3_1)
+        val textView2 = convertView.findViewById<TextView>(R.id.textView_layout_list3_2)
+        val textView3 = convertView.findViewById<TextView>(R.id.textView_layout_list3_3)
 
-        textView_1.text = mData[position].spend!!.details
-        textView_3.text = df.format(mData[position].spend!!.amount.toLong())
+        textView1.text = mData[position].spend!!.details
+        textView3.text = df.format(mData[position].spend!!.amount.toLong())
 
         return convertView
     }

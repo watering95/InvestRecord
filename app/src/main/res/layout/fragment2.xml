@@ -14,24 +14,28 @@
             android:layout_height="wrap_content"
             android:text="@string/week1"
             android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/button_frag2_due_week_1"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/month1"
             android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/button_frag2_due_month_1"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/year1"
             android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/button_frag2_due_year_1"/>
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/full"
             android:layout_weight="1"
+            style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/button_frag2_due_full"/>
     </LinearLayout>
     <WebView

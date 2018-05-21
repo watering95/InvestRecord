@@ -30,7 +30,7 @@ public class Fragment5 extends Fragment {
     private MainActivity mActivity;
     private IRResolver ir;
     private List5Adapter listAdapter;
-    private final ArrayList<Info_List5> lists = new ArrayList<>();
+    private final ArrayList<InfoList5> lists = new ArrayList<>();
     private static final String TAG = "InvestRecord";
 
     public Fragment5() {
@@ -81,7 +81,7 @@ public class Fragment5 extends Fragment {
         int income, spend;
         String txtMonth, txtDate;
 
-        Info_List5 list5;
+        InfoList5 list5;
 
         Calendar date = mActivity.strToCalendar(mActivity.getToday());
         txtDate = mActivity.calendarToStr(date);
@@ -89,7 +89,7 @@ public class Fragment5 extends Fragment {
         lists.clear();
 
         for(int i = 0; i < 12; i++) {
-            list5 = new Info_List5();
+            list5 = new InfoList5();
 
             txtMonth = String.format("%04d-%02d", date.get(Calendar.YEAR), date.get(Calendar.MONTH) + 1);
             income = ir.getIncomeMonth(txtDate);

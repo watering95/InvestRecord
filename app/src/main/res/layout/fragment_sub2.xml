@@ -22,7 +22,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:id="@+id/linearLayout_frag_sub2">
+        android:id="@+id/linearLayout_frag_sub2"
+        android:background="@color/grey">
 
         <LinearLayout
             android:layout_width="match_parent"

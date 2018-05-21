@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 
-import com.example.watering.investrecord.info.Info_List5
+import com.example.watering.investrecord.info.InfoList5
 import com.example.watering.investrecord.R
 
 import java.text.DecimalFormat
@@ -17,12 +17,8 @@ import java.util.ArrayList
  * Created by watering on 17. 11. 17.
  */
 
-class List5Adapter(context: Context, private val mData: ArrayList<Info_List5>) : BaseAdapter() {
-    private val inflater: LayoutInflater
-
-    init {
-        inflater = LayoutInflater.from(context)
-    }
+class List5Adapter(context: Context, private val mData: ArrayList<InfoList5>) : BaseAdapter() {
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getCount(): Int {
         return mData.size

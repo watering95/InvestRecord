@@ -1,7 +1,10 @@
 package com.example.watering.investrecord;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -22,8 +25,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.watering.investrecord.data.Account;
 import com.example.watering.investrecord.data.Group;
 import com.example.watering.investrecord.fragment.*;
+import com.example.watering.investrecord.info.InfoDairyForeign;
+import com.example.watering.investrecord.info.InfoIOForeign;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -43,17 +49,30 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.channels.FileChannel;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import static android.os.Environment.DIRECTORY_DOCUMENTS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -85,8 +104,12 @@ public class MainActivity extends AppCompatActivity {
     public interface Callback {
         void update();
     }
+    public interface ExchangeTask {
+        void finish(Double[] exchange);
+    }
 
     private Callback m_callbackSub3;
+    private static ExchangeTask exchangeTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,15 +120,14 @@ public class MainActivity extends AppCompatActivity {
         initLayout();
         initGroupSpinner();
         initDataBase();
+        initExchangeRate();
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_toolbar_main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -124,6 +146,135 @@ public class MainActivity extends AppCompatActivity {
                 dialog.show(getSupportFragmentManager(), "dialog");
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setCallbackSub3(Callback callback) {
+        this.m_callbackSub3 = callback;
+    }
+    public void inoutDialog(String selectedDate) {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(0, new UserDialogFragment.UserListener() {
+            @Override
+            public void onWorkComplete(String name) {
+
+            }
+        });
+
+        dialog.setSelectedDate(selectedDate);
+        dialog.show(fragmentManager, "dialog");
+    }
+    public String getToday() {
+        Calendar today = Calendar.getInstance();
+
+        return String.format(Locale.getDefault(), "%04d-%02d-%02d", today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DATE));
+    }
+    public String monthChange(String date, int amount) {
+        Calendar calendar = strToCalendar(date);
+
+        calendar.add(Calendar.MONTH, amount);
+
+        if (Calendar.getInstance().before(calendar)) {
+            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
+            return date;
+        }
+
+        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
+    }
+    public String dateChange(String date, int amount) {
+        Calendar calendar = strToCalendar(date);
+
+        calendar.add(Calendar.DATE,amount);
+
+        if (Calendar.getInstance().before(calendar)) {
+            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
+            return date;
+        }
+
+        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
+    }
+    public String calendarToStr(Calendar calendar) {
+        return String.format(Locale.getDefault(), "%04d-%02d-%02d", calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
+    }
+    public Calendar strToCalendar(String date) {
+        Calendar calendar = Calendar.getInstance();
+
+        if(date == null) return calendar;
+
+        String year = date.substring(0,4);
+        String month = date.substring(5,7);
+        String day = date.substring(8,10);
+
+        calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
+
+        return calendar;
+    }
+
+    public void setExchangeTask(ExchangeTask exchangeTask) {
+        MainActivity.exchangeTask = exchangeTask;
+    }
+    public void runExchangeTask(String date) {
+        String authKey = "GJxPHU7IZSycH27FubZt3wvxIqKlnue1";
+        String dataType = "AP01";
+        String apiURL = "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=" + authKey + "&searchdate=" + date + "&data=" + dataType;
+
+        new GetExchangeTask().execute(apiURL);
+    }
+
+    static class GetExchangeTask extends AsyncTask<String, Void, Double[]> {
+
+        @Override
+        protected Double[] doInBackground(String... strings) {
+            try {
+                URL url = new URL(strings[0]);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+                Double[] currency = new Double[5];
+
+                DecimalFormat df = new DecimalFormat("#,###.##");
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuilder res = new StringBuilder();
+
+                while ((inputLine = br.readLine()) != null) {
+                    res.append(inputLine);
+                }
+                br.close();
+
+                JSONArray jsonArray = new JSONArray(res.toString());
+
+                for (int i = 0, limit = jsonArray.length(); i < limit; i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String cur_unit = jsonObject.getString("cur_unit");
+                    if (cur_unit.compareTo("USD") == 0) {
+                        currency[0] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                    else if (cur_unit.compareTo("CNH") == 0) {
+                        currency[1] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                    else if (cur_unit.compareTo("EUR") == 0) {
+                        currency[2] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                    else if (cur_unit.compareTo("JPY(100)") == 0) {
+                        currency[3] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                    else if (cur_unit.compareTo("HKD") == 0) {
+                        currency[4] = df.parse(jsonObject.getString("deal_bas_r")).doubleValue();
+                    }
+                }
+                con.disconnect();
+                return currency;
+            } catch (IOException | JSONException | ParseException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Double[] aDouble) {
+            super.onPostExecute(aDouble);
+            exchangeTask.finish(aDouble);
+        }
     }
 
     private void initLayout() {
@@ -171,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.replace(R.id.frame_main, fragmentSub3).commit();
                         mToolbar.setTitle(R.string.title3);
                         break;
-                    case R.id.navigation_item_setting:
+                    case R.id.navigation_item_DB_manage:
                         settingDialog();
                         break;
                 }
@@ -206,7 +357,71 @@ public class MainActivity extends AppCompatActivity {
     private void initDataBase() {
         updateGroupSpinner();
     }
+    private void initExchangeRate() {
+        final String today = getToday();
 
+        // table이 존재하지 않으면
+        if(ir.checkDBTable("tbl_Info_Dairy_Foreign") == 0) {
+            return;
+        }
+
+        ExchangeTask mainExchangeTask = new ExchangeTask() {
+            @Override
+            public void finish(Double[] exchangeRate) {
+
+                for(int i = 0, limit = 5; i < limit; i++) {
+                    if(exchangeRate[i] == null) {
+                        Toast.makeText(getApplicationContext(),R.string.toast_exchange_error,Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+                InfoIOForeign[] info_io_foreign_today = new InfoIOForeign[5];
+
+                for(int i_group = 0, limit_i = groups.size(); i_group < limit_i; i_group++) {
+
+                    List<Account> accounts = ir.getAccounts(groups.get(i_group).getId());
+
+                    for(int i_account = 0, limit_j = accounts.size(); i_account < limit_j; i_account++) {
+
+                        int id_account = accounts.get(i_account).getId();
+
+                        for(int i_currency = 0, limit_k = 5; i_currency < limit_k; i_currency++) {
+                            InfoDairyForeign info_dairy_foreign_last = ir.getLastInfoDairyForeign(id_account, i_currency, today);
+                            info_io_foreign_today[i_currency] = ir.getInfoIOForeign(id_account, i_currency, today);
+                            int evaluation;
+
+                            if(info_dairy_foreign_last != null) {
+                                Double principal = info_dairy_foreign_last.getPrincipal();
+
+                                if(principal >= 0) evaluation = (int) (principal * exchangeRate[i_currency]);
+                                else continue;
+                            }
+                            else {
+                                continue;
+                            }
+
+                            if(info_io_foreign_today[i_currency] == null) {
+                                info_io_foreign_today[i_currency] = new InfoIOForeign();
+
+                                info_io_foreign_today[i_currency].setCurrency(i_currency);
+                                info_io_foreign_today[i_currency].setAccount(id_account);
+                                info_io_foreign_today[i_currency].setDate(today);
+                                info_io_foreign_today[i_currency].setEvaluation(evaluation);
+                                ir.insertInfoIOForeign(info_io_foreign_today[i_currency]);
+                            }
+                            else {
+                                info_io_foreign_today[i_currency].setEvaluation(evaluation);
+                                ir.updateInfoIOForeign(info_io_foreign_today[i_currency]);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        setExchangeTask(mainExchangeTask);
+        runExchangeTask(today);
+    }
     private void updateGroupSpinner() {
         updateGroupList();
         groupAdapter.notifyDataSetChanged();
@@ -225,66 +440,8 @@ public class MainActivity extends AppCompatActivity {
             grouplists.add(groups.get(i).getName());
         }
     }
-
-    public String getToday() {
-        Calendar today = Calendar.getInstance();
-
-        return String.format(Locale.getDefault(), "%04d-%02d-%02d", today.get(Calendar.YEAR),today.get(Calendar.MONTH)+1,today.get(Calendar.DATE));
-    }
-    public String monthChange(String date, int amount) {
-        Calendar calendar = strToCalendar(date);
-
-        calendar.add(Calendar.MONTH, amount);
-
-        if (Calendar.getInstance().before(calendar)) {
-            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
-            return date;
-        }
-
-        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
-    }
-    public String dateChange(String date, int amount) {
-        Calendar calendar = strToCalendar(date);
-
-        calendar.add(Calendar.DATE,amount);
-
-        if (Calendar.getInstance().before(calendar)) {
-            Toast.makeText(getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
-            return date;
-        }
-
-        return String.format(Locale.getDefault(),"%d-%02d-%02d",calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
-    }
-    public Calendar strToCalendar(String date) {
-        Calendar calendar = Calendar.getInstance();
-
-        if(date == null) return calendar;
-
-        String year = date.substring(0,4);
-        String month = date.substring(5,7);
-        String day = date.substring(8,10);
-
-        calendar.set(Integer.parseInt(year),Integer.parseInt(month)-1,Integer.parseInt(day));
-
-        return calendar;
-    }
-    public String calendarToStr(Calendar calendar) {
-        return String.format(Locale.getDefault(), "%04d-%02d-%02d", calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.DATE));
-    }
-
-    public void inoutDialog(String selectedDate) {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
-            @Override
-            public void onWorkComplete(String name) {
-
-            }
-        });
-
-        dialog.setSelectedDate(selectedDate);
-        dialog.show(fragmentManager, "dialog");
-    }
     private void settingDialog() {
-        UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.navigation_item_setting, new UserDialogFragment.UserListener() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.navigation_item_DB_manage, new UserDialogFragment.UserListener() {
             @Override
             public void onWorkComplete(String name) {
                 switch(name) {
@@ -300,6 +457,9 @@ public class MainActivity extends AppCompatActivity {
                     case "restore":
                         signIn(REQUEST_CODE_SIGN_IN_DOWN);
                         break;
+                    case "save":
+                        saveDBToLocal();
+                        break;
                 }
                 updateGroupSpinner();
                 fragmentSub1.callUpdateFrag1();
@@ -310,7 +470,6 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.show(fragmentManager, "dialog");
     }
-
     private void deleteDBFile() {
         String file = getFilesDir().toString();
         file = file.substring(0,file.length()-5) + "databases/InvestRecord.db";
@@ -449,7 +608,11 @@ public class MainActivity extends AppCompatActivity {
 
         Toast.makeText(this,R.string.toast_db_restore_ok,Toast.LENGTH_SHORT).show();
     }
-
+    private void callUpdateFragSub3() {
+        if(m_callbackSub3 != null) {
+            m_callbackSub3.update();
+        }
+    }
     private void signIn(int code) {
         Log.i(TAG, "Start sign in");
         GoogleSignInClient mGoogleSignInClient = buildGoogleSignInClient();
@@ -502,6 +665,35 @@ public class MainActivity extends AppCompatActivity {
                         }
                 );
     }
+    private void saveDBToLocal() {
+        try {
+            File dataDir = Environment.getDataDirectory();
+            File bkDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+
+            assert bkDir != null;
+            if(bkDir.canWrite()) {
+                String dbPath = "//data//com.example.watering.investrecord//databases//InvestRecord.db";
+                String bkPath = "InvestRecord.db";
+
+                File dataDB = new File(dataDir, dbPath);
+                File bkDB = new File(bkDir, bkPath);
+
+                if(dataDB.exists()) {
+                    FileChannel src = new FileInputStream(dataDB).getChannel();
+                    FileChannel dst = new FileOutputStream(bkDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+
+                    Toast.makeText(getApplicationContext(),R.string.toast_save_ok,Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(),R.string.toast_save_error,Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -539,15 +731,5 @@ public class MainActivity extends AppCompatActivity {
             default:
                 super.onActivityResult(requestCode,resultCode,data);
         }
-    }
-
-    private void callUpdateFragSub3() {
-        if(m_callbackSub3 != null) {
-            m_callbackSub3.update();
-        }
-    }
-
-    public void setCallbackSub3(Callback callback) {
-        this.m_callbackSub3 = callback;
     }
 }

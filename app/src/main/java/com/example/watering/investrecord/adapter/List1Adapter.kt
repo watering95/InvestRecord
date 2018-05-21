@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 
-import com.example.watering.investrecord.info.Info_List1
+import com.example.watering.investrecord.info.InfoList1
 import com.example.watering.investrecord.R
 
 import java.text.DecimalFormat
@@ -18,12 +18,8 @@ import java.util.Locale
  * Created by watering on 17. 11. 17.
  */
 
-class List1Adapter(context: Context, private val mData: ArrayList<Info_List1>) : BaseAdapter() {
-    private val inflater: LayoutInflater
-
-    init {
-        inflater = LayoutInflater.from(context)
-    }
+class List1Adapter(context: Context, private val mData: ArrayList<InfoList1>) : BaseAdapter() {
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getCount(): Int {
         return mData.size
@@ -50,14 +46,15 @@ class List1Adapter(context: Context, private val mData: ArrayList<Info_List1>) :
         val rate = convertView.findViewById<TextView>(R.id.textView_layout_list1_4)
         val accountInfo = convertView.findViewById<TextView>(R.id.textView_layout_list1_5)
 
-        val list6 = mData[position].list6
+        val list6 = mData[position].infoList6
+        val dairyTotal = list6!!.dairyTotal
         val account = mData[position].account
         val df = DecimalFormat("#,###")
 
         txtAccount.text = account!!.number.toString()
-        principal.text = df.format(list6!!.dairy!!.principal.toLong())
-        rate.text = String.format(Locale.getDefault(), "%.2f", list6.dairy!!.rate)
-        evaluation.text = df.format(list6.evaluation.toLong())
+        principal.text = df.format(dairyTotal!!.principal.toLong())
+        rate.text = String.format(Locale.getDefault(), "%.2f", dairyTotal.rate)
+        evaluation.text = df.format(dairyTotal.evaluation.toLong())
         accountInfo.text = String.format(Locale.getDefault(), "%s %s", account.institute, account.description)
 
         return convertView

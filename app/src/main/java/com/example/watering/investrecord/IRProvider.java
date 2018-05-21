@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.example.watering.investrecord.DBHelper.*;
+import com.example.watering.investrecord.dbhelper.*;
 
 /**
  * Created by watering on 17. 10. 21.
@@ -21,8 +21,11 @@ public class IRProvider extends ContentProvider {
     private static final String AUTHORITY = "watering.investrecord.provider";
     private static final String PATH_GROUP = "group";
     private static final String PATH_ACCOUNT = "account";
-    private static final String PATH_INFO_IO = "info_io";
-    private static final String PATH_INFO_DAIRY = "info_dairy";
+    private static final String PATH_INFO_IO_KRW = "info_io_krw";
+    private static final String PATH_INFO_IO_FOREIGN = "info_io_foreign";
+    private static final String PATH_INFO_DAIRY_KRW = "info_dairy_krw";
+    private static final String PATH_INFO_DAIRY_FOREIGN = "info_dairy_foreign";
+    private static final String PATH_INFO_DAIRY_TOTAL = "info_dairy_total";
     private static final String PATH_CARD = "card";
     private static final String PATH_CATEGORY_MAIN = "category_main";
     private static final String PATH_CATEGORY_SUB = "category_sub";
@@ -36,8 +39,11 @@ public class IRProvider extends ContentProvider {
 
     private static final int CODE_GROUP = 0;
     private static final int CODE_ACCOUNT = 1;
-    private static final int CODE_INFO_IO = 2;
-    private static final int CODE_INFO_DAIRY = 3;
+    private static final int CODE_INFO_IO_KRW = 2;
+    private static final int CODE_INFO_IO_FOREIGN = 14;
+    private static final int CODE_INFO_DAIRY_KRW = 3;
+    private static final int CODE_INFO_DAIRY_FOREIGN = 15;
+    private static final int CODE_INFO_DAIRY_TOTAL = 16;
     private static final int CODE_CARD = 4;
     private static final int CODE_CATEGORY_MAIN = 5;
     private static final int CODE_CATEGORY_SUB = 6;
@@ -51,8 +57,11 @@ public class IRProvider extends ContentProvider {
 
     private GroupDBHelper DB_group;
     private AccountDBHelper DB_account;
-    private Info_DairyDBHelper DB_info_dairy;
-    private Info_IODBHelper DB_info_IO;
+    private InfoDairyKRWDBHelper DB_info_dairy_krw;
+    private InfoDairyForeignDBHelper DB_info_dairy_foreign;
+    private InfoDairyTotalDBHelper DB_info_dairy_total;
+    private InfoIOKRWDBHelper DB_info_IO_krw;
+    private InfoIOForeignDBHelper DB_info_IO_foreign;
     private CardDBHelper DB_card;
     private CategoryMainDBHelper DB_category_main;
     private CategorySubDBHelper DB_category_sub;
@@ -65,8 +74,11 @@ public class IRProvider extends ContentProvider {
     static {
         Matcher.addURI(AUTHORITY,PATH_GROUP,CODE_GROUP);
         Matcher.addURI(AUTHORITY,PATH_ACCOUNT,CODE_ACCOUNT);
-        Matcher.addURI(AUTHORITY,PATH_INFO_IO,CODE_INFO_IO);
-        Matcher.addURI(AUTHORITY,PATH_INFO_DAIRY,CODE_INFO_DAIRY);
+        Matcher.addURI(AUTHORITY, PATH_INFO_IO_KRW, CODE_INFO_IO_KRW);
+        Matcher.addURI(AUTHORITY, PATH_INFO_IO_FOREIGN, CODE_INFO_IO_FOREIGN);
+        Matcher.addURI(AUTHORITY, PATH_INFO_DAIRY_KRW, CODE_INFO_DAIRY_KRW);
+        Matcher.addURI(AUTHORITY, PATH_INFO_DAIRY_FOREIGN, CODE_INFO_DAIRY_FOREIGN);
+        Matcher.addURI(AUTHORITY, PATH_INFO_DAIRY_TOTAL, CODE_INFO_DAIRY_TOTAL);
         Matcher.addURI(AUTHORITY,PATH_CARD,CODE_CARD);
         Matcher.addURI(AUTHORITY,PATH_CATEGORY_MAIN,CODE_CATEGORY_MAIN);
         Matcher.addURI(AUTHORITY,PATH_CATEGORY_SUB,CODE_CATEGORY_SUB);
@@ -82,8 +94,11 @@ public class IRProvider extends ContentProvider {
     public boolean onCreate() {
         DB_group = new GroupDBHelper(getContext());
         DB_account = new AccountDBHelper(getContext());
-        DB_info_dairy = new Info_DairyDBHelper(getContext());
-        DB_info_IO = new Info_IODBHelper(getContext());
+        DB_info_dairy_krw = new InfoDairyKRWDBHelper(getContext());
+        DB_info_dairy_foreign = new InfoDairyForeignDBHelper(getContext());
+        DB_info_dairy_total = new InfoDairyTotalDBHelper(getContext());
+        DB_info_IO_krw = new InfoIOKRWDBHelper(getContext());
+        DB_info_IO_foreign = new InfoIOForeignDBHelper(getContext());
         DB_card = new CardDBHelper(getContext());
         DB_category_main = new CategoryMainDBHelper(getContext());
         DB_category_sub = new CategorySubDBHelper(getContext());
@@ -108,11 +123,20 @@ public class IRProvider extends ContentProvider {
             case CODE_ACCOUNT:
                 cursor = DB_account.query(projection, selection, selectionArgs, sortOrder);
                 break;
-            case CODE_INFO_IO:
-                cursor = DB_info_IO.query(projection, selection, selectionArgs, sortOrder);
+            case CODE_INFO_IO_KRW:
+                cursor = DB_info_IO_krw.query(projection, selection, selectionArgs, sortOrder);
                 break;
-            case CODE_INFO_DAIRY:
-                cursor = DB_info_dairy.query(projection, selection, selectionArgs, sortOrder);
+            case CODE_INFO_IO_FOREIGN:
+                cursor = DB_info_IO_foreign.query(projection, selection, selectionArgs, sortOrder);
+                break;
+            case CODE_INFO_DAIRY_KRW:
+                cursor = DB_info_dairy_krw.query(projection, selection, selectionArgs, sortOrder);
+                break;
+            case CODE_INFO_DAIRY_FOREIGN:
+                cursor = DB_info_dairy_foreign.query(projection, selection, selectionArgs, sortOrder);
+                break;
+            case CODE_INFO_DAIRY_TOTAL:
+                cursor = DB_info_dairy_total.query(projection, selection, selectionArgs, sortOrder);
                 break;
             case CODE_CARD:
                 cursor = DB_card.query(projection, selection, selectionArgs, sortOrder);
@@ -157,10 +181,16 @@ public class IRProvider extends ContentProvider {
                 return "vnd.android.cursor.dir/vnd.investrecord.group";
             case CODE_ACCOUNT:
                 return "vnd.android.cursor.dir/vnd.investrecord.account";
-            case CODE_INFO_IO:
-                return "vnd.android.cursor.dir/vnd.investrecord.info_io";
-            case CODE_INFO_DAIRY:
-                return "vnd.android.cursor.dir/vnd.investrecord.info_dairy";
+            case CODE_INFO_IO_KRW:
+                return "vnd.android.cursor.dir/vnd.investrecord.info_io_krw";
+            case CODE_INFO_IO_FOREIGN:
+                return "vnd.android.cursor.dir/vnd.investrecord.info_io_foreign";
+            case CODE_INFO_DAIRY_KRW:
+                return "vnd.android.cursor.dir/vnd.investrecord.info_dairy_krw";
+            case CODE_INFO_DAIRY_FOREIGN:
+                return "vnd.android.cursor.dir/vnd.investrecord.info_dairy_foreign";
+            case CODE_INFO_DAIRY_TOTAL:
+                return "vnd.android.cursor.dir/vnd.investrecord.info_dairy_total";
             case CODE_CARD:
                 return "vnd.android.cursor.dir/vnd.investrecord.card";
             case CODE_CATEGORY_MAIN:
@@ -193,11 +223,20 @@ public class IRProvider extends ContentProvider {
             case CODE_ACCOUNT:
                 DB_account.insert(values);
                 break;
-            case CODE_INFO_IO:
-                DB_info_IO.insert(values);
+            case CODE_INFO_IO_KRW:
+                DB_info_IO_krw.insert(values);
                 break;
-            case CODE_INFO_DAIRY:
-                DB_info_dairy.insert(values);
+            case CODE_INFO_IO_FOREIGN:
+                DB_info_IO_foreign.insert(values);
+                break;
+            case CODE_INFO_DAIRY_KRW:
+                DB_info_dairy_krw.insert(values);
+                break;
+            case CODE_INFO_DAIRY_FOREIGN:
+                DB_info_dairy_foreign.insert(values);
+                break;
+            case CODE_INFO_DAIRY_TOTAL:
+                DB_info_dairy_total.insert(values);
                 break;
             case CODE_CARD:
                 DB_card.insert(values);
@@ -236,11 +275,20 @@ public class IRProvider extends ContentProvider {
             case CODE_ACCOUNT:
                 DB_account.delete(selection, selectionArgs);
                 break;
-            case CODE_INFO_IO:
-                DB_info_IO.delete(selection, selectionArgs);
+            case CODE_INFO_IO_KRW:
+                DB_info_IO_krw.delete(selection, selectionArgs);
                 break;
-            case CODE_INFO_DAIRY:
-                DB_info_dairy.delete(selection, selectionArgs);
+            case CODE_INFO_IO_FOREIGN:
+                DB_info_IO_foreign.delete(selection, selectionArgs);
+                break;
+            case CODE_INFO_DAIRY_KRW:
+                DB_info_dairy_krw.delete(selection, selectionArgs);
+                break;
+            case CODE_INFO_DAIRY_FOREIGN:
+                DB_info_dairy_foreign.delete(selection, selectionArgs);
+                break;
+            case CODE_INFO_DAIRY_TOTAL:
+                DB_info_dairy_total.delete(selection, selectionArgs);
                 break;
             case CODE_CARD:
                 DB_card.delete(selection, selectionArgs);
@@ -278,11 +326,20 @@ public class IRProvider extends ContentProvider {
             case CODE_ACCOUNT:
                 DB_account.update(values, selection, selectionArgs);
                 break;
-            case CODE_INFO_IO:
-                DB_info_IO.update(values, selection, selectionArgs);
+            case CODE_INFO_IO_KRW:
+                DB_info_IO_krw.update(values, selection, selectionArgs);
                 break;
-            case CODE_INFO_DAIRY:
-                DB_info_dairy.update(values, selection, selectionArgs);
+            case CODE_INFO_IO_FOREIGN:
+                DB_info_IO_foreign.update(values, selection, selectionArgs);
+                break;
+            case CODE_INFO_DAIRY_KRW:
+                DB_info_dairy_krw.update(values, selection, selectionArgs);
+                break;
+            case CODE_INFO_DAIRY_FOREIGN:
+                DB_info_dairy_foreign.update(values, selection, selectionArgs);
+                break;
+            case CODE_INFO_DAIRY_TOTAL:
+                DB_info_dairy_total.update(values, selection, selectionArgs);
                 break;
             case CODE_CARD:
                 DB_card.update(values, selection, selectionArgs);

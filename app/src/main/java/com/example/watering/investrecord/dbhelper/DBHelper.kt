@@ -17,9 +17,7 @@ open class DBHelper internal constructor(context: Context) : SQLiteOpenHelper(co
     internal var COLUMNS: Array<String>? = null
 
     override fun onCreate(db: SQLiteDatabase) {
-        val sql: StringBuilder
-
-        sql = StringBuilder("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
+        val sql = StringBuilder("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT ")
 
         for (COLUMN in COLUMNS!!) {
@@ -32,9 +30,7 @@ open class DBHelper internal constructor(context: Context) : SQLiteOpenHelper(co
     override fun onOpen(db: SQLiteDatabase) {
         super.onOpen(db)
 
-        val sql: StringBuilder
-
-        sql = StringBuilder("CREATE TABLE IF NOT EXISTS ").append(TABLE_NAME).append(" (")
+        val sql = StringBuilder("CREATE TABLE IF NOT EXISTS ").append(TABLE_NAME).append(" (")
                 .append(BaseColumns._ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT")
 
         for (COLUMN in COLUMNS!!) {
@@ -56,13 +52,12 @@ open class DBHelper internal constructor(context: Context) : SQLiteOpenHelper(co
 
     @Throws(SQLiteException::class)
     fun delete(where: String?, whereArgs: Array<String>) {
-        val selection: String?
-
-        if (where == null) {
-            selection = null
+        val selection: String? = if (where == null) {
+            null
         } else {
-            selection = "$where=?"
+            "$where=?"
         }
+
         writableDatabase.delete(TABLE_NAME, selection, whereArgs)
     }
 
@@ -78,7 +73,7 @@ open class DBHelper internal constructor(context: Context) : SQLiteOpenHelper(co
 
     companion object {
 
-        private val db_version = 7
-        private val DB_FILE_NAME = "InvestRecord.db"
+        private const val db_version = 7
+        private const val DB_FILE_NAME = "InvestRecord.db"
     }
 }

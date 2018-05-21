@@ -36,7 +36,7 @@ public class Fragment4 extends Fragment {
     private String selectedDate;
     private List4Adapter list4Adapter;
     private ArrayList<Income> incomes = new ArrayList<>();
-    private final ArrayList<Info_List4> lists = new ArrayList<>();
+    private final ArrayList<InfoList4> lists = new ArrayList<>();
     private static final String TAG = "InvestRecord";
 
     public Fragment4() {
@@ -155,7 +155,7 @@ public class Fragment4 extends Fragment {
     }
 
     private void updateInfoLists() {
-        Info_List4 list;
+        InfoList4 list;
 
         lists.clear();
         incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
@@ -165,7 +165,7 @@ public class Fragment4 extends Fragment {
         }
 
         for(int i = 0, n = incomes.size(); i < n; i++) {
-            list = new Info_List4();
+            list = new InfoList4();
             list.setIncome(incomes.get(i));
 
             lists.add(list);

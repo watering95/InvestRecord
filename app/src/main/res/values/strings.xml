@@ -14,14 +14,21 @@
     <string name="input">입금액</string>
     <string name="output">출금액</string>
     <string name="evaluate">평가금액</string>
+    <string name="evaluate_krw">원화 평가금액</string>
+    <string name="currency">통화</string>
+    <string name="krw">원화</string>
     <string name="delete_all">전부삭제</string>
     <string name="DB_delete">DB 파일 삭제</string>
     <string name="DB_backup">DB 파일 백업</string>
     <string name="DB_restore">DB 파일 복원</string>
+    <string name="DB_save">DB 로컬 저장</string>
+    <string name="DB_manage">DB 관리</string>
     <string name="total_principal">총자산</string>
     <string name="total_evaluate">총평가액</string>
+    <string name="exchange_rate">환율</string>
     <string name="total_rate">총수익율</string>
     <string name="principal">원금</string>
+    <string name="principal_foreign">외화 원금</string>
     <string name="rate">수익율</string>
     <string name="date">날짜</string>
     <string name="select_date">날짜 선택</string>
@@ -52,7 +59,8 @@
     <string name="setting">설정</string>
     <string name="statistic">통계</string>
     <string name="input_income">수입 입력</string>
-    <string name="input_inout">입출력 입력</string>
+    <string name="input_inout_krw">원화 입출력 입력</string>
+    <string name="input_inout_foreign">외화 입출력 입력</string>
     <string name="input_spend">지출 입력</string>
     <string name="transfer">계좌 이체</string>
     <string name="income">수입</string>
@@ -83,6 +91,7 @@
     <string name="card_account">인출계좌</string>
     <string name="toast_htmlfile">HTML 파일 생성 실패</string>
     <string name="toast_date_error">오늘 이전 날짜로 선택해 주세요.</string>
+    <string name="toast_exchange_error">환율을 가져오지 못했습니다.</string>
     <string name="toast_db_error">DB 파일을 찾지 못했습니다.</string>
     <string name="toast_db_del_ok">DB 파일을 삭제했습니다.</string>
     <string name="toast_db_del_error">DB 파일을 삭제하지 못했습니다.</string>
@@ -93,4 +102,6 @@
     <string name="toast_no_account">선택된 계좌가 없습니다.</string>
     <string name="toast_no_amount">이체금액이 없습니다.</string>
     <string name="toast_same_name">같은 이름이 있습니다.</string>
+    <string name="toast_save_ok">로컬에 저장 완료.</string>
+    <string name="toast_save_error">로컬에 저장 실패.</string>
 </resources>
