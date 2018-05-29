@@ -5,76 +5,60 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:text="@string/total_principal"
             android:textSize="15sp"
+            android:ems="5"
             android:textAlignment="center"/>
-
         <TextView
             android:id="@+id/textView_frag1_total_principal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:background="#fff0f0"
-            android:ems="13"
-            android:textSize="15sp"
-            tools:ignore="RelativeOverlap" />
-    </RelativeLayout>
-    <RelativeLayout
+            android:textSize="15sp" />
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:text="@string/total_evaluate"
             android:textSize="15sp"
+            android:ems="5"
             android:textAlignment="center"/>
         <TextView
             android:id="@+id/textView_frag1_total_evaluate"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:ems="13"
             android:textSize="15sp"
-            android:background="#fff0f0"
-            tools:ignore="RelativeOverlap" />
-    </RelativeLayout>
-    <RelativeLayout
+            android:background="#fff0f0" />
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:text="@string/total_rate"
             android:textSize="15sp"
+            android:ems="5"
             android:textAlignment="center"/>
         <TextView
             android:id="@+id/textView_frag1_total_rate"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:ems="13"
             android:textSize="15sp"
-            android:background="#fff0f0"
-            tools:ignore="RelativeOverlap" />
-    </RelativeLayout>
+            android:background="#fff0f0" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -84,7 +68,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
+            android:layout_weight="1"
             android:text="@string/account"
             android:textAlignment="center" />
 

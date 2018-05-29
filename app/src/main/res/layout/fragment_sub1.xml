@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,7 +9,9 @@
         android:id="@+id/tab_frag_sub1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark" />
+        android:background="@color/colorPrimaryDark"
+        app:tabMaxWidth="0dp"
+        android:textAlignment="center"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager_frag_sub1"

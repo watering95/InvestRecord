@@ -6,10 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.watering.investrecord.IRResolver;
@@ -92,6 +95,18 @@ public class FragmentSub1 extends Fragment {
 
         textView_spend_month = mView.findViewById(R.id.textView_frag_sub1_spend_month);
         textView_income_month = mView.findViewById(R.id.textView_frag_sub1_income_month);
+
+        LinearLayout linearLayout = mView.findViewById(R.id.linearLayout_frag_sub1);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = mActivity.getSupportFragmentManager();
+
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_main, mActivity.fragmentSub2).commit();
+            }
+        });
+
         updateFragSub1();
 
         mFragSub1ViewPager = mView.findViewById(R.id.viewpager_frag_sub1);
