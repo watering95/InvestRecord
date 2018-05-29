@@ -20,7 +20,7 @@ import com.example.watering.investrecord.info.InfoDairyKRW;
 import com.example.watering.investrecord.info.InfoDairyTotal;
 import com.example.watering.investrecord.info.InfoIOKRW;
 import com.example.watering.investrecord.info.InfoList1;
-import com.example.watering.investrecord.info.InfoList6;
+import com.example.watering.investrecord.info.InfoList7;
 import com.example.watering.investrecord.adapter.List1Adapter;
 import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
@@ -125,7 +125,7 @@ public class Fragment1 extends Fragment {
 
         InfoDairyTotal dairy_total;
         InfoList1 list1;
-        InfoList6 list6;
+        InfoList7 list6;
 
         List<Account> accounts = ir.getAccounts(ir.getCurrentGroup());
 
@@ -142,7 +142,7 @@ public class Fragment1 extends Fragment {
 
         for(int i = 0, n = accounts.size(); i < n; i++) {
             list1 = new InfoList1();
-            list6 = new InfoList6();
+            list6 = new InfoList7();
 
             id_account = accounts.get(i).getId();
 
@@ -172,7 +172,7 @@ public class Fragment1 extends Fragment {
             list6.setDairyTotal(dairy_total);
 
             list1.setAccount(accounts.get(i));
-            list1.setInfoList6(list6);
+            list1.setInfoList7(list6);
             sum_evaluate += dairy_total.getEvaluation();
             sum_principal += dairy_total.getPrincipal();
 

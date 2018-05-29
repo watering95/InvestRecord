@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 
-import com.example.watering.investrecord.info.InfoList1
+import com.example.watering.investrecord.info.InfoList7
 import com.example.watering.investrecord.R
+import com.example.watering.investrecord.info.InfoDairyTotal
 
 import java.text.DecimalFormat
 import java.util.ArrayList
@@ -18,7 +19,7 @@ import java.util.Locale
  * Created by watering on 17. 11. 17.
  */
 
-class List1Adapter(context: Context, private val mData: ArrayList<InfoList1>) : BaseAdapter() {
+class List7Adapter(context: Context, private val mData: ArrayList<InfoList7>) : BaseAdapter() {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getCount(): Int {
@@ -37,25 +38,20 @@ class List1Adapter(context: Context, private val mData: ArrayList<InfoList1>) : 
         var convertView = convertView
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.layout_list1, parent, false)
+            convertView = inflater.inflate(R.layout.layout_list7, parent, false)
         }
 
-        val txtAccount = convertView!!.findViewById<TextView>(R.id.textView_layout_list1_1)
-        val principal = convertView.findViewById<TextView>(R.id.textView_layout_list1_2)
-        val evaluation = convertView.findViewById<TextView>(R.id.textView_layout_list1_3)
-        val rate = convertView.findViewById<TextView>(R.id.textView_layout_list1_4)
-        val accountInfo = convertView.findViewById<TextView>(R.id.textView_layout_list1_5)
-
-        val list6 = mData[position].infoList7
-        val dairyTotal = list6!!.dairyTotal
-        val account = mData[position].account
+        val dairyTotal: InfoDairyTotal? = mData[position].dairyTotal
+        val date = convertView!!.findViewById<TextView>(R.id.textView_layout_list7_1)
+        val principal = convertView.findViewById<TextView>(R.id.textView_layout_list7_2)
+        val evaluation = convertView.findViewById<TextView>(R.id.textView_layout_list7_3)
+        val rate = convertView.findViewById<TextView>(R.id.textView_layout_list7_4)
         val df = DecimalFormat("#,###")
 
-        txtAccount.text = account!!.number.toString()
-        principal.text = df.format(dairyTotal!!.principal.toLong())
+        date.text = dairyTotal!!.date.toString()
+        principal.text = df.format(dairyTotal.principal.toLong())
         rate.text = String.format(Locale.getDefault(), "%.2f", dairyTotal.rate)
         evaluation.text = df.format(dairyTotal.evaluation.toLong())
-        accountInfo.text = String.format(Locale.getDefault(), "%s %s", account.institute, account.description)
 
         return convertView
     }

@@ -2,35 +2,37 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1.1"
-        android:id="@+id/textView_layout_list2_1"
-        android:textAlignment="center"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:id="@+id/textView_layout_list2_2"
-        android:layout_gravity="end"
-        android:textAlignment="textEnd"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:id="@+id/textView_layout_list2_3"
-        android:layout_gravity="end"
-        android:textAlignment="textEnd"/>
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1.2"
-        android:id="@+id/textView_layout_list2_4"
-        android:layout_gravity="end"
-        android:textAlignment="textEnd"/>
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_layout_list6_1"
+            android:textAlignment="center"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView_layout_list6_5"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView_layout_list6_2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical|end"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/textView_layout_list6_3"
+        android:gravity="center_vertical|end"/>
 
 </LinearLayout>

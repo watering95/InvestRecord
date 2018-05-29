@@ -39,16 +39,13 @@ class List5Adapter(context: Context, private val mData: ArrayList<InfoList5>) : 
             convertView = inflater.inflate(R.layout.layout_list5, parent, false)
         }
 
-        val txtMonth = convertView!!.findViewById<TextView>(R.id.textView_layout_list5_1)
-        val txtIncome = convertView.findViewById<TextView>(R.id.textView_layout_list5_2)
-        val txtSpend = convertView.findViewById<TextView>(R.id.textView_layout_list5_3)
-
-        val list5 = mData[position]
         val df = DecimalFormat("#,###")
+        val textView1 = convertView!!.findViewById<TextView>(R.id.textView_layout_list5_1)
+        val textView2 = convertView.findViewById<TextView>(R.id.textView_layout_list5_2)
+        val textView3 = convertView.findViewById<TextView>(R.id.textView_layout_list5_3)
 
-        txtMonth.text = list5.month
-        txtIncome.text = df.format(list5.income.toLong())
-        txtSpend.text = df.format(list5.spend.toLong())
+        textView1.text = mData[position].income!!.details
+        textView3.text = df.format(mData[position].income!!.amount.toLong())
 
         return convertView
     }

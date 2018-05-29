@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/linearLayout_frag6_title">
+        android:id="@+id/linearLayout_frag7_title">
 
         <TextView
             android:layout_width="match_parent"
@@ -40,15 +40,15 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/linearLayout_frag6_title"
-        android:layout_above="@id/webView_frag6"
-        android:id="@+id/listview_frag2_totalasset">
+        android:layout_below="@id/linearLayout_frag7_title"
+        android:layout_above="@id/webView_frag7"
+        android:id="@+id/listview_frag7_totalasset">
     </ListView>
 
     <WebView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:id="@+id/webView_frag6"/>
+        android:id="@+id/webView_frag7"/>
 
 </RelativeLayout>

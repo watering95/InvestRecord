@@ -8,6 +8,7 @@
     <string name="main">Main</string>
     <string name="sub">Sub</string>
     <string name="analysis">분석</string>
+    <string name="reference">참조</string>
     <string name="navigation_title">나의 자산</string>
     <string name="group">그룹</string>
     <string name="account">계좌번호</string>

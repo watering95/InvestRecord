@@ -1,17 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/fragment6_include"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/floating_frag6"
-        android:src="@drawable/ic_home_white_24dp"
-        android:layout_gravity="bottom|end"/>
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout_frag6">
 
-</android.support.design.widget.CoordinatorLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:text="@string/month"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/income"
+            android:textAlignment="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/spending"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listview_frag6"
+        android:layout_below="@id/linearLayout_frag6">
+    </ListView>
+
+</RelativeLayout>

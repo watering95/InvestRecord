@@ -15,11 +15,11 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.example.watering.investrecord.IRResolver;
-import com.example.watering.investrecord.data.Income;
-import com.example.watering.investrecord.info.*;
-import com.example.watering.investrecord.adapter.*;
 import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
+import com.example.watering.investrecord.data.Spend;
+import com.example.watering.investrecord.adapter.*;
+import com.example.watering.investrecord.info.*;
 
 import java.util.ArrayList;
 
@@ -35,7 +35,8 @@ public class Fragment4 extends Fragment {
     private IRResolver ir;
     private String selectedDate;
     private List4Adapter list4Adapter;
-    private ArrayList<Income> incomes = new ArrayList<>();
+    private EditText editText_date;
+    private ArrayList<Spend> spends = new ArrayList<>();
     private final ArrayList<InfoList4> lists = new ArrayList<>();
     private static final String TAG = "InvestRecord";
 
@@ -59,7 +60,7 @@ public class Fragment4 extends Fragment {
             }
         };
 
-        fragmentSub2.setCallback4(callback);
+        fragmentSub2.setCallback3(callback);
     }
 
     @Nullable
@@ -73,7 +74,7 @@ public class Fragment4 extends Fragment {
     }
 
     private void initLayout() {
-        final EditText editText_date = mView.findViewById(R.id.editText_frag4_date);
+        editText_date = mView.findViewById(R.id.editText_frag4_date);
 
         selectedDate = mActivity.getToday();
 
@@ -124,16 +125,16 @@ public class Fragment4 extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int id_income = incomes.get(position).getId();
+                String spend_code = spends.get(position).getCode();
                 UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag4, new UserDialogFragment.UserListener() {
                     @Override
                     public void onWorkComplete(String date) {
                         updateListView();
                     }
                 });
-                dialog.initId(id_income);
+                dialog.initCode(spend_code);
                 //noinspection ConstantConditions
-                dialog.show(getFragmentManager(),"dialog");
+                dialog.show(getFragmentManager(), "dialog");
             }
         });
 
@@ -158,15 +159,17 @@ public class Fragment4 extends Fragment {
         InfoList4 list;
 
         lists.clear();
-        incomes = (ArrayList<Income>) ir.getIncomes(selectedDate);
-        if(incomes.isEmpty()) {
-            Log.i(TAG, "No income");
+
+        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
+
+        if(spends.isEmpty()) {
+            Log.i(TAG,"No spend");
             return;
         }
 
-        for(int i = 0, n = incomes.size(); i < n; i++) {
+        for(int i = 0, n = spends.size(); i < n; i++) {
             list = new InfoList4();
-            list.setIncome(incomes.get(i));
+            list.setSpend(spends.get(i));
 
             lists.add(list);
         }

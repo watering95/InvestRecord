@@ -1,27 +1,34 @@
 package com.example.watering.investrecord.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.watering.investrecord.IRResolver;
 import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
-import com.example.watering.investrecord.data.Spend;
-import com.example.watering.investrecord.adapter.*;
-import com.example.watering.investrecord.info.*;
+import com.example.watering.investrecord.data.Account;
+import com.example.watering.investrecord.info.InfoDairyKRW;
+import com.example.watering.investrecord.info.InfoDairyTotal;
+import com.example.watering.investrecord.info.InfoIOKRW;
 
-import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.List;
+
 
 /**
  * Created by watering on 17. 10. 21.
@@ -30,15 +37,13 @@ import java.util.ArrayList;
 @SuppressWarnings("DefaultFileTemplate")
 public class Fragment3 extends Fragment {
 
-    private View mView;
     private MainActivity mActivity;
     private IRResolver ir;
-    private String selectedDate;
-    private List3Adapter list3Adapter;
-    private EditText editText_date;
-    private ArrayList<Spend> spends = new ArrayList<>();
-    private final ArrayList<InfoList3> lists = new ArrayList<>();
+    private View mView;
+    private WebView mWeb;
     private static final String TAG = "InvestRecord";
+    private int duration = 7;
+    private int interval = 1;
 
     public Fragment3() {
     }
@@ -51,131 +56,186 @@ public class Fragment3 extends Fragment {
         assert mActivity != null;
         ir = mActivity.ir;
 
-        final FragmentSub2 fragmentSub2 = mActivity.fragmentSub2;
+//        makeHTMLFile();
 
-        FragmentSub2.Callback callback = new FragmentSub2.Callback() {
+        final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
+
+        FragmentSub1.Callback callback = new FragmentSub1.Callback() {
             @Override
             public void update() {
-                updateListView();
+                makeHTMLFile();
+                mWeb.reload();
             }
         };
 
-        fragmentSub2.setCallback3(callback);
+        fragmentSub1.setCallback3(callback);
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment3, container, false);
 
         initLayout();
+        openWebView();
 
         return mView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        makeHTMLFile();
+        mWeb.reload();
+    }
+
     private void initLayout() {
-        editText_date = mView.findViewById(R.id.editText_frag3_date);
+        Button buttonWeek = mView.findViewById(R.id.button_frag3_due_week_1);
+        Button buttonMonth = mView.findViewById(R.id.button_frag3_due_month_1);
+        Button buttonYear = mView.findViewById(R.id.button_frag3_due_year_1);
+        Button buttonFull = mView.findViewById(R.id.button_frag3_due_full);
 
-        selectedDate = mActivity.getToday();
-
-        ImageButton image_btn_backward = mView.findViewById(R.id.image_btn_frag3_date_backward);
-        ImageButton image_btn_forward = mView.findViewById(R.id.image_btn_frag3_date_forward);
-
-        image_btn_backward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedDate = mActivity.dateChange(selectedDate, -1);
-                editText_date.setText(selectedDate);
-                updateListView();
-            }
-        });
-
-        image_btn_forward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedDate = mActivity.dateChange(selectedDate, 1);
-                editText_date.setText(selectedDate);
-                updateListView();
-            }
-        });
-
-        editText_date.setText(selectedDate);
-        editText_date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.editText_frag3_date, new UserDialogFragment.UserListener() {
-                    @Override
-                    public void onWorkComplete(String date) {
-                        selectedDate = date;
-                        editText_date.setText(selectedDate);
-                        updateListView();
-                    }
-                });
-                dialog.setSelectedDate(selectedDate);
-                //noinspection ConstantConditions
-                dialog.show(getFragmentManager(), "dialog");
-            }
-        });
-
-        ListView listView = mView.findViewById(R.id.listview_frag3);
-
-        updateInfoLists();
-        list3Adapter = new List3Adapter(mView.getContext(),lists);
-        listView.setAdapter(list3Adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String spend_code = spends.get(position).getCode();
-                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag3, new UserDialogFragment.UserListener() {
-                    @Override
-                    public void onWorkComplete(String date) {
-                        updateListView();
-                    }
-                });
-                dialog.initCode(spend_code);
-                //noinspection ConstantConditions
-                dialog.show(getFragmentManager(), "dialog");
-            }
-        });
-
-        FloatingActionButton floating = mView.findViewById(R.id.floating_frag3);
-        floating.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag3, new UserDialogFragment.UserListener() {
-                    @Override
-                    public void onWorkComplete(String date) {
-                        updateListView();
-                    }
-                });
-                dialog.setSelectedDate(selectedDate);
-                //noinspection ConstantConditions
-                dialog.show(getFragmentManager(), "dialog");
-            }
-        });
+        buttonWeek.setOnClickListener(listener);
+        buttonMonth.setOnClickListener(listener);
+        buttonYear.setOnClickListener(listener);
+        buttonFull.setOnClickListener(listener);
     }
 
-    private void updateInfoLists() {
-        InfoList3 list;
-
-        lists.clear();
-
-        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
-
-        if(spends.isEmpty()) {
-            Log.i(TAG,"No spend");
-            return;
+    private final Button.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.button_frag3_due_week_1:
+                    duration = 7;
+                    interval = 1;
+                    break;
+                case R.id.button_frag3_due_month_1:
+                    duration = 30;
+                    interval = 1;
+                    break;
+                case R.id.button_frag3_due_year_1:
+                    duration = 365;
+                    interval = 7;
+                    break;
+                case R.id.button_frag3_due_full:
+                    duration = -1;
+                    interval = 10;
+                    break;
+            }
+            makeHTMLFile();
+            mWeb.reload();
         }
+    };
 
-        for(int i = 0, n = spends.size(); i < n; i++) {
-            list = new InfoList3();
-            list.setSpend(spends.get(i));
+    private void makeHTMLFile() {
+        try{
+            BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph_total.html",false));
 
-            lists.add(list);
+            List<Account> accounts = ir.getAccounts(ir.getCurrentGroup());
+
+            StringBuilder data = new StringBuilder();
+            String strToday = mActivity.getToday();
+            String strDate = strToday;
+            Calendar firstDate = mActivity.strToCalendar(ir.getFirstDate());
+            InfoDairyTotal dairy_total;
+            int id_account;
+
+            int i = 0, sumEvaluation = 0, sumPrincipal = 0;
+            double rate = 0;
+            do {
+                // 특정일의 합계와 평가액 계산
+                for (int index = 0, n = accounts.size(); index < n; index++) {
+                    id_account = accounts.get(index).getId();
+
+                    dairy_total = ir.getLastInfoDairyTotal(id_account, strDate);
+                    if(dairy_total == null) {
+                        InfoDairyKRW dairy_krw = ir.getLastInfoDairyKRW(id_account, strDate);
+                        InfoIOKRW io_krw;
+                        if(dairy_krw == null) {
+                            dairy_krw = new InfoDairyKRW();
+                            io_krw = new InfoIOKRW();
+
+                            dairy_krw.setRate(0);
+                            dairy_krw.setPrincipal(0);
+                            io_krw.setEvaluation(0);
+                        }
+                        else {
+                            io_krw = ir.getLastInfoIOKRW(id_account, dairy_krw.getDate());
+                        }
+
+                        dairy_total = new InfoDairyTotal();
+
+                        dairy_total.setEvaluation(io_krw.getEvaluation());
+                        dairy_total.setRate(dairy_krw.getRate());
+                        dairy_total.setPrincipal(dairy_krw.getPrincipal());
+                    }
+
+                    sumEvaluation += dairy_total.getEvaluation();
+                    sumPrincipal += dairy_total.getPrincipal();
+
+                }
+                // 특정일의 수익율 계산
+                if(sumPrincipal != 0 && sumEvaluation != 0) rate = (double)sumEvaluation / (double)sumPrincipal * 100 - 100;
+                // 특정일 데이터 추가
+                data.append("[").append("new Date('").append(strDate).append("')").append(", ").append(sumEvaluation).append(", ").append(rate).append("],\n");
+                // 초기화
+                sumEvaluation = 0;
+                sumPrincipal = 0;
+                rate = 0;
+                i++;
+                // 날짜 변경
+                if(duration >= 0 && i > duration) break;
+                strDate = mActivity.dateChange(strToday, -i*interval);
+            } while(mActivity.strToCalendar(strDate).compareTo(firstDate) > 0);
+
+            data.delete(data.length()-2,data.length()-1);
+
+            Log.i(TAG, String.format("%s",data));
+
+            String function = "function drawChart() {\n"
+                    + "var chartDiv = document.getElementById('chart_div');\n\n"
+
+                    + "var data = new google.visualization.DataTable();\n"
+                    + "data.addColumn('date','Day');\n"
+                    + "data.addColumn('number','평가액');\n"
+                    + "data.addColumn('number','수익율');\n"
+                    + "data.addRows([\n" + data + "]);\n\n"
+
+                    + "var options = {"
+                    + "series: {0: {targetAxisIndex: 0}, 1: {targetAxisIndex: 1}},"
+                    + "vAxes: {0: {title: '평가액'}, 1: {title: '수익율'}},"
+                    + "};\n\n"
+
+                    + "var chart = new google.visualization.LineChart(chartDiv);\n"
+                    + "chart.draw(data, options);\n"
+
+                    + "}\n";
+
+            String script = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n"
+                    + "<script type=\"text/javascript\">\n"
+                    + "google.charts.load('current', {'packages':['line', 'corechart']});\n"
+                    + "google.charts.setOnLoadCallback(drawChart);\n"
+                    + function
+                    + "</script>\n";
+
+            String body = "<div id=\"chart_div\"></div>\n";
+
+            String html = "<!DOCTYPE html>\n" + "<head>\n" + script + "</head>\n" + "<body>\n" + body + "</body>\n" + "</html>";
+
+            bw.write(html);
+            bw.close();
+        } catch (IOException e) {
+            Toast.makeText(mActivity.getApplicationContext(), R.string.toast_htmlfile, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
-    private void updateListView() {
-        updateInfoLists();
-        list3Adapter.notifyDataSetChanged();
+    @SuppressLint("SetJavaScriptEnabled")
+    private void openWebView() {
+        mWeb = mView.findViewById(R.id.webView_frag3);
+        mWeb.setWebViewClient(new WebViewClient());
+        WebSettings set = mWeb.getSettings();
+        set.setJavaScriptEnabled(true);
+        set.setBuiltInZoomControls(true);
+        mWeb.loadUrl("file:///" + mActivity.getFilesDir() + "graph_total.html");
     }
 }
