@@ -86,7 +86,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/principal"
+            android:text="@string/viewPrincipal"
             android:layout_weight="3"/>
         <EditText
             android:id="@+id/editText_dlg_inout_krw_principal"

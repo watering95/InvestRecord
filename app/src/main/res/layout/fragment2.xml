@@ -12,7 +12,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/week1"
+            android:text="@string/month3"
             android:layout_weight="1"
             style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/button_frag2_due_week_1"/>

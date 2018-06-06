@@ -175,6 +175,7 @@ public class Fragment1 extends Fragment {
             list1.setInfoList7(list6);
             sum_evaluate += dairy_total.getEvaluation();
             sum_principal += dairy_total.getPrincipal();
+            list1.setTotal(sum_evaluate);
 
             lists.add(list1);
         }

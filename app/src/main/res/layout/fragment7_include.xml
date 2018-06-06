@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/principal"
+            android:text="@string/viewPrincipal"
             android:layout_weight="1"
             android:textAlignment="center"/>
         <TextView
@@ -31,7 +31,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/rate"
+            android:text="@string/viewRateProfit"
             android:layout_weight="1.2"
             android:textAlignment="center"/>
 
