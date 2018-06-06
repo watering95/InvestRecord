@@ -34,18 +34,17 @@ class List4Adapter(context: Context, private val mData: ArrayList<InfoList4>) : 
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
-
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.layout_list4, parent, false)
         }
 
         val df = DecimalFormat("#,###")
-        val textView1 = convertView!!.findViewById<TextView>(R.id.textView_layout_list6_1)
-        val textView2 = convertView.findViewById<TextView>(R.id.textView_layout_list6_2)
-        val textView3 = convertView.findViewById<TextView>(R.id.textView_layout_list6_3)
+        val textView1 = convertView!!.findViewById<TextView>(R.id.textView_layout_list4_1)
+        val textView2 = convertView.findViewById<TextView>(R.id.textView_layout_list4_2)
+        val textView3 = convertView.findViewById<TextView>(R.id.textView_layout_list4_3)
 
-        textView1.text = mData[position].income!!.details
-        textView3.text = df.format(mData[position].income!!.amount.toLong())
+        textView1.text = mData[position].spend!!.details
+        textView3.text = df.format(mData[position].spend!!.amount.toLong())
 
         return convertView
     }

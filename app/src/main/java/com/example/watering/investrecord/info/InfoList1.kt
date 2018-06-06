@@ -8,5 +8,6 @@ import com.example.watering.investrecord.data.Account
 
 class InfoList1 {
     var account: Account? = null
-    var infoList6: InfoList6? = null
+    var infoList7: InfoList7? = null
+    var total: Int = 0
 }

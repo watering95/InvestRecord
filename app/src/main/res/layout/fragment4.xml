@@ -12,6 +12,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/floating_frag4"
         android:src="@drawable/ic_create_white_24dp"
-        android:layout_gravity="bottom|end"/>
-
+        android:layout_gravity="bottom|end" />
 </android.support.design.widget.CoordinatorLayout>

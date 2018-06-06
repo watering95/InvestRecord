@@ -11,26 +11,26 @@ import android.support.v4.app.FragmentPagerAdapter;
 @SuppressWarnings("DefaultFileTemplate")
 class FragSub3TabPagerAdapter extends FragmentPagerAdapter {
 
-    private final Fragment6 fragment6;
     private final Fragment7 fragment7;
     private final Fragment8 fragment8;
+    private final Fragment9 fragment9;
 
     FragSub3TabPagerAdapter(FragmentManager fm) {
         super(fm);
-        fragment6 = new Fragment6();
         fragment7 = new Fragment7();
         fragment8 = new Fragment8();
+        fragment9 = new Fragment9();
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return fragment6;
-            case 1:
                 return fragment7;
-            case 2:
+            case 1:
                 return fragment8;
+            case 2:
+                return fragment9;
             default:
                 return null;
         }

@@ -1,27 +1,27 @@
 package com.example.watering.investrecord.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.watering.investrecord.IRResolver;
 import com.example.watering.investrecord.MainActivity;
 import com.example.watering.investrecord.R;
-import com.example.watering.investrecord.data.Spend;
-import com.example.watering.investrecord.adapter.*;
-import com.example.watering.investrecord.info.*;
 
-import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 
 /**
  * Created by watering on 17. 10. 21.
@@ -30,15 +30,12 @@ import java.util.ArrayList;
 @SuppressWarnings("DefaultFileTemplate")
 public class Fragment3 extends Fragment {
 
-    private View mView;
     private MainActivity mActivity;
     private IRResolver ir;
-    private String selectedDate;
-    private List3Adapter list3Adapter;
-    private EditText editText_date;
-    private ArrayList<Spend> spends = new ArrayList<>();
-    private final ArrayList<InfoList3> lists = new ArrayList<>();
+    private View mView;
+    private WebView mWeb;
     private static final String TAG = "InvestRecord";
+    private String function = "<script type=\"text/javascript\" src=\"http://watering.iptime.org:3000/script/graph_1month.js\"></script>\n";
 
     public Fragment3() {
     }
@@ -51,131 +48,99 @@ public class Fragment3 extends Fragment {
         assert mActivity != null;
         ir = mActivity.ir;
 
-        final FragmentSub2 fragmentSub2 = mActivity.fragmentSub2;
+        final FragmentSub1 fragmentSub1 = mActivity.fragmentSub1;
 
-        FragmentSub2.Callback callback = new FragmentSub2.Callback() {
+        FragmentSub1.Callback callback = new FragmentSub1.Callback() {
             @Override
             public void update() {
-                updateListView();
+                makeHTMLFile(function);
+                mWeb.reload();
             }
         };
 
-        fragmentSub2.setCallback3(callback);
+        fragmentSub1.setCallback3(callback);
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment3, container, false);
 
         initLayout();
+        openWebView();
 
         return mView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        makeHTMLFile(function);
+        mWeb.reload();
+    }
+
     private void initLayout() {
-        editText_date = mView.findViewById(R.id.editText_frag3_date);
+        Button buttonWeek = mView.findViewById(R.id.button_frag3_due_month_1);
+        Button buttonMonth = mView.findViewById(R.id.button_frag3_due_month_3);
+        Button buttonYear = mView.findViewById(R.id.button_frag3_due_year_1);
+        Button buttonFull = mView.findViewById(R.id.button_frag3_due_year_3);
 
-        selectedDate = mActivity.getToday();
-
-        ImageButton image_btn_backward = mView.findViewById(R.id.image_btn_frag3_date_backward);
-        ImageButton image_btn_forward = mView.findViewById(R.id.image_btn_frag3_date_forward);
-
-        image_btn_backward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedDate = mActivity.dateChange(selectedDate, -1);
-                editText_date.setText(selectedDate);
-                updateListView();
-            }
-        });
-
-        image_btn_forward.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedDate = mActivity.dateChange(selectedDate, 1);
-                editText_date.setText(selectedDate);
-                updateListView();
-            }
-        });
-
-        editText_date.setText(selectedDate);
-        editText_date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.editText_frag3_date, new UserDialogFragment.UserListener() {
-                    @Override
-                    public void onWorkComplete(String date) {
-                        selectedDate = date;
-                        editText_date.setText(selectedDate);
-                        updateListView();
-                    }
-                });
-                dialog.setSelectedDate(selectedDate);
-                //noinspection ConstantConditions
-                dialog.show(getFragmentManager(), "dialog");
-            }
-        });
-
-        ListView listView = mView.findViewById(R.id.listview_frag3);
-
-        updateInfoLists();
-        list3Adapter = new List3Adapter(mView.getContext(),lists);
-        listView.setAdapter(list3Adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String spend_code = spends.get(position).getCode();
-                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag3, new UserDialogFragment.UserListener() {
-                    @Override
-                    public void onWorkComplete(String date) {
-                        updateListView();
-                    }
-                });
-                dialog.initCode(spend_code);
-                //noinspection ConstantConditions
-                dialog.show(getFragmentManager(), "dialog");
-            }
-        });
-
-        FloatingActionButton floating = mView.findViewById(R.id.floating_frag3);
-        floating.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UserDialogFragment dialog = UserDialogFragment.newInstance(R.id.floating_frag3, new UserDialogFragment.UserListener() {
-                    @Override
-                    public void onWorkComplete(String date) {
-                        updateListView();
-                    }
-                });
-                dialog.setSelectedDate(selectedDate);
-                //noinspection ConstantConditions
-                dialog.show(getFragmentManager(), "dialog");
-            }
-        });
+        buttonWeek.setOnClickListener(listener);
+        buttonMonth.setOnClickListener(listener);
+        buttonYear.setOnClickListener(listener);
+        buttonFull.setOnClickListener(listener);
     }
 
-    private void updateInfoLists() {
-        InfoList3 list;
-
-        lists.clear();
-
-        spends = (ArrayList<Spend>) ir.getSpends(selectedDate);
-
-        if(spends.isEmpty()) {
-            Log.i(TAG,"No spend");
-            return;
+    private final Button.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch(v.getId()) {
+                case R.id.button_frag3_due_month_1:
+                    function = "<script type=\"text/javascript\" src=\"http://watering.iptime.org:3000/script/graph_1month.js\"></script>\n";
+                    break;
+                case R.id.button_frag3_due_month_3:
+                    function = "<script type=\"text/javascript\" src=\"http://watering.iptime.org:3000/script/graph_3month.js\"></script>\n";
+                    break;
+                case R.id.button_frag3_due_year_1:
+                    function = "<script type=\"text/javascript\" src=\"http://watering.iptime.org:3000/script/graph_1year.js\"></script>\n";
+                    break;
+                case R.id.button_frag3_due_year_3:
+                    function = "<script type=\"text/javascript\" src=\"http://watering.iptime.org:3000/script/graph_3year.js\"></script>\n";
+                    break;
+            }
+            makeHTMLFile(function);
+            mWeb.reload();
         }
+    };
 
-        for(int i = 0, n = spends.size(); i < n; i++) {
-            list = new InfoList3();
-            list.setSpend(spends.get(i));
+    private void makeHTMLFile(String function) {
+        try{
+            BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph_reference.html",false));
 
-            lists.add(list);
+            StringBuilder data = new StringBuilder();
+            String strToday = mActivity.getToday();
+
+            String script = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n"
+                + function;
+
+            String body = "<div id=\"linechart_material\"></div>\n";
+
+            String html = "<!DOCTYPE html>\n" + "<head>\n" + script + "</head>\n" + "<body>\n" + body + "</body>\n" + "</html>";
+
+            bw.write(html);
+            bw.close();
+        } catch (IOException e) {
+            Toast.makeText(mActivity.getApplicationContext(), R.string.toast_htmlfile, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
-    private void updateListView() {
-        updateInfoLists();
-        list3Adapter.notifyDataSetChanged();
+    @SuppressLint("SetJavaScriptEnabled")
+    private void openWebView() {
+        mWeb = mView.findViewById(R.id.webView_frag3);
+        mWeb.setWebViewClient(new WebViewClient());
+        WebSettings set = mWeb.getSettings();
+        set.setJavaScriptEnabled(true);
+        set.setBuiltInZoomControls(true);
+        mWeb.loadUrl("file:///" + mActivity.getFilesDir() + "graph_reference.html");
     }
 }

@@ -8,6 +8,7 @@
     <string name="main">Main</string>
     <string name="sub">Sub</string>
     <string name="analysis">분석</string>
+    <string name="reference">참조</string>
     <string name="navigation_title">나의 자산</string>
     <string name="group">그룹</string>
     <string name="account">계좌번호</string>
@@ -27,9 +28,9 @@
     <string name="total_evaluate">총평가액</string>
     <string name="exchange_rate">환율</string>
     <string name="total_rate">총수익율</string>
-    <string name="principal">원금</string>
+    <string name="viewPrincipal">원금</string>
     <string name="principal_foreign">외화 원금</string>
-    <string name="rate">수익율</string>
+    <string name="viewRateProfit">수익율</string>
     <string name="date">날짜</string>
     <string name="select_date">날짜 선택</string>
     <string name="institute">기관</string>
@@ -43,9 +44,10 @@
     <string name="select">선택</string>
     <string name="execute">실행</string>
     <string name="month">월</string>
-    <string name="week1">1주</string>
+    <string name="month3">3개월</string>
     <string name="month1">1개월</string>
     <string name="year1">1년</string>
+    <string name="year3">3년</string>
     <string name="full">전체</string>
     <string name="cash">현금</string>
     <string name="card">카드</string>

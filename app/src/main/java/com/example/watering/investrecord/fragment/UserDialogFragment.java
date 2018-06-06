@@ -124,15 +124,15 @@ public class UserDialogFragment extends DialogFragment {
             case R.id.navigation_item_DB_manage:
                 dialogDBManage();
                 break;
-            case R.id.editText_frag3_date:
             case R.id.editText_frag4_date:
+            case R.id.editText_frag5_date:
             case R.id.editText_dlg_spend_date:
                 dialogDate();
                 break;
-            case R.id.floating_frag3:
+            case R.id.floating_frag4:
                 dialogSpend();
                 break;
-            case R.id.floating_frag4:
+            case R.id.floating_frag5:
                 dialogIncome();
                 break;
             case R.id.menu_sub2_category_add:

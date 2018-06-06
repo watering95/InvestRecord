@@ -43,7 +43,7 @@ public class FragmentSub1 extends Fragment {
         void update();
     }
 
-    private Callback m_callback1, m_callback2;
+    private Callback m_callback1, m_callback2, m_callback3;
 
     public FragmentSub1() {
     }
@@ -73,6 +73,9 @@ public class FragmentSub1 extends Fragment {
     public void setCallback2(FragmentSub1.Callback callback) {
         this.m_callback2 = callback;
     }
+    public void setCallback3(FragmentSub1.Callback callback) {
+        this.m_callback3 = callback;
+    }
 
     public void callUpdateFrag1() {
         if(m_callback1 != null) {
@@ -84,6 +87,11 @@ public class FragmentSub1 extends Fragment {
             m_callback2.update();
         }
     }
+    public void callUpdateFrag3() {
+        if(m_callback3 != null) {
+            m_callback3.update();
+        }
+    }
 
     private void initLayout() {
         TabLayout mFragSub1TabLayout = mView.findViewById(R.id.tab_frag_sub1);
@@ -91,6 +99,7 @@ public class FragmentSub1 extends Fragment {
         mFragSub1TabLayout.setTabTextColors(Color.parseColor("#ffffff"),Color.parseColor("#00ff00"));
         mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText(R.string.total_review));
         mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText(R.string.analysis));
+        mFragSub1TabLayout.addTab(mFragSub1TabLayout.newTab().setText(R.string.reference));
         mFragSub1TabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         textView_spend_month = mView.findViewById(R.id.textView_frag_sub1_spend_month);

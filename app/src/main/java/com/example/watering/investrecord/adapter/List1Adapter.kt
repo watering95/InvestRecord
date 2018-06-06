@@ -40,22 +40,26 @@ class List1Adapter(context: Context, private val mData: ArrayList<InfoList1>) : 
             convertView = inflater.inflate(R.layout.layout_list1, parent, false)
         }
 
-        val txtAccount = convertView!!.findViewById<TextView>(R.id.textView_layout_list1_1)
-        val principal = convertView.findViewById<TextView>(R.id.textView_layout_list1_2)
-        val evaluation = convertView.findViewById<TextView>(R.id.textView_layout_list1_3)
-        val rate = convertView.findViewById<TextView>(R.id.textView_layout_list1_4)
-        val accountInfo = convertView.findViewById<TextView>(R.id.textView_layout_list1_5)
+        val viewAccount = convertView!!.findViewById<TextView>(R.id.textView_layout_list1_1)
+        val viewPrincipal = convertView.findViewById<TextView>(R.id.textView_layout_list1_2)
+        val viewEvaluation = convertView.findViewById<TextView>(R.id.textView_layout_list1_3)
+        val viewRateProfit = convertView.findViewById<TextView>(R.id.textView_layout_list1_4)
+        val viewAccountInfo = convertView.findViewById<TextView>(R.id.textView_layout_list1_5)
+        val viewRateTotal = convertView.findViewById<TextView>(R.id.textView_layout_list1_6)
 
-        val list6 = mData[position].infoList6
+        val list6 = mData[position].infoList7
         val dairyTotal = list6!!.dairyTotal
         val account = mData[position].account
         val df = DecimalFormat("#,###")
+        val total = mData[count-1].total
+        val evaluation = dairyTotal!!.evaluation.toLong()
 
-        txtAccount.text = account!!.number.toString()
-        principal.text = df.format(dairyTotal!!.principal.toLong())
-        rate.text = String.format(Locale.getDefault(), "%.2f", dairyTotal.rate)
-        evaluation.text = df.format(dairyTotal.evaluation.toLong())
-        accountInfo.text = String.format(Locale.getDefault(), "%s %s", account.institute, account.description)
+        viewAccount.text = account!!.number.toString()
+        viewPrincipal.text = df.format(dairyTotal.principal.toLong())
+        viewRateProfit.text = String.format(Locale.getDefault(), "%.2f", dairyTotal.rate)
+        viewEvaluation.text = df.format(evaluation)
+        viewAccountInfo.text = String.format(Locale.getDefault(), "%s %s", account.institute, account.description)
+        viewRateTotal.text = String.format(Locale.getDefault(), "%.2f", evaluation.toFloat()/total.toFloat()*100.0) + "%"
 
         return convertView
     }
