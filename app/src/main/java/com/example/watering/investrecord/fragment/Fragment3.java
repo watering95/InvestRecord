@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,7 +116,7 @@ public class Fragment3 extends Fragment {
 
     private void makeHTMLFile(String function) {
         try{
-            BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph_reference.html",false));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph_frag3.html",false));
 
             StringBuilder data = new StringBuilder();
             String strToday = mActivity.getToday();
@@ -123,10 +124,10 @@ public class Fragment3 extends Fragment {
             String script = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n"
                 + function;
 
-            String body = "<div id=\"linechart_material\"></div>\n";
+            String body = "<div id=\"chart1\"></div>\n" + "<div id=\"chart2\"></div>\n";
 
             String html = "<!DOCTYPE html>\n" + "<head>\n" + script + "</head>\n" + "<body>\n" + body + "</body>\n" + "</html>";
-
+            Log.i(TAG, String.format("%s",html));
             bw.write(html);
             bw.close();
         } catch (IOException e) {
@@ -141,6 +142,6 @@ public class Fragment3 extends Fragment {
         WebSettings set = mWeb.getSettings();
         set.setJavaScriptEnabled(true);
         set.setBuiltInZoomControls(true);
-        mWeb.loadUrl("file:///" + mActivity.getFilesDir() + "graph_reference.html");
+        mWeb.loadUrl("file:///" + mActivity.getFilesDir() + "graph_frag3.html");
     }
 }

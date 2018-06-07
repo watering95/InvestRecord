@@ -1670,6 +1670,34 @@ public class IRResolver {
 
         return sum;
     }
+
+    public int getSpendsCategorySum(int id_category_main, String date) {
+        int sum;
+        String where = "A.date_use BETWEEN date('" + date + "','start of month') AND date('" + date + "','start of month','+1 month','-1 day') and C._id=?";
+        String[] selectionArgs = {String.valueOf(id_category_main)};
+        String[] select = {"total(A.amount) "
+                + "FROM tbl_spend AS A "
+                + "JOIN tbl_category_sub AS B "
+                + "ON A.id_sub=B._id "
+                + "JOIN tbl_category_main AS C "
+                + "ON B.id_main=C._id"};
+
+        Cursor c;
+
+        // table이 존재하지 않으면
+        if(checkDBTable("tbl_spend") == 0) return 0;
+
+        c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
+
+        assert c != null;
+        c.moveToNext();
+
+        sum = c.getInt(0);
+        c.close();
+
+        return sum;
+    }
+
     public int getIncomeSum(String date, int id_account) {
         int sum;
         String where = "date=? AND id_account=?";

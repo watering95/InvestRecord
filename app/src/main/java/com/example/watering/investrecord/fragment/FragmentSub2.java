@@ -236,7 +236,7 @@ public class FragmentSub2 extends Fragment {
     public void setCallback4(FragmentSub2.Callback callback) {
         this.m_callback4 = callback;
     }
-    public void setCallback5(FragmentSub2.Callback callback) {
+    public void setCallback6(FragmentSub2.Callback callback) {
         this.m_callback5 = callback;
     }
 
