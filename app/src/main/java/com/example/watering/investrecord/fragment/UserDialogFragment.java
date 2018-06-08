@@ -1998,6 +1998,7 @@ public class UserDialogFragment extends DialogFragment {
         for (int i = 0, n = categorySubs.size(); i < n; i++) {
             lists_category_sub.add(categorySubs.get(i).getName());
         }
+        selectedSubId = categorySubs.get(0).getId();
     }
     private void updateAccountList(int id_group) {
         String str;

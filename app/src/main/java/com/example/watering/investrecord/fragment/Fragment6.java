@@ -171,7 +171,7 @@ public class Fragment6 extends Fragment {
                     + "]);\n\n"
 
                     + "var options = {"
-                    + "title: " + new StringBuilder().append("'").append(strDate).delete(strDate.length()-2,strDate.length()+1).append("'")
+                    + "title: " + new StringBuilder().append("'").append(strDate).delete(strDate.length()-2,strDate.length()+1).append(" 지출'")
                     + "};\n\n"
 
                     + "var chart = new google.visualization.PieChart(chartDiv);\n"
