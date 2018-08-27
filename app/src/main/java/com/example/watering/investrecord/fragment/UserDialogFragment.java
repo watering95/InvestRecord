@@ -104,13 +104,13 @@ public class UserDialogFragment extends DialogFragment {
                 dialogSelect();
                 break;
             case 1:
-                dialogInoutKRW();
+                dialogInOutKRW();
                 break;
             case 2:
                 dialogTransfer();
                 break;
             case 3:
-                dialogInoutForeign();
+                dialogInOutForeign();
                 break;
             case R.id.menu_sub1_addGroup:
                 dialogGroupAdd();
@@ -171,6 +171,157 @@ public class UserDialogFragment extends DialogFragment {
     }
     public void setSelectedDate(String selectedDate) {
         this.selectedDate = selectedDate;
+    }
+
+    @SuppressLint("InflateParams")
+    private void dialogDate() {
+        final String[] date = new String[1];
+
+        view = inflater.inflate(R.layout.dialog_date, null);
+
+        DatePicker datePicker = view.findViewById(R.id.datePicker_dlg_date);
+
+        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar select = Calendar.getInstance();
+                select.set(year, monthOfYear, dayOfMonth);
+
+                if (Calendar.getInstance().before(select)) {
+                    Toast.makeText(mActivity.getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                date[0] = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
+
+            }
+        });
+        builder.setView(view).setTitle(getString(R.string.select_date));
+        builder.setPositiveButton(getString(R.string.select),new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                listener.onWorkComplete(date[0]);
+            }
+        });
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+    }
+    @SuppressLint("InflateParams")
+    private void dialogDBManage() {
+        view = inflater.inflate(R.layout.dialog_listview, null);
+
+        ListView listView = view.findViewById(R.id.listView_dlg_listView);
+
+        lists_select.clear();
+        lists_select.add(getString(R.string.delete_all));
+        lists_select.add(getString(R.string.DB_delete));
+        lists_select.add(getString(R.string.DB_backup));
+        lists_select.add(getString(R.string.DB_restore));
+        lists_select.add(getString(R.string.DB_save));
+
+        //noinspection ConstantConditions
+        adapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, lists_select);
+
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView.setAdapter(adapter1);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String str = null;
+                switch(position) {
+                    case 0:
+                        str = "delall";
+                        break;
+                    case 1:
+                        str = "del";
+                        break;
+                    case 2:
+                        str = "backup";
+                        break;
+                    case 3:
+                        str = "restore";
+                        break;
+                    case 4:
+                        str = "save";
+                        break;
+                }
+                listener.onWorkComplete(str);
+            }
+        });
+
+        builder.setView(view).setTitle(getString(R.string.setting));
+        builder.setPositiveButton(getString(R.string.finish), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                listener.onWorkComplete("");
+            }
+        });
+    }
+    @SuppressLint("InflateParams")
+    private void dialogSelect() {
+        view = inflater.inflate(R.layout.dialog_listview, null);
+
+        ListView listView = view.findViewById(R.id.listView_dlg_listView);
+
+        lists_select.clear();
+        lists_select.add(getString(R.string.input_inout_krw));
+        lists_select.add(getString(R.string.input_inout_foreign));
+        lists_select.add(getString(R.string.transfer));
+
+        //noinspection ConstantConditions
+        adapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, lists_select);
+
+        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        listView.setAdapter(adapter1);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch(position) {
+                    case 0:
+                        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
+                            @Override
+                            public void onWorkComplete(String date) {
+                            }
+                        });
+                        dialog.setSelectedDate(selectedDate);
+                        //noinspection ConstantConditions
+                        dialog.show(getFragmentManager(), "dialog");
+                        break;
+                    case 1:
+                        dialog = UserDialogFragment.newInstance(3, new UserDialogFragment.UserListener() {
+                            @Override
+                            public void onWorkComplete(String date) {
+                            }
+                        });
+                        dialog.setSelectedDate(selectedDate);
+                        //noinspection ConstantConditions
+                        dialog.show(getFragmentManager(), "dialog");
+                        break;
+                    case 2:
+                        dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
+                            @Override
+                            public void onWorkComplete(String date) {
+                            }
+                        });
+                        dialog.setSelectedDate(selectedDate);
+                        //noinspection ConstantConditions
+                        dialog.show(getFragmentManager(), "dialog");
+                        break;
+                }
+                listener.onWorkComplete(null);
+            }
+        });
+
+        builder.setView(view).setTitle(getString(R.string.select));
+        builder.setPositiveButton(getString(R.string.finish), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                listener.onWorkComplete("");
+            }
+        });
     }
 
     @SuppressLint("InflateParams")
@@ -675,121 +826,7 @@ public class UserDialogFragment extends DialogFragment {
     }
 
     @SuppressLint("InflateParams")
-    private void dialogDBManage() {
-        view = inflater.inflate(R.layout.dialog_listview, null);
-
-        ListView listView = view.findViewById(R.id.listView_dlg_listView);
-
-        lists_select.clear();
-        lists_select.add(getString(R.string.delete_all));
-        lists_select.add(getString(R.string.DB_delete));
-        lists_select.add(getString(R.string.DB_backup));
-        lists_select.add(getString(R.string.DB_restore));
-        lists_select.add(getString(R.string.DB_save));
-
-        //noinspection ConstantConditions
-        adapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, lists_select);
-
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        listView.setAdapter(adapter1);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String str = null;
-                switch(position) {
-                    case 0:
-                        str = "delall";
-                        break;
-                    case 1:
-                        str = "del";
-                        break;
-                    case 2:
-                        str = "backup";
-                        break;
-                    case 3:
-                        str = "restore";
-                        break;
-                    case 4:
-                        str = "save";
-                        break;
-                }
-                listener.onWorkComplete(str);
-            }
-        });
-
-        builder.setView(view).setTitle(getString(R.string.setting));
-        builder.setPositiveButton(getString(R.string.finish), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                listener.onWorkComplete("");
-            }
-        });
-    }
-    @SuppressLint("InflateParams")
-    private void dialogSelect() {
-        view = inflater.inflate(R.layout.dialog_listview, null);
-
-        ListView listView = view.findViewById(R.id.listView_dlg_listView);
-
-        lists_select.clear();
-        lists_select.add(getString(R.string.input_inout_krw));
-        lists_select.add(getString(R.string.input_inout_foreign));
-        lists_select.add(getString(R.string.transfer));
-
-        //noinspection ConstantConditions
-        adapter1 = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, lists_select);
-
-        listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        listView.setAdapter(adapter1);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch(position) {
-                    case 0:
-                        UserDialogFragment dialog = UserDialogFragment.newInstance(1, new UserDialogFragment.UserListener() {
-                            @Override
-                            public void onWorkComplete(String date) {
-                            }
-                        });
-                        dialog.setSelectedDate(selectedDate);
-                        //noinspection ConstantConditions
-                        dialog.show(getFragmentManager(), "dialog");
-                        break;
-                    case 1:
-                        dialog = UserDialogFragment.newInstance(3, new UserDialogFragment.UserListener() {
-                            @Override
-                            public void onWorkComplete(String date) {
-                            }
-                        });
-                        dialog.setSelectedDate(selectedDate);
-                        //noinspection ConstantConditions
-                        dialog.show(getFragmentManager(), "dialog");
-                        break;
-                    case 2:
-                        dialog = UserDialogFragment.newInstance(2, new UserDialogFragment.UserListener() {
-                            @Override
-                            public void onWorkComplete(String date) {
-                            }
-                        });
-                        dialog.setSelectedDate(selectedDate);
-                        //noinspection ConstantConditions
-                        dialog.show(getFragmentManager(), "dialog");
-                        break;
-                }
-                listener.onWorkComplete(null);
-            }
-        });
-
-        builder.setView(view).setTitle(getString(R.string.select));
-        builder.setPositiveButton(getString(R.string.finish), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                listener.onWorkComplete("");
-            }
-        });
-    }
-    @SuppressLint("InflateParams")
-    private void dialogInoutKRW() {
+    private void dialogInOutKRW() {
         view = inflater.inflate(R.layout.dialog_inout_krw, null);
 
         final EditText txtInput = view.findViewById(R.id.editText_dlg_inout_krw_input);
@@ -854,16 +891,20 @@ public class UserDialogFragment extends DialogFragment {
         builder.setPositiveButton(getString(R.string.regist), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String str_in, str_out, str_eval;
+                String str_in, str_out, str_eval, str_income, str_spend;
 
                 DecimalFormat df = new DecimalFormat("#,###");
 
                 str_in = txtInput.getText().toString();
                 str_out = txtOutput.getText().toString();
                 str_eval = txtEvaluation.getText().toString();
+                str_income = txtIncome.getText().toString();
+                str_spend = txtSpend.getText().toString();
 
                 if(str_in.isEmpty()) str_in = "0";
                 if(str_out.isEmpty()) str_out = "0";
+                if(str_income.isEmpty()) str_income = "0";
+                if(str_spend.isEmpty()) str_spend = "0";
 
                 InfoIOKRW io_krw = new InfoIOKRW();
 
@@ -875,12 +916,15 @@ public class UserDialogFragment extends DialogFragment {
                     }
                 }
 
-                int in = 0, out = 0, evaluation = 0;
+                int in = 0, out = 0, evaluation = 0, income = 0, spend = 0;
                 try {
                     in = df.parse(str_in).intValue();
                     out = df.parse(str_out).intValue();
+                    income = df.parse(str_income).intValue();
+                    spend = df.parse(str_spend).intValue();
+
                     if(str_eval.isEmpty()) {
-                        evaluation = in - out;
+                        evaluation = in - out + income - spend;
                     }
                     else {
                         evaluation = df.parse(str_eval).intValue();
@@ -908,7 +952,7 @@ public class UserDialogFragment extends DialogFragment {
         });
     }
     @SuppressLint("InflateParams")
-    private void dialogInoutForeign() {
+    private void dialogInOutForeign() {
         int input_krw, output_krw;
         double input_foreign, output_foreign, evaluation;
         final int[] current_currency = {0};
@@ -1171,42 +1215,6 @@ public class UserDialogFragment extends DialogFragment {
         }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-    }
-    @SuppressLint("InflateParams")
-    private void dialogDate() {
-        final String[] date = new String[1];
-
-        view = inflater.inflate(R.layout.dialog_date, null);
-
-        DatePicker datePicker = view.findViewById(R.id.datePicker_dlg_date);
-
-        datePicker.init(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar select = Calendar.getInstance();
-                select.set(year, monthOfYear, dayOfMonth);
-
-                if (Calendar.getInstance().before(select)) {
-                    Toast.makeText(mActivity.getApplicationContext(), R.string.toast_date_error, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                date[0] = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
-
-            }
-        });
-        builder.setView(view).setTitle(getString(R.string.select_date));
-        builder.setPositiveButton(getString(R.string.select),new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                listener.onWorkComplete(date[0]);
-            }
-        });
-        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
             }
         });
     }

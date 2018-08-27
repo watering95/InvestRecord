@@ -1846,7 +1846,7 @@ public class IRResolver {
                 if(io_krw != null) evaluation = io_krw.getEvaluation();
 
                 calInfoDairyKRW(select,daires_krw.get(index).getId(),id_account,txtDate,evaluation);
-                calInfoDairyTotal(id_account, selectedDate);
+                calInfoDairyTotal(id_account, txtDate);
                 index++;
 
             } while(df.parse(selectedDate).compareTo(date) < 0);
@@ -1892,7 +1892,7 @@ public class IRResolver {
                 if(io_foreign != null) evaluation = io_foreign.getEvaluation();
 
                 calInfoDairyForeign(select,daires_foreign.get(index).getId(),id_account,id_currency,txtDate,evaluation);
-                calInfoDairyTotal(id_account, selectedDate);
+                calInfoDairyTotal(id_account, txtDate);
                 index++;
 
             } while(df.parse(selectedDate).compareTo(date) < 0);
@@ -1951,8 +1951,9 @@ public class IRResolver {
         InfoDairyKRW dairy_krw = getLastInfoDairyKRW(id_account, date);
         InfoIOKRW io_krw = getLastInfoIOKRW(id_account, date);
 
-        InfoDairyForeign[] dairy_foreign = new InfoDairyForeign[4];
-        InfoIOForeign[] io_foreign = new InfoIOForeign[4];
+        // 외환 종류가 5개
+        InfoDairyForeign[] dairy_foreign = new InfoDairyForeign[5];
+        InfoIOForeign[] io_foreign = new InfoIOForeign[5];
 
         int principal = 0, evaluation = 0;
         if (dairy_krw != null) {
@@ -1962,7 +1963,7 @@ public class IRResolver {
             evaluation = io_krw.getEvaluation();
         }
 
-        for (int i = 0, limit = 4; i < limit; i++) {
+        for (int i = 0, limit = 5; i < limit; i++) {
             dairy_foreign[i] = getInfoDairyForeign(id_account, i, date);
             io_foreign[i] = getInfoIOForeign(id_account, i, date);
             if (dairy_foreign[i] != null) principal += dairy_foreign[i].getPrincipal_krw();
@@ -2001,9 +2002,9 @@ public class IRResolver {
         // io_latest가 없으면 0
         if(io_krw_latest != null) {
             evaluation = io_krw_latest.getEvaluation();
-            // 현재값이 있을 경우 무시하고 전날 데이터에 입출력값 반영
-            if(io_krw != null) evaluation = evaluation - io_krw.getOutput() + io_krw.getInput();
         }
+        // 현재값이 있을 경우 무시하고 전날 데이터에 입출력값 반영
+        if(io_krw != null) evaluation = evaluation - io_krw.getOutput() + io_krw.getInput();
         // evaluation에 해당일 spendcash, spendcard, income 반영
         return evaluation - getSpendsCashSum(txtDate,id_account) - getSpendsCardSum(txtDate,id_account) + getIncomeSum(txtDate,id_account);
     }
