@@ -1637,6 +1637,7 @@ public class IRResolver {
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
 
         assert c != null;
+        if(c.getCount() == 0) return 0;
         c.moveToNext();
 
         sum = c.getInt(0);
@@ -1663,6 +1664,7 @@ public class IRResolver {
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
 
         assert c != null;
+        if(c.getCount() == 0) return 0;
         c.moveToNext();
 
         sum = c.getInt(0);
@@ -1690,6 +1692,7 @@ public class IRResolver {
         c = cr.query(Uri.parse(URI_JOIN), select, where, selectionArgs, null);
 
         assert c != null;
+        if(c.getCount() == 0) return 0;
         c.moveToNext();
 
         sum = c.getInt(0);
@@ -1712,6 +1715,7 @@ public class IRResolver {
         c = cr.query(Uri.parse(URI_INCOME), select, where, selectionArgs, null);
 
         assert c != null;
+        if(c.getCount() == 0) return 0;
         c.moveToNext();
 
         sum = c.getInt(0);
@@ -1732,6 +1736,7 @@ public class IRResolver {
         c = cr.query(Uri.parse(URI_SPEND), select, where, null, null);
 
         assert c != null;
+        if(c.getCount() == 0) return 0;
         c.moveToNext();
 
         sum = c.getInt(0);
@@ -1751,6 +1756,7 @@ public class IRResolver {
         c = cr.query(Uri.parse(URI_INCOME), select, where, null, null);
 
         assert c != null;
+        if(c.getCount() == 0) return 0;
         c.moveToNext();
 
         sum = c.getInt(0);
@@ -1786,6 +1792,7 @@ public class IRResolver {
 
         c = cr.query(Uri.parse(uri), select, where, selectionArgs, null);
         assert c != null;
+        if(c.getCount() == 0) return 0;
         c.moveToNext();
 
         sum = c.getInt(0);
@@ -1803,6 +1810,7 @@ public class IRResolver {
 
         c = cr.query(Uri.parse(uri), select, where, selectionArgs, null);
         assert c != null;
+        if(c.getCount() == 0) return 0f;
         c.moveToNext();
 
         sum = c.getDouble(0);

@@ -188,7 +188,7 @@ public class Fragment2 extends Fragment {
                 strDate = mActivity.dateChange(strToday, -i*interval);
             } while(mActivity.strToCalendar(strDate).compareTo(firstDate) > 0);
 
-            data.delete(data.length()-2,data.length()-1);
+            if(data.length() > 0) data.delete(data.length()-2,data.length()-1);
 
             Log.i(TAG, String.format("%s",data));
 

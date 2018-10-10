@@ -121,7 +121,7 @@ public class Fragment6 extends Fragment {
         int income, spend;
         String txtMonth, txtDate;
 
-        InfoList6 list5;
+        InfoList6 list6;
 
         Calendar date = mActivity.strToCalendar(mActivity.getToday());
         txtDate = mActivity.calendarToStr(date);
@@ -129,16 +129,16 @@ public class Fragment6 extends Fragment {
         lists.clear();
 
         for(int i = 0; i < 12; i++) {
-            list5 = new InfoList6();
+            list6 = new InfoList6();
 
             txtMonth = String.format("%04d-%02d", date.get(Calendar.YEAR), date.get(Calendar.MONTH) + 1);
             income = ir.getIncomeMonth(txtDate);
             spend = ir.getSpendMonth(txtDate);
 
-            list5.setMonth(txtMonth);
-            list5.setIncome(income);
-            list5.setSpend(spend);
-            lists.add(list5);
+            list6.setMonth(txtMonth);
+            list6.setIncome(income);
+            list6.setSpend(spend);
+            lists.add(list6);
 
             txtDate = mActivity.monthChange(txtDate, -1);
             date = mActivity.strToCalendar(txtDate);
@@ -158,7 +158,7 @@ public class Fragment6 extends Fragment {
                 sum = ir.getSpendsCategorySum(categoryMain.getId(), strDate);
                 if(sum > 0) data.append("['").append(categoryMain.getName()).append("', ").append(sum).append("],\n");
             }
-            data.delete(data.length()-2,data.length()-1);
+            if(data.length() > 0) data.delete(data.length()-2,data.length()-1);
 
             Log.i(TAG, String.format("%s",data));
 

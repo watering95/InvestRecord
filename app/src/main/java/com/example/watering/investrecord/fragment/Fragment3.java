@@ -118,9 +118,6 @@ public class Fragment3 extends Fragment {
         try{
             BufferedWriter bw = new BufferedWriter(new FileWriter(mActivity.getFilesDir() + "graph_frag3.html",false));
 
-            StringBuilder data = new StringBuilder();
-            String strToday = mActivity.getToday();
-
             String script = "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n"
                 + function;
 

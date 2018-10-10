@@ -411,8 +411,8 @@ public class MainActivity extends AppCompatActivity {
                                 ir.insertInfoIOForeign(info_io_foreign_today[i_currency]);
                             }
                             else {
-                                info_io_foreign_today[i_currency].setEvaluation(evaluation);
-                                ir.updateInfoIOForeign(info_io_foreign_today[i_currency]);
+//                                info_io_foreign_today[i_currency].setEvaluation(evaluation);
+//                                ir.updateInfoIOForeign(info_io_foreign_today[i_currency]);
                             }
                         }
                     }
